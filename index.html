@@ -8,188 +8,188 @@ body, html {margin:0; padding:0; overflow:hidden; font-family:Arial;}
 .slide {display:none; width:100vw; height:100vh; justify-content:center; align-items:center; flex-direction:column; position:absolute;}
 .active {display:flex;}
 
-/* Slide1 */
 #slide1 {background:black;}
 .start-btn {background:red; color:white; padding:25px 50px; font-size:24px; border:none; border-radius:15px; cursor:pointer; box-shadow:0 0 20px red;}
 
-/* Slide2 */
-#slide2 {background:#ffd6e0; flex-direction:column; text-align:center; position:relative; overflow:hidden;}
-h1 {font-size:55px; margin:0 0 20px 0;}
-p {font-size:24px; margin:0 0 40px 0;}
-.choice-btn {padding:15px 30px; font-size:20px; border:none; border-radius:20px; cursor:pointer; position:absolute; transition:0.3s;}
+#slide2 {background:#ffd6e0; text-align:center; position:relative; overflow:hidden;}
+h1 {font-size:55px;}
+p {font-size:24px;}
+
+.choice-btn {
+  padding:15px 30px;
+  font-size:20px;
+  border:none;
+  border-radius:20px;
+  cursor:pointer;
+  position:absolute;
+}
+
 #yesBtn {background:#ff4d6d; color:white; left:40%; top:60%; display:none;}
 #noBtn {background:#555; color:white; left:55%; top:60%; display:none;}
 
-/* Modal */
-.modal {position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; opacity:0; pointer-events:none; transition:0.3s; z-index:10;}
+.modal {
+  position:fixed; top:0; left:0; width:100%; height:100%;
+  background:rgba(0,0,0,0.5);
+  display:flex; justify-content:center; align-items:center;
+  opacity:0; pointer-events:none; transition:0.3s;
+}
 .modal.show {opacity:1; pointer-events:auto;}
-.modal-box {background:white; padding:25px 40px; border-radius:15px; font-size:22px; text-align:center;}
+.modal-box {background:white; padding:25px; border-radius:15px;}
 
-/* Explosion */
-@keyframes explode {0%{transform:scale(1);opacity:1;}50%{transform:scale(2);background:red;}100%{transform:scale(0);opacity:0;}}
+@keyframes explode {
+  0%{transform:scale(1);}
+  50%{transform:scale(2); background:red;}
+  100%{transform:scale(0); opacity:0;}
+}
 .explode {animation:explode 0.5s forwards;}
 
-/* Glow */
 .glow {animation:pulse 1s infinite;}
-@keyframes pulse {0%{box-shadow:0 0 10px #ff4d6d;}50%{box-shadow:0 0 30px #ff4d6d;}100%{box-shadow:0 0 10px #ff4d6d;}}
+@keyframes pulse {
+  0%{box-shadow:0 0 10px #ff4d6d;}
+  50%{box-shadow:0 0 30px #ff4d6d;}
+  100%{box-shadow:0 0 10px #ff4d6d;}
+}
 </style>
 </head>
 <body>
 
 <audio id="music" loop>
-  <source src="birthday.mp3" type="audio/mpeg">
+  <source src="birthday.mp3">
 </audio>
 
-<!-- Slide1 -->
 <div class="slide active" id="slide1">
   <button class="start-btn" id="startBtn">PRESS</button>
 </div>
 
-<!-- Slide2 -->
 <div class="slide" id="slide2">
   <h1>Happy Birthday Shoon! ⸜(｡˃ ᵕ ˂ )⸝🎂</h1>
   <p>i have presents for you, want to open?</p>
-  <button class="choice-btn" id="yesBtn">YES</button>
-  <button class="choice-btn" id="noBtn">NO</button>
+  <button id="yesBtn" class="choice-btn">YES</button>
+  <button id="noBtn" class="choice-btn">NO</button>
 </div>
 
-<!-- Modal -->
 <div id="modal" class="modal">
   <div class="modal-box" id="modalText"></div>
 </div>
 
 <script>
+let startBtn = document.getElementById("startBtn");
 let slide1 = document.getElementById("slide1");
 let slide2 = document.getElementById("slide2");
-let startBtn = document.getElementById("startBtn");
-let music = document.getElementById("music");
 let yesBtn = document.getElementById("yesBtn");
 let noBtn = document.getElementById("noBtn");
 let modal = document.getElementById("modal");
 let modalText = document.getElementById("modalText");
+let music = document.getElementById("music");
 
-let noClickCount = 0;
 let yesScale = 1;
-let multipleBtns = [];
 let countdown = 5;
+let lastNo;
 let moveInterval;
 
-// Start button
-startBtn.addEventListener("click", ()=>{
+// START
+startBtn.onclick = () => {
   slide1.classList.remove("active");
   slide2.classList.add("active");
   yesBtn.style.display="block";
   noBtn.style.display="block";
   music.play();
-});
+};
 
-// Modal function
+// MODAL
 function showModal(text){
   modalText.innerText = text;
   modal.classList.add("show");
-  setTimeout(()=>{ modal.classList.remove("show"); },2000);
+  setTimeout(()=>modal.classList.remove("show"),2000);
 }
 
-// YES button click
-yesBtn.addEventListener("click", ()=>{
-  showModal("Yay! 🎉 Let's reveal the surprises 😌");
-});
+// YES
+yesBtn.onclick = () => {
+  showModal("Yay! 🎉");
+};
 
-// NO button click
-noBtn.addEventListener("click", ()=>handleNo(noBtn));
-
-function handleNo(btn){
-  noClickCount++;
+// NO CLICK (FIRST)
+noBtn.onclick = () => {
   yesScale += 0.8;
-  yesBtn.style.transform=`scale(${yesScale})`;
+  yesBtn.style.transform = `scale(${yesScale})`;
 
-  if(noClickCount===1){
-    showModal("why no? ૮(◞ ‸ ◟ )ა");
-    teleportNo(btn);
-  }
-  else if(noClickCount===2){
+  showModal("why no? ૮(◞ ‸ ◟ )ა");
+
+  teleport(noBtn);
+
+  setTimeout(()=>{
     showModal("try pressing 5 buttons then (¬_ ´¬ )");
-    multiplyNo();
-  }
-  else if(noClickCount===3){
-    showModal("i've been preparing this for 20 days(っ╥﹏╥ς)");
-    startSliding(btn);
-  }
-  else if(noClickCount===4){
-    showModal("alr fine try catching it then <(ꐦㅍ _ㅍ)>");
-    slowSlide(btn);
-  }
-  else if(noClickCount===5){
-    showModal("fine imma pop this before u pmo ς(≖_≖ )ﾉ🔪");
-    explodeNo(btn);
-  }
-}
+    multiply();
+  },2000);
+};
 
 // TELEPORT
-function teleportNo(btn){
-  let x=Math.random()*(window.innerWidth-100);
-  let y=Math.random()*(window.innerHeight-100);
-  btn.style.left=x+"px";
-  btn.style.top=y+"px";
+function teleport(btn){
+  btn.style.left = Math.random()*80 + "%";
+  btn.style.top = Math.random()*80 + "%";
 }
 
-// MULTIPLY NO BUTTONS
-function multiplyNo(){
-  multipleBtns=[];
-  countdown=5;
+// MULTIPLY
+function multiply(){
   noBtn.style.display="none";
+  countdown = 5;
 
   for(let i=0;i<5;i++){
-    let newBtn=noBtn.cloneNode(true);
-    newBtn.style.display="block";
-    newBtn.onclick=function(){
+    let b = noBtn.cloneNode(true);
+    b.style.display="block";
+    b.style.left = Math.random()*80 + "%";
+    b.style.top = Math.random()*80 + "%";
+
+    b.onclick = () => {
       countdown--;
-      if(countdown>0){
-        showModal(countdown+".");
-      } else {
+      yesScale += 0.5;
+      yesBtn.style.transform = `scale(${yesScale})`;
+
+      if(countdown > 1){
+        showModal(countdown + "...");
+      } 
+      else if(countdown === 1){
         showModal("shoon lae thu…(  •̀⤙•́ )");
+      } 
+      else {
+        createLastNo();
       }
-      newBtn.remove();
+
+      b.remove();
     };
-    newBtn.style.left = Math.random()*(window.innerWidth-100)+"px";
-    newBtn.style.top = Math.random()*(window.innerHeight-100)+"px";
-    slide2.appendChild(newBtn);
-    multipleBtns.push(newBtn);
+
+    slide2.appendChild(b);
   }
 }
 
-// SLIDING NO BUTTON
-function startSliding(btn){
-  btn.style.display="block";
-  moveInterval=setInterval(()=>{
-    let x=Math.random()*(window.innerWidth-120);
-    let y=Math.random()*(window.innerHeight-120);
-    btn.style.transition="1.5s linear";
-    btn.style.left=x+"px";
-    btn.style.top=y+"px";
-  },1500);
-}
+// LAST NO BUTTON
+function createLastNo(){
+  lastNo = noBtn.cloneNode(true);
+  lastNo.style.display="block";
+  lastNo.style.left="50%";
+  lastNo.style.top="60%";
 
-// SLOW SLIDE
-function slowSlide(btn){
-  clearInterval(moveInterval);
-  btn.style.display="block";
-  moveInterval=setInterval(()=>{
-    let x=Math.random()*(window.innerWidth-120);
-    let y=Math.random()*(window.innerHeight-120);
-    btn.style.transition="3s linear";
-    btn.style.left=x+"px";
-    btn.style.top=y+"px";
+  slide2.appendChild(lastNo);
+
+  showModal("alr fine try catching it then <(ꐦㅍ _ㅍ)>");
+
+  moveInterval = setInterval(()=>{
+    let x = Math.random()*80;
+    let y = Math.random()*80;
+    lastNo.style.transition = "2.5s linear";
+    lastNo.style.left = x+"%";
+    lastNo.style.top = y+"%";
   },2000);
-}
 
-// EXPLODE
-function explodeNo(btn){
-  clearInterval(moveInterval);
-  btn.classList.add("explode");
-  setTimeout(()=>{ btn.remove(); },500);
-  yesBtn.style.transform="scale(3)";
-  yesBtn.classList.add("glow");
+  lastNo.onclick = () => {
+    clearInterval(moveInterval);
+    showModal("fine imma pop this before u pmo ς(≖_≖ )ﾉ🔪");
+
+    lastNo.classList.add("explode");
+    setTimeout(()=>lastNo.remove(),500);
+
+    yesBtn.classList.add("glow");
+  };
 }
 </script>
 </body>
