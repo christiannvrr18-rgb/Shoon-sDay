@@ -49,27 +49,28 @@ body{
 }
 
 h1{
-  font-size:60px;
+  font-size:55px;
 }
 
 p{
-  font-size:26px;
+  font-size:24px;
 }
 
-/* BUTTONS */
+/* BUTTON CONTAINER */
 .btn-container{
   display:flex;
   gap:20px;
-  margin-top:30px;
+  margin-top:20px;
 }
 
+/* BUTTONS */
 .choice-btn{
   padding:15px 30px;
-  font-size:22px;
+  font-size:20px;
   border:none;
   border-radius:20px;
   cursor:pointer;
-  transition:0.2s;
+  transition:0.3s;
 }
 
 #yesBtn{
@@ -80,34 +81,47 @@ p{
 #noBtn{
   background:#555;
   color:white;
-  position:relative;
+  position:absolute;
 }
 
-/* POPUP MODAL */
-.popup-bg{
+/* MODAL POPUP */
+.modal{
   position:fixed;
   top:0;
   left:0;
   width:100%;
   height:100%;
   background:rgba(0,0,0,0.5);
-  display:none;
+  display:flex;
   justify-content:center;
   align-items:center;
+  opacity:0;
+  pointer-events:none;
+  transition:0.3s;
 }
 
-.popup-box{
+.modal.show{
+  opacity:1;
+  pointer-events:auto;
+}
+
+.modal-box{
   background:white;
   padding:25px 40px;
-  border-radius:20px;
+  border-radius:15px;
   font-size:22px;
   text-align:center;
-  animation:fadeIn 0.3s ease;
 }
 
-@keyframes fadeIn{
-  from{opacity:0; transform:scale(0.8);}
-  to{opacity:1; transform:scale(1);}
+/* EXPLOSION */
+@keyframes explode{
+  0%{ transform:scale(1); opacity:1; }
+  50%{ transform:scale(2); background:red; }
+  100%{ transform:scale(0); opacity:0; }
+}
+
+.explode{
+  animation:explode 0.5s forwards;
 }
 
 /* GLOW */
@@ -119,17 +133,6 @@ p{
   0%{ box-shadow:0 0 10px #ff4d6d; }
   50%{ box-shadow:0 0 30px #ff4d6d; }
   100%{ box-shadow:0 0 10px #ff4d6d; }
-}
-
-/* EXPLOSION */
-.explode{
-  animation:explode 0.5s forwards;
-}
-
-@keyframes explode{
-  0%{ transform:scale(1); opacity:1; }
-  50%{ transform:scale(2); background:red; }
-  100%{ transform:scale(0); opacity:0; }
 }
 </style>
 </head>
@@ -156,9 +159,9 @@ p{
   </div>
 </div>
 
-<!-- POPUP -->
-<div id="popupBg" class="popup-bg" onclick="closePopup()">
-  <div class="popup-box" id="popupText"></div>
+<!-- MODAL -->
+<div id="modal" class="modal">
+  <div class="modal-box" id="modalText"></div>
 </div>
 
 <script>
@@ -169,8 +172,8 @@ let music = document.getElementById("music");
 let yesBtn = document.getElementById("yesBtn");
 let noBtn = document.getElementById("noBtn");
 
-let popupBg = document.getElementById("popupBg");
-let popupText = document.getElementById("popupText");
+let modal = document.getElementById("modal");
+let modalText = document.getElementById("modalText");
 
 let count = 0;
 let moveInterval;
@@ -180,42 +183,25 @@ function start(){
   slide1.classList.remove("active");
   slide2.classList.add("active");
   music.play();
+
+  // place NO beside YES initially
+  noBtn.style.left = yesBtn.offsetLeft + 120 + "px";
+  noBtn.style.top = yesBtn.offsetTop + "px";
 }
 
-/* POPUP */
-function showPopup(text){
-  popupText.innerText = text;
-  popupBg.style.display = "flex";
-}
+/* MODAL FUNCTION */
+function showModal(text){
+  modalText.innerText = text;
+  modal.classList.add("show");
 
-function closePopup(){
-  popupBg.style.display = "none";
+  setTimeout(()=>{
+    modal.classList.remove("show");
+  },2000);
 }
 
 /* YES */
 function yes(){
-  showPopup("good choice 😌 (next part soon)");
-}
-
-/* RANDOM TELEPORT */
-function teleport(){
-  let x = Math.random() * (window.innerWidth - 100);
-  let y = Math.random() * (window.innerHeight - 100);
-  noBtn.style.position = "absolute";
-  noBtn.style.left = x + "px";
-  noBtn.style.top = y + "px";
-}
-
-/* FAST CHAOTIC MOVEMENT */
-function startChaos(){
-  moveInterval = setInterval(()=>{
-    let x = Math.random() * (window.innerWidth - 100);
-    let y = Math.random() * (window.innerHeight - 100);
-
-    noBtn.style.transition = "0.1s";
-    noBtn.style.left = x + "px";
-    noBtn.style.top = y + "px";
-  },100); // FAST
+  showModal("good choice 😌 (next part soon)");
 }
 
 /* NO LOGIC */
@@ -223,30 +209,54 @@ function no(){
   count++;
 
   if(count === 1){
-    showPopup("why no?૮(◞ ‸ ◟ )ა");
-    yesBtn.style.transform="scale(1.5)";
-    teleport();
+    showModal("why no?૮(◞ ‸ ◟ )ა");
+    yesBtn.style.transform="scale(1.4)";
+
+    // teleport ONCE
+    teleportNo();
   }
 
   else if(count === 2){
-    showPopup("i've been preparing this for 20 days(っ╥﹏╥ς)");
-    yesBtn.style.transform="scale(2)";
-    startChaos();
+    showModal("i've been preparing this for 20 days(っ╥﹏╥ς)");
+    yesBtn.style.transform="scale(1.8)";
+
+    startSliding();
   }
 
   else if(count === 3){
-    showPopup("yep im removing that button before you pmo ς(≖_≖ )ﾉ🔪");
+    showModal("yep im removing that button before you pmo ς(≖_≖ )ﾉ🔪");
+    yesBtn.style.transform="scale(2.2)";
+    yesBtn.classList.add("glow");
 
     clearInterval(moveInterval);
-    noBtn.classList.add("explode");
 
-    yesBtn.style.transform="scale(2.5)";
-    yesBtn.classList.add("glow");
+    noBtn.classList.add("explode");
 
     setTimeout(()=>{
       noBtn.style.display="none";
     },500);
   }
+}
+
+/* TELEPORT */
+function teleportNo(){
+  let x = Math.random()*(window.innerWidth-100);
+  let y = Math.random()*(window.innerHeight-100);
+
+  noBtn.style.left = x + "px";
+  noBtn.style.top = y + "px";
+}
+
+/* SMOOTH SLIDING */
+function startSliding(){
+  moveInterval = setInterval(()=>{
+    let x = Math.random()*(window.innerWidth-120);
+    let y = Math.random()*(window.innerHeight-120);
+
+    noBtn.style.transition = "0.8s linear";
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+  },1000);
 }
 </script>
 
