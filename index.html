@@ -40,11 +40,6 @@ body{
   border-radius:15px;
   cursor:pointer;
   box-shadow:0 0 20px red;
-  transition:0.2s;
-}
-
-.start-btn:hover{
-  transform:scale(1.1);
 }
 
 /* SLIDE 2 */
@@ -54,29 +49,27 @@ body{
 }
 
 h1{
-  font-size:55px;
+  font-size:60px;
 }
 
 p{
-  font-size:24px;
-}
-
-/* BUTTON CONTAINER */
-.btn-container{
-  display:flex;
-  gap:20px;
-  margin-top:20px;
-  position:relative;
+  font-size:26px;
 }
 
 /* BUTTONS */
+.btn-container{
+  display:flex;
+  gap:20px;
+  margin-top:30px;
+}
+
 .choice-btn{
   padding:15px 30px;
-  font-size:20px;
+  font-size:22px;
   border:none;
   border-radius:20px;
   cursor:pointer;
-  transition:0.3s;
+  transition:0.2s;
 }
 
 #yesBtn{
@@ -90,11 +83,31 @@ p{
   position:relative;
 }
 
-/* POPUP */
-.popup{
-  margin-top:20px;
+/* POPUP MODAL */
+.popup-bg{
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.5);
+  display:none;
+  justify-content:center;
+  align-items:center;
+}
+
+.popup-box{
+  background:white;
+  padding:25px 40px;
+  border-radius:20px;
   font-size:22px;
-  color:#8b0033;
+  text-align:center;
+  animation:fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn{
+  from{opacity:0; transform:scale(0.8);}
+  to{opacity:1; transform:scale(1);}
 }
 
 /* GLOW */
@@ -108,44 +121,15 @@ p{
   100%{ box-shadow:0 0 10px #ff4d6d; }
 }
 
-/* SLIDE ANIMATION */
-.slide-move{
-  animation:slideMove 0.5s forwards;
-}
-
-@keyframes slideMove{
-  0%{ transform:translateX(0); }
-  100%{ transform:translateX(150px); }
-}
-
-/* CONTINUOUS FLOAT */
-.float{
-  animation:floatMove 2s infinite alternate ease-in-out;
-}
-
-@keyframes floatMove{
-  0%{ transform:translateX(0px); }
-  100%{ transform:translateX(200px); }
-}
-
 /* EXPLOSION */
 .explode{
-  animation:explode 0.6s forwards;
+  animation:explode 0.5s forwards;
 }
 
 @keyframes explode{
-  0%{
-    transform:scale(1);
-    opacity:1;
-  }
-  50%{
-    transform:scale(1.8);
-    background:red;
-  }
-  100%{
-    transform:scale(0);
-    opacity:0;
-  }
+  0%{ transform:scale(1); opacity:1; }
+  50%{ transform:scale(2); background:red; }
+  100%{ transform:scale(0); opacity:0; }
 }
 </style>
 </head>
@@ -170,8 +154,11 @@ p{
     <button id="yesBtn" class="choice-btn" onclick="yes()">YES</button>
     <button id="noBtn" class="choice-btn" onclick="no()">NO</button>
   </div>
+</div>
 
-  <div id="popup" class="popup"></div>
+<!-- POPUP -->
+<div id="popupBg" class="popup-bg" onclick="closePopup()">
+  <div class="popup-box" id="popupText"></div>
 </div>
 
 <script>
@@ -181,9 +168,12 @@ let music = document.getElementById("music");
 
 let yesBtn = document.getElementById("yesBtn");
 let noBtn = document.getElementById("noBtn");
-let popup = document.getElementById("popup");
+
+let popupBg = document.getElementById("popupBg");
+let popupText = document.getElementById("popupText");
 
 let count = 0;
+let moveInterval;
 
 /* START */
 function start(){
@@ -192,9 +182,40 @@ function start(){
   music.play();
 }
 
+/* POPUP */
+function showPopup(text){
+  popupText.innerText = text;
+  popupBg.style.display = "flex";
+}
+
+function closePopup(){
+  popupBg.style.display = "none";
+}
+
 /* YES */
 function yes(){
-  popup.innerText="good choice 😌 (next part soon)";
+  showPopup("good choice 😌 (next part soon)");
+}
+
+/* RANDOM TELEPORT */
+function teleport(){
+  let x = Math.random() * (window.innerWidth - 100);
+  let y = Math.random() * (window.innerHeight - 100);
+  noBtn.style.position = "absolute";
+  noBtn.style.left = x + "px";
+  noBtn.style.top = y + "px";
+}
+
+/* FAST CHAOTIC MOVEMENT */
+function startChaos(){
+  moveInterval = setInterval(()=>{
+    let x = Math.random() * (window.innerWidth - 100);
+    let y = Math.random() * (window.innerHeight - 100);
+
+    noBtn.style.transition = "0.1s";
+    noBtn.style.left = x + "px";
+    noBtn.style.top = y + "px";
+  },100); // FAST
 }
 
 /* NO LOGIC */
@@ -202,38 +223,29 @@ function no(){
   count++;
 
   if(count === 1){
-    popup.innerText="why no?૮(◞ ‸ ◟ )ა";
-    yesBtn.style.transform="scale(1.4)";
-    
-    // slight move only (natural)
-    noBtn.style.transform="translateX(40px)";
+    showPopup("why no?૮(◞ ‸ ◟ )ა");
+    yesBtn.style.transform="scale(1.5)";
+    teleport();
   }
 
   else if(count === 2){
-    popup.innerText="i've been preparing this for 20 days(っ╥﹏╥ς)";
-    yesBtn.style.transform="scale(1.8)";
-    
-    // smooth sliding motion
-    noBtn.classList.add("slide-move");
-
-    setTimeout(()=>{
-      noBtn.classList.remove("slide-move");
-      noBtn.classList.add("float"); // continuous smooth movement
-    },500);
+    showPopup("i've been preparing this for 20 days(っ╥﹏╥ς)");
+    yesBtn.style.transform="scale(2)";
+    startChaos();
   }
 
   else if(count === 3){
-    popup.innerText="yep im removing that button before you pmo ς(≖_≖ )ﾉ🔪";
-    yesBtn.style.transform="scale(2.2)";
-    yesBtn.classList.add("glow");
+    showPopup("yep im removing that button before you pmo ς(≖_≖ )ﾉ🔪");
 
-    // explosion
-    noBtn.classList.remove("float");
+    clearInterval(moveInterval);
     noBtn.classList.add("explode");
+
+    yesBtn.style.transform="scale(2.5)";
+    yesBtn.classList.add("glow");
 
     setTimeout(()=>{
       noBtn.style.display="none";
-    },600);
+    },500);
   }
 }
 </script>
