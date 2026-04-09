@@ -69,8 +69,10 @@ let modal = document.getElementById("modal");
 let modalText = document.getElementById("modalText");
 
 let noClickCount = 0;
+let yesScale = 1;
+let multipleBtns = [];
+let countdown = 5;
 let moveInterval;
-let multipleButtons = [];
 
 // Start button
 startBtn.addEventListener("click", ()=>{
@@ -81,38 +83,43 @@ startBtn.addEventListener("click", ()=>{
   music.play();
 });
 
-// Modal
+// Modal function
 function showModal(text){
   modalText.innerText = text;
   modal.classList.add("show");
   setTimeout(()=>{ modal.classList.remove("show"); },2000);
 }
 
-// YES
+// YES button click
 yesBtn.addEventListener("click", ()=>{
   showModal("Yay! 🎉 Let's reveal the surprises 😌");
 });
 
-// NO
+// NO button click
 noBtn.addEventListener("click", ()=>{
   noClickCount++;
+  yesScale += 0.8; // Gradual growth
+  yesBtn.style.transform=`scale(${yesScale})`;
+
   if(noClickCount===1){
     showModal("why no? ૮(◞ ‸ ◟ )ა");
-    yesBtn.style.transform="scale(5)";
     teleportNo(noBtn);
-  } else if(noClickCount===2){
-    showModal("Let's multiply the NO buttons! ಠ_ಠ");
+  }
+  else if(noClickCount===2){
+    showModal("Multiplying NO buttons! ಠ_ಠ");
     multiplyNo();
-  } else if(noClickCount===3){
+  }
+  else if(noClickCount===3){
     showModal("i've been preparing this for 20 days(っ╥﹏╥ς)");
     startSliding(noBtn);
-  } else if(noClickCount===4){
+  }
+  else if(noClickCount===4){
     showModal("yep im removing that button before you pmo ς(≖_≖ )ﾉ🔪");
     explodeNo(noBtn);
   }
 });
 
-// Teleport
+// TELEPORT
 function teleportNo(btn){
   let x=Math.random()*(window.innerWidth-100);
   let y=Math.random()*(window.innerHeight-100);
@@ -120,27 +127,33 @@ function teleportNo(btn){
   btn.style.top=y+"px";
 }
 
-// Multiply
+// MULTIPLY NO BUTTONS
 function multiplyNo(){
-  multipleButtons=[];
+  multipleBtns=[];
+  countdown=5;
+  noBtn.style.display="none"; // hide original
+
   for(let i=0;i<5;i++){
     let newBtn=noBtn.cloneNode(true);
+    newBtn.style.display="block";
     newBtn.onclick=function(){
-      let num=i+1;
-      showModal(num===5?"shoon lae thu…(  •̀⤙•́  )":num+".");
-      newBtn.remove();
+      countdown--;
+      if(countdown>0){
+        showModal(countdown+".");
+      } else {
+        showModal("shoon lae thu…(  •̀⤙•́  )");
+        newBtn.remove();
+      }
+      newBtn.remove(); // remove after click
     };
-    let x=Math.random()*(window.innerWidth-100);
-    let y=Math.random()*(window.innerHeight-100);
-    newBtn.style.left=x+"px";
-    newBtn.style.top=y+"px";
+    newBtn.style.left = Math.random()*(window.innerWidth-100)+"px";
+    newBtn.style.top = Math.random()*(window.innerHeight-100)+"px";
     slide2.appendChild(newBtn);
-    multipleButtons.push(newBtn);
+    multipleBtns.push(newBtn);
   }
-  noBtn.style.display="none";
 }
 
-// Sliding
+// SLIDING NO BUTTON
 function startSliding(btn){
   btn.style.display="block";
   moveInterval=setInterval(()=>{
@@ -152,7 +165,7 @@ function startSliding(btn){
   },1500);
 }
 
-// Explode
+// EXPLODE
 function explodeNo(btn){
   clearInterval(moveInterval);
   btn.classList.add("explode");
