@@ -2,189 +2,55 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Birthday</title>
-
+<title>Birthday Surprise</title>
 <style>
-html,body{
-  margin:0;
-  padding:0;
-  width:100%;
-  height:100%;
-  overflow:hidden;
-  font-family:Arial;
-}
-
-/* Slides */
-.slide{
-  display:none;
-  position:absolute;
-  width:100%;
-  height:100%;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
-}
-
+html,body{margin:0;padding:0;width:100%;height:100%;overflow:hidden;font-family:Arial;}
+.slide{display:none;position:absolute;width:100%;height:100%;justify-content:center;align-items:center;flex-direction:column;}
 .active{display:flex;}
-
-/* Slide1 */
 #slide1{background:black;}
-
-.start-btn{
-  background:red;
-  color:white;
-  padding:25px 50px;
-  font-size:24px;
-  border:none;
-  border-radius:15px;
-  cursor:pointer;
-  box-shadow:0 0 25px red;
-}
-
-/* Slide2 */
-#slide2{
-  background:#ffd6e0;
-  position:relative;
-  overflow:hidden;
-  text-align:center;
-}
-
-h1{font-size:45px;margin-bottom:10px;}
-p{font-size:22px;}
-
-.choice-btn{
-  position:absolute;
-  padding:12px 25px;
-  border:none;
-  border-radius:20px;
-  cursor:pointer;
-  font-size:18px;
-}
-
-/* Buttons initial position */
-#yesBtn{
-  background:#ff4d6d;
-  color:white;
-  left:40%;
-  top:65%;
-}
-
-#noBtn{
-  background:#444;
-  color:white;
-  left:55%;
-  top:65%;
-}
-
-/* Cat */
-#bdayCat{
-  position:absolute;
-  width:120px;
-  bottom:20px;
-  right:20px;
-  animation:float 3s infinite ease-in-out;
-  z-index:2;
-}
-
-/* Floating */
-@keyframes float{
-  0%{transform:translateY(0);}
-  50%{transform:translateY(-15px);}
-  100%{transform:translateY(0);}
-}
-
-/* Modal */
-.modal{
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background:rgba(0,0,0,0.5);
-  opacity:0;
-  pointer-events:none;
-  z-index:9999; /* FIXED */
-}
-
-.modal.show{
-  opacity:1;
-  pointer-events:auto;
-}
-
-.modal-box{
-  background:white;
-  padding:20px 40px;
-  border-radius:15px;
-  font-size:20px;
-}
-
-/* Glow */
-.glow{
-  animation:pulse 1s infinite;
-}
-
-@keyframes pulse{
-  0%{box-shadow:0 0 10px #ff4d6d;}
-  50%{box-shadow:0 0 30px #ff4d6d;}
-  100%{box-shadow:0 0 10px #ff4d6d;}
-}
-
-/* Explosion */
-@keyframes explode{
-  to{transform:scale(0);opacity:0;}
-}
+.start-btn{background:red;color:white;padding:25px 50px;font-size:24px;border:none;border-radius:15px;cursor:pointer;box-shadow:0 0 25px red;}
+#slide2{background:#ffd6e0;position:relative;overflow:hidden;text-align:center;}
+h1{font-size:45px;margin-top:30px;}
+p{font-size:22px;margin-top:10px;}
+.choice-btn{position:absolute;padding:12px 25px;border:none;border-radius:20px;cursor:pointer;font-size:18px;}
+#yesBtn{background:#ff4d6d;color:white;left:40%;top:65%;}
+#noBtn{background:#444;color:white;left:55%;top:65%;}
+#bdayCat{position:absolute;width:120px;top:120px;left:50%;transform:translateX(-50%);z-index:2;animation:float 3s infinite ease-in-out;}
+@keyframes float{0%{transform:translate(-50%,0);}50%{transform:translate(-50%,-15px);}100%{transform:translate(-50%,0);}}
+.modal{position:fixed;top:0;left:0;width:100%;height:100%;display:flex;justify-content:center;align-items:center;background:rgba(0,0,0,0.5);opacity:0;pointer-events:none;z-index:9999;}
+.modal.show{opacity:1;pointer-events:auto;}
+.modal-box{background:white;padding:20px 40px;border-radius:15px;font-size:20px;}
+.glow{animation:pulse 1s infinite;}
+@keyframes pulse{0%{box-shadow:0 0 10px #ff4d6d;}50%{box-shadow:0 0 30px #ff4d6d;}100%{box-shadow:0 0 10px #ff4d6d;}}
 .explode{animation:explode .3s forwards;}
-
-/* Slide3 */
-#slide3{
-  background:#ffd6e0;
-  overflow:hidden;
-}
-
-.float{
-  position:absolute;
-  animation:float2 6s infinite ease-in-out;
-}
-
-@keyframes float2{
-  0%{transform:translateY(0);}
-  50%{transform:translateY(-60px);}
-  100%{transform:translateY(0);}
-}
+@keyframes explode{to{transform:scale(0);opacity:0;}}
+#slide3{background:#ffd6e0;overflow:hidden;}
+.float{position:absolute;animation:float2 6s infinite ease-in-out;font-size:25px;}
+@keyframes float2{0%{transform:translateY(0);}50%{transform:translateY(-60px);}100%{transform:translateY(0);}}
 </style>
 </head>
-
 <body>
 
 <audio id="music" loop>
 <source src="birthday.mp3">
 </audio>
 
-<!-- Slide1 -->
 <div id="slide1" class="slide active">
-<button class="start-btn" id="startBtn">PRESS</button>
+  <button class="start-btn" id="startBtn">PRESS</button>
 </div>
 
-<!-- Slide2 -->
 <div id="slide2" class="slide">
-<h1>Happy Birthday Shoon! ⸜(｡˃ ᵕ ˂ )⸝🎂</h1>
-<p>i have presents for you, want to open?</p>
-
-<button id="yesBtn" class="choice-btn">YES</button>
-<button id="noBtn" class="choice-btn">NO</button>
-
-<img src="bdaycat.png" id="bdayCat">
+  <h1>Happy Birthday Shoon! ⸜(｡˃ ᵕ ˂ )⸝🎂</h1>
+  <img src="bdaycat.png" id="bdayCat">
+  <p>I have presents for you, want to open?</p>
+  <button id="yesBtn" class="choice-btn">YES</button>
+  <button id="noBtn" class="choice-btn">NO</button>
 </div>
 
-<!-- Slide3 -->
 <div id="slide3" class="slide"></div>
 
-<!-- Modal -->
 <div id="modal" class="modal">
-<div id="modalText" class="modal-box"></div>
+  <div id="modalText" class="modal-box"></div>
 </div>
 
 <script>
@@ -192,40 +58,38 @@ let startBtn=document.getElementById("startBtn");
 let slide1=document.getElementById("slide1");
 let slide2=document.getElementById("slide2");
 let slide3=document.getElementById("slide3");
-
 let yesBtn=document.getElementById("yesBtn");
 let noBtn=document.getElementById("noBtn");
-
 let modal=document.getElementById("modal");
 let modalText=document.getElementById("modalText");
-
 let music=document.getElementById("music");
 
-let noClicks=0;
 let yesScale=1;
-let count=5;
+let noClicks=0;
+let multiplyCount=3; // countdown for multiplied buttons
+let finalNoStage=false;
 
-/* START */
+/* START BUTTON */
 startBtn.onclick=()=>{
   slide1.classList.remove("active");
   slide2.classList.add("active");
   music.play();
 };
 
-/* POPUP */
+/* POPUP FUNCTION */
 function pop(text){
   modalText.innerText=text;
   modal.classList.add("show");
   setTimeout(()=>modal.classList.remove("show"),2000);
 }
 
-/* GROW YES */
+/* YES GROW */
 function growYes(){
   yesScale+=0.25;
   yesBtn.style.transform=`scale(${yesScale})`;
 }
 
-/* YES */
+/* YES BUTTON */
 yesBtn.onclick=()=>{
   slide2.classList.remove("active");
   slide3.classList.add("active");
@@ -241,10 +105,9 @@ noBtn.onclick=()=>{
     pop("why no? ૮(◞ ‸ ◟ )ა");
     teleport(noBtn);
   }
-
   else if(noClicks===2){
     pop("try pressing 5 buttons then (¬_ ´¬ )");
-    multiply();
+    multiplyNoBtn();
   }
 };
 
@@ -254,43 +117,44 @@ function teleport(btn){
   btn.style.top=Math.random()*80+"%";
 }
 
-/* MULTIPLY */
-function multiply(){
+/* MULTIPLY NO BUTTONS */
+function multiplyNoBtn(){
   noBtn.style.display="none";
-  count=5;
-
+  multiplyCount=3;
+  let buttons=[];
   for(let i=0;i<5;i++){
     let b=noBtn.cloneNode(true);
     b.style.display="block";
+    b.style.left=Math.random()*80+"%";
+    b.style.top=Math.random()*60+"%";
+    slide2.appendChild(b);
+    buttons.push(b);
 
     b.onclick=()=>{
       growYes();
-      count--;
-
-      if(count>0){
-        pop(count+1);
-      }else{
+      multiplyCount--;
+      if(multiplyCount>0){
+        pop(multiplyCount);
+      } else if(multiplyCount===0){
         pop("shoon lae thu…(  •̀⤙•́ )");
-        finalStage();
+        // Remove all other buttons except 2 for final stage
+        buttons.forEach((btn2)=>btn2.remove());
+        finalNoButtons();
       }
-
       b.remove();
     };
-
-    b.style.left=Math.random()*90+"%";
-    b.style.top=Math.random()*90+"%";
-    slide2.appendChild(b);
   }
 }
 
-/* FINAL STAGE */
-function finalStage(){
+/* FINAL 2 NO BUTTONS STAGE */
+function finalNoButtons(){
+  finalNoStage=true;
   let btn1=noBtn.cloneNode(true);
   let btn2=noBtn.cloneNode(true);
-
   btn1.style.display="block";
+  btn1.style.left="40%"; btn1.style.top="65%";
   btn2.style.display="block";
-
+  btn2.style.left="55%"; btn2.style.top="65%";
   slide2.appendChild(btn1);
   slide2.appendChild(btn2);
 
@@ -303,15 +167,15 @@ function finalStage(){
   btn2.onclick=()=>{
     growYes();
     pop("alr fine try catching it then <(ꐦㅍ _ㅍ)>");
-    move(btn2);
+    moveButton(btn2);
   };
 }
 
-/* MOVE */
-function move(btn){
+/* MOVE BUTTON */
+function moveButton(btn){
   let interval=setInterval(()=>{
-    btn.style.left=Math.random()*90+"%";
-    btn.style.top=Math.random()*90+"%";
+    btn.style.left=Math.random()*80+"%";
+    btn.style.top=Math.random()*60+"%";
   },1500);
 
   btn.onclick=()=>{
@@ -323,10 +187,9 @@ function move(btn){
   };
 }
 
-/* SLIDE3 BG */
+/* SLIDE3 SPAWN SPARKLES / HEARTS / CATS / BUNNIES */
 function spawnCute(){
   let items=["💖","✨","🍓","🐱","🐰"];
-
   for(let i=0;i<40;i++){
     let el=document.createElement("div");
     el.className="float";
@@ -337,6 +200,5 @@ function spawnCute(){
   }
 }
 </script>
-
 </body>
 </html>
