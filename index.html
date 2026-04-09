@@ -98,7 +98,7 @@ yesBtn.addEventListener("click", ()=>{
 // NO button click
 noBtn.addEventListener("click", ()=>{
   noClickCount++;
-  yesScale += 0.8; // Gradual growth
+  yesScale += 0.5; // Gradual growth
   yesBtn.style.transform=`scale(${yesScale})`;
 
   if(noClickCount===1){
@@ -140,11 +140,11 @@ function multiplyNo(){
       countdown--;
       if(countdown>0){
         showModal(countdown+".");
+        newBtn.remove(); // remove pressed button
       } else {
         showModal("shoon lae thu…(  •̀⤙•́  )");
-        newBtn.remove();
+        startSliding(newBtn); // last button starts sliding
       }
-      newBtn.remove(); // remove after click
     };
     newBtn.style.left = Math.random()*(window.innerWidth-100)+"px";
     newBtn.style.top = Math.random()*(window.innerHeight-100)+"px";
