@@ -14,8 +14,8 @@ body {
 .slide {
   display:none;
   position:absolute;
-  width:100%;
-  height:100%;
+  width:100vw;
+  height:100vh;
   justify-content:center;
   align-items:center;
   flex-direction:column;
@@ -46,16 +46,23 @@ body {
   background:#ffd6e0;
   text-align:center;
   position:relative;
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  width:100vw;
+  height:100vh;
   overflow:hidden;
 }
 
 h1 {
   font-size:55px;
-  margin-top:40px;
+  margin:0 0 20px 0;
 }
 
 p {
   font-size:24px;
+  margin:0 0 40px 0;
 }
 
 /* BUTTONS */
@@ -131,7 +138,7 @@ p {
   100%{ box-shadow:0 0 10px #ff4d6d; }
 }
 
-/* Sparkles */
+/* Sparkles for YES */
 .sparkle {
   position:absolute;
   width:10px;
@@ -147,7 +154,6 @@ p {
   50%{ transform:translateY(-50px); }
   100%{ transform:translateY(0px); }
 }
-
 </style>
 </head>
 <body>
@@ -221,7 +227,7 @@ function showModal(text){
 // YES CLICK
 function yes(){
   showModal("Yay! 🎉 Let's reveal the surprises 😌");
-  // here you can trigger sparkles/hearts/bunnies etc
+  // add sparkles/animations here if desired
 }
 
 // NO CLICK
