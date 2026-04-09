@@ -96,28 +96,34 @@ yesBtn.addEventListener("click", ()=>{
 });
 
 // NO button click
-noBtn.addEventListener("click", ()=>{
+noBtn.addEventListener("click", ()=>handleNo(noBtn));
+
+function handleNo(btn){
   noClickCount++;
-  yesScale += 0.5; // Gradual growth
+  yesScale += 0.8;
   yesBtn.style.transform=`scale(${yesScale})`;
 
   if(noClickCount===1){
     showModal("why no? ૮(◞ ‸ ◟ )ა");
-    teleportNo(noBtn);
+    teleportNo(btn);
   }
   else if(noClickCount===2){
-    showModal("Multiplying NO buttons! ಠ_ಠ");
+    showModal("try pressing 5 buttons then (¬_ ´¬ )");
     multiplyNo();
   }
   else if(noClickCount===3){
     showModal("i've been preparing this for 20 days(っ╥﹏╥ς)");
-    startSliding(noBtn);
+    startSliding(btn);
   }
   else if(noClickCount===4){
-    showModal("yep im removing that button before you pmo ς(≖_≖ )ﾉ🔪");
-    explodeNo(noBtn);
+    showModal("alr fine try catching it then <(ꐦㅍ _ㅍ)>");
+    slowSlide(btn);
   }
-});
+  else if(noClickCount===5){
+    showModal("fine imma pop this before u pmo ς(≖_≖ )ﾉ🔪");
+    explodeNo(btn);
+  }
+}
 
 // TELEPORT
 function teleportNo(btn){
@@ -131,7 +137,7 @@ function teleportNo(btn){
 function multiplyNo(){
   multipleBtns=[];
   countdown=5;
-  noBtn.style.display="none"; // hide original
+  noBtn.style.display="none";
 
   for(let i=0;i<5;i++){
     let newBtn=noBtn.cloneNode(true);
@@ -140,11 +146,10 @@ function multiplyNo(){
       countdown--;
       if(countdown>0){
         showModal(countdown+".");
-        newBtn.remove(); // remove pressed button
       } else {
-        showModal("shoon lae thu…(  •̀⤙•́  )");
-        startSliding(newBtn); // last button starts sliding
+        showModal("shoon lae thu…(  •̀⤙•́ )");
       }
+      newBtn.remove();
     };
     newBtn.style.left = Math.random()*(window.innerWidth-100)+"px";
     newBtn.style.top = Math.random()*(window.innerHeight-100)+"px";
@@ -163,6 +168,19 @@ function startSliding(btn){
     btn.style.left=x+"px";
     btn.style.top=y+"px";
   },1500);
+}
+
+// SLOW SLIDE
+function slowSlide(btn){
+  clearInterval(moveInterval);
+  btn.style.display="block";
+  moveInterval=setInterval(()=>{
+    let x=Math.random()*(window.innerWidth-120);
+    let y=Math.random()*(window.innerHeight-120);
+    btn.style.transition="3s linear";
+    btn.style.left=x+"px";
+    btn.style.top=y+"px";
+  },2000);
 }
 
 // EXPLODE
