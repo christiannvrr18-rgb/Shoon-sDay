@@ -1,211 +1,182 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Happy Birthday 🎂</title>
+<title>Birthday Surprise 🎉</title>
 
 <style>
-body{
+/* === BODY & BACKGROUND === */
+body {
   margin:0;
   font-family: 'Georgia', serif;
-  background:#ffe4ec;
-  text-align:center;
   overflow:hidden;
+  height:100vh;
+  width:100vw;
+  background: linear-gradient(135deg, #ffe4ec, #ffccd9, #8b0033);
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  color:#fff;
 }
 
-.slide{
+canvas {
+  position:fixed;
+  top:0;
+  left:0;
+  z-index:0;
+}
+
+/* === SLIDES === */
+.slide {
   display:none;
-  padding:60px 20px;
+  position:absolute;
+  top:0; left:0;
+  height:100%;
+  width:100%;
+  text-align:center;
+  padding:50px 20px;
+  z-index:1;
 }
 
-.active{
-  display:block;
-  animation:fade 0.8s ease;
-}
+.active { display:block; animation:fade 0.8s ease; }
 
-@keyframes fade{
-  from{opacity:0;}
-  to{opacity:1;}
-}
+@keyframes fade { from{opacity:0;} to{opacity:1;} }
 
-h1{font-size:55px; color:#8b0033;}
-h2{font-size:40px;}
-p{font-size:24px; max-width:700px; margin:auto;}
+h1 { font-size:60px; color:#8b0033; text-shadow:2px 2px #fff; }
+h2 { font-size:45px; }
+p { font-size:28px; max-width:700px; margin:20px auto; line-height:1.4; }
 
-button{
-  padding:14px 25px;
-  font-size:18px;
+button {
+  padding:15px 30px;
+  font-size:20px;
   border:none;
-  border-radius:25px;
-  margin:10px;
+  border-radius:30px;
+  margin:15px;
   cursor:pointer;
+  box-shadow:0 4px 8px rgba(0,0,0,0.3);
+  transition:all 0.3s ease;
 }
 
-.next{background:#ff4d6d; color:white;}
-.exit{background:#b3003c; color:white;}
+button:hover { transform:scale(1.1); }
 
-img{
-  width:250px;
-  margin:20px;
-  border-radius:20px;
+.next { background:#ff4d6d; color:white; }
+.exit { background:#b3003c; color:white; }
+
+img { width:250px; margin:20px; border-radius:20px; animation:float 3s ease-in-out infinite; }
+
+@keyframes float {
+  0%,100%{ transform:translateY(0);}
+  50%{ transform:translateY(-15px);}
+}
+
+/* === TYPEWRITER TEXT === */
+.typewriter p {
+  display:inline-block;
+  overflow:hidden;
+  border-right:0.15em solid #fff;
+  white-space:nowrap;
+  animation: typing 3s steps(50, end), blink 0.7s step-end infinite;
+}
+
+@keyframes typing { from { width:0; } to { width:100%; } }
+@keyframes blink { 50% { border-color:transparent; } }
+
+/* === CONFETTI === */
+.confetti {
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  pointer-events:none;
+  z-index:2;
 }
 </style>
 </head>
-
 <body>
 
-<audio id="music" loop>
-  <source src="hotline.mp3">
+<!-- AUDIO -->
+<audio id="bgmusic" loop>
+  <source src="minmhamin.mp3">
 </audio>
 
-<!-- 1 OPENING -->
-<div class="slide active">
-  <h1>hey birthday girl 🎂</h1>
-  <p>
-  i made something for you…  
-  don’t overthink it, just go through it okay?
-  </p>
+<!-- === SLIDES === -->
+<div class="slide active" id="slide1">
+  <h1>Happy Birthday 🎂</h1>
+  <p>Ready for a little surprise?</p>
   <img src="bunny1.jpg">
   <br>
-  <button class="next" onclick="nextSlide()">start</button>
+  <button class="next" onclick="nextSlide()">Start</button>
 </div>
 
-<!-- 2 MORNING -->
-<div class="slide">
-  <h2>good morning 🐰</h2>
-  <p>
-  pompom’s been with you right?  
-  i hope she’s taking care of you for me
-  </p>
+<div class="slide" id="slide2">
+  <h2>Pompom’s here 🐰</h2>
+  <p class="typewriter">I hope she’s taking care of you for me…</p>
   <img src="pompom.jpg">
   <br>
-  <button class="next" onclick="nextSlide()">continue</button>
+  <button class="next" onclick="nextSlide()">Continue</button>
 </div>
 
-<!-- 3 FLOWERS -->
-<div class="slide">
-  <h2>i got you flowers 🌸</h2>
-  <p>
-  rose lilies and tulips…  
-  see? i actually pay attention sometimes
-  </p>
+<div class="slide" id="slide3">
+  <h2>Flowers for you 🌸</h2>
+  <p class="typewriter">Rose lilies and tulips… paying attention sometimes 😏</p>
   <img src="flowers.jpg">
   <br>
-  <button onclick="sendEmail()">receive bouquet 💌</button>
-  <button class="next" onclick="nextSlide()">next</button>
+  <button onclick="sendEmail()">Send Virtual Bouquet 💌</button>
+  <button class="next" onclick="nextSlide()">Next</button>
 </div>
 
-<!-- 4 FOOD -->
-<div class="slide">
-  <h2>eat first</h2>
-  <p>
-  don’t say you’re not hungry…  
-  i already know how you are 😐
-  </p>
-  <img src="cake.jpg">
+<div class="slide" id="slide4">
+  <h2>Fruit Time 🍓🥭🥥</h2>
+  <p class="typewriter">Here I bought you strawberries, mango, and durian!</p>
+  <img src="strawberry.jpg">
+  <img src="mango.jpg">
+  <img src="durian.jpg">
   <br>
-  <button class="next" onclick="nextSlide()">ok fine</button>
+  <button class="next" onclick="nextSlide()">Next</button>
 </div>
 
-<!-- 5 SINGING -->
-<div class="slide">
-  <h2>okay don’t laugh 💀</h2>
-  <p>
-  i actually tried here…  
-  so be nice for like 2 minutes
-  </p>
-
-  <!-- AUDIO -->
+<div class="slide" id="slide5">
+  <h2>Little Surprise 🎤</h2>
+  <p class="typewriter">Don’t laugh… i actually tried!</p>
   <audio controls>
     <source src="sing.mp3">
   </audio>
-
-  <!-- OR VIDEO -->
-  <!--
-  <video width="300" controls>
-    <source src="sing.mp4">
-  </video>
-  -->
-
   <br>
-  <button class="next" onclick="nextSlide()">be honest</button>
+  <button class="next" onclick="nextSlide()">Be Honest</button>
 </div>
 
-<!-- 6 BUNNY BREAK -->
-<div class="slide">
-  <h2>important break 🐰</h2>
-  <p>
-  i still think pompom was a good choice…  
-  she kinda matches you
-  </p>
+<div class="slide" id="slide6">
+  <h2>Random Thoughts 🐰</h2>
+  <p class="typewriter">I like knowing something I gave you is there with you today.</p>
   <img src="bunny2.jpg">
   <br>
-  <button class="next" onclick="nextSlide()">continue</button>
+  <button class="next" onclick="nextSlide()">Next</button>
 </div>
 
-<!-- 7 EXTRA EMOTIONAL -->
-<div class="slide">
-  <h2>random thought</h2>
-  <p>
-  i like knowing something i gave you  
-  is there with you today
+<div class="slide" id="slide7">
+  <h2>Final Message ❤️</h2>
+  <p class="typewriter">
+    I know I’m not there in person, but I made this for you… <br>
+    You’re sarcastic, soft, and balanced… <br>
+    And yeah, I notice it all. <br>
+    Enjoy your day, birthday girl. <br>
+    – Lloyd
   </p>
   <br>
-  <button class="next" onclick="nextSlide()">next</button>
+  <button class="next" onclick="showConfetti()">Finish</button>
 </div>
 
-<!-- 8 SHIFT -->
-<div class="slide">
-  <h2>okay… for real</h2>
-  <p>
-  i wish i was actually there with you today…  
-  not just doing this through a screen
-  </p>
-  <br>
-  <button onclick="finalSlide()">next</button>
-</div>
-
-<!-- FINAL -->
-<div class="slide">
-  <h2>happy birthday ❤️</h2>
-  <p>
-  i know this isn’t the same as being there with you,  
-  but i still wanted to make something that’s actually yours.  
-
-  not just something random… but something that reminds you  
-  that someone out there is thinking about you today.  
-
-  you’re not nonchalant like you act sometimes,  
-  you care more than you show,  
-  and i notice that.  
-
-  i like how you balance things…  
-  how you can be sarcastic one second  
-  and soft the next without even trying.  
-
-  and yeah, i don’t always say things directly,  
-  but i hope you can feel it through this.  
-
-  i’m really glad it’s you.  
-
-  enjoy your day, okay?  
-
-  – lloyd
-  </p>
-</div>
+<canvas class="confetti" id="confetti"></canvas>
 
 <script>
+// === SLIDES & MUSIC ===
 let slides=document.querySelectorAll(".slide");
 let current=0;
-let music=document.getElementById("music");
+let bgmusic=document.getElementById("bgmusic");
 let started=false;
 
-function startMusic(){
-  if(!started){
-    music.play();
-    started=true;
-  }
-}
+function startMusic(){ if(!started){ bgmusic.play(); started=true; } }
 
 function nextSlide(){
   startMusic();
@@ -214,17 +185,48 @@ function nextSlide(){
   slides[current].classList.add("active");
 }
 
-function finalSlide(){
-  slides[current].classList.remove("active");
-  current++;
-  slides[current].classList.add("active");
-
-  music.src="minmhamin.mp3";
-  music.play();
+// === EMAIL BUTTON ===
+function sendEmail(){
+  window.location.href="mailto:?subject=For you 🌸&body=Imagine I’m giving you these flowers in person 😌";
 }
 
-function sendEmail(){
-  window.location.href="mailto:?subject=For you 🌸&body=If I could, I’d give these to you in person… but for now, imagine I’m there 😌";
+// === CONFETTI EFFECT ===
+function showConfetti(){
+  slides[current].classList.remove("active");
+  let c=document.getElementById("confetti");
+  let ctx=c.getContext("2d");
+  c.width=window.innerWidth;
+  c.height=window.innerHeight;
+
+  let pieces=[];
+  for(let i=0;i<150;i++){
+    pieces.push({
+      x:Math.random()*c.width,
+      y:Math.random()*c.height,
+      r:Math.random()*6+4,
+      d:Math.random()*c.height,
+      color:`hsl(${Math.random()*360}, 100%, 70%)`,
+      tilt:Math.random()*10
+    });
+  }
+
+  function draw(){
+    ctx.clearRect(0,0,c.width,c.height);
+    for(let i=0;i<pieces.length;i++){
+      let p=pieces[i];
+      ctx.fillStyle=p.color;
+      ctx.beginPath();
+      ctx.moveTo(p.x+ p.tilt,p.y);
+      ctx.lineTo(p.x + p.tilt +2,p.y+10);
+      ctx.lineTo(p.x + p.tilt -2,p.y+10);
+      ctx.fill();
+      p.y +=2;
+      p.x += Math.sin(p.y/10);
+      if(p.y>c.height){ p.y=-10; p.x=Math.random()*c.width; }
+    }
+    requestAnimationFrame(draw);
+  }
+  draw();
 }
 </script>
 
