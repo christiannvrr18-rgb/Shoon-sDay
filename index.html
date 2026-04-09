@@ -1,108 +1,147 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Birthday Surprise 🎉</title>
+<title>Happy Birthday 🎂</title>
+
 <style>
-body {
-  margin:0; padding:0;
-  height:100vh; width:100vw;
+body{
+  margin:0;
+  height:100vh;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:#ffd6e0;
+  font-family: 'Georgia', serif;
   overflow:hidden;
-  background: linear-gradient(135deg, #ffe4ec, #ffcce0);
-  font-family: 'Arial', sans-serif;
-  position:relative;
-  cursor: auto;
 }
 
-/* floating elements */
-.floating {
-  position:absolute;
-  pointer-events:none;
-  z-index:1;
-  transition: all 1s ease;
-}
-
-#pom {
-  position:absolute;
-  top:50%; left:50%;
-  transform:translate(-50%,-50%);
-  width:250px;
-  cursor:pointer;
-  animation: bounce 2s infinite;
-  z-index:2;
-}
-
-@keyframes bounce {
-  0%,100% { transform: translate(-50%, -50%) translateY(0); }
-  50% { transform: translate(-50%, -50%) translateY(-25px); }
-}
-
-#message {
-  position:absolute;
-  top:20%; left:50%;
-  transform:translateX(-50%);
-  font-size:60px;
-  color:#8b0033;
+.container{
   text-align:center;
+}
+
+h1{
+  font-size:50px;
+  color:#8b0033;
+}
+
+button{
+  padding:15px 30px;
+  font-size:20px;
+  border:none;
+  border-radius:30px;
+  cursor:pointer;
+  margin:10px;
+  transition:0.3s;
+  position:relative;
+}
+
+#yesBtn{
+  background:#ff4d6d;
+  color:white;
+}
+
+#noBtn{
+  background:#b3003c;
+  color:white;
+  position:absolute;
+}
+
+.popup{
+  position:absolute;
+  top:20%;
+  left:50%;
+  transform:translateX(-50%);
+  background:white;
+  padding:15px 25px;
+  border-radius:15px;
+  font-size:20px;
   display:none;
-  text-shadow: 2px 2px #fff;
+}
+
+/* YES BUTTON GLOW */
+.glow{
+  animation:pulse 1s infinite;
+}
+
+@keyframes pulse{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.2);}
+  100%{transform:scale(1);}
+}
+
+/* EXPLOSION */
+.explode{
+  animation:boom 0.5s forwards;
+}
+
+@keyframes boom{
+  0%{transform:scale(1); opacity:1;}
+  100%{transform:scale(3); opacity:0;}
 }
 </style>
 </head>
+
 <body>
 
-<!-- Floating hearts / stars / notes -->
-<div id="effects"></div>
+<div class="container">
+  <h1>happy birthday shoon! 🎂</h1>
 
-<!-- Pompom center -->
-<img id="pom" src="pompom.png" alt="Pompom Plushy">
+  <button id="yesBtn" onclick="goNext()">yes</button>
+  <button id="noBtn" onclick="handleNo()">no</button>
+</div>
 
-<!-- Hidden birthday message -->
-<div id="message">HAPPY BIRTH DAY SHOON</div>
-
-<!-- Music -->
-<audio id="song">
-  <source src="minmhamin.mp3" type="audio/mpeg">
-</audio>
+<div class="popup" id="popup"></div>
 
 <script>
-// ===== MUSIC + POMPOM CLICK =====
-let pom = document.getElementById("pom");
-let song = document.getElementById("song");
-let message = document.getElementById("message");
-let effects = document.getElementById("effects");
+let noCount = 0;
+let yesBtn = document.getElementById("yesBtn");
+let noBtn = document.getElementById("noBtn");
+let popup = document.getElementById("popup");
 
-pom.addEventListener("click", ()=>{
-  song.play();
-  message.style.display = "block";
+function showPopup(text){
+  popup.innerText = text;
+  popup.style.display = "block";
+  setTimeout(()=> popup.style.display="none",2000);
+}
 
-  createEffects(); // floating hearts, stars, notes
-});
+function moveNo(){
+  let x = Math.random() * (window.innerWidth - 100);
+  let y = Math.random() * (window.innerHeight - 50);
+  noBtn.style.left = x + "px";
+  noBtn.style.top = y + "px";
+}
 
-// ===== FLOATING EFFECTS =====
-function createEffects() {
-  let icons = ["❤️","⭐","🎵","🍓","🐰"];
-  setInterval(()=>{
-    let icon = icons[Math.floor(Math.random()*icons.length)];
-    let el = document.createElement("div");
-    el.className = "floating";
-    el.innerHTML = icon;
-    el.style.left = Math.random()*window.innerWidth + "px";
-    el.style.top = window.innerHeight + "px";
-    el.style.fontSize = (20+Math.random()*30) + "px";
-    effects.appendChild(el);
+function handleNo(){
+  noCount++;
 
-    // animate upwards
-    let top = window.innerHeight;
-    let intv = setInterval(()=>{
-      top -= 2 + Math.random()*3;
-      el.style.top = top + "px";
-      if(top < -50) {
-        el.remove();
-        clearInterval(intv);
-      }
-    }, 20);
-  }, 300);
+  if(noCount === 1){
+    moveNo();
+    yesBtn.style.transform="scale(1.5)";
+    showPopup("why no?૮(◞ ‸ ◟ )ა");
+  }
+
+  else if(noCount === 2){
+    moveNo();
+    yesBtn.style.transform="scale(2)";
+    showPopup("i’ve been preparing this for 20 days(っ╥﹏╥ς)");
+  }
+
+  else if(noCount === 3){
+    noBtn.classList.add("explode");
+    setTimeout(()=> noBtn.style.display="none",500);
+    yesBtn.style.transform="scale(2.5)";
+    yesBtn.classList.add("glow");
+    showPopup("yep im removing that button before you pmoς(≖_≖ )ﾉ🔪");
+  }
+
+  else{
+    moveNo();
+  }
+}
+
+function goNext(){
+  alert("NEXT SLIDE COMING NEXT STEP 👀");
 }
 </script>
 
