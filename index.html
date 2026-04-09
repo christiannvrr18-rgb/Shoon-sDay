@@ -4,144 +4,34 @@
 <meta charset="UTF-8">
 <title>Birthday Surprise</title>
 <style>
-body {
-  margin:0;
-  font-family: Arial, sans-serif;
-  overflow:hidden;
-}
+body, html {margin:0; padding:0; overflow:hidden; font-family:Arial;}
+.slide {display:none; width:100vw; height:100vh; justify-content:center; align-items:center; flex-direction:column; position:absolute;}
+.active {display:flex;}
 
-/* SLIDES */
-.slide {
-  display:none;
-  position:absolute;
-  width:100vw;
-  height:100vh;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
-}
+/* Slide1 */
+#slide1 {background:black;}
+.start-btn {background:red; color:white; padding:25px 50px; font-size:24px; border:none; border-radius:15px; cursor:pointer; box-shadow:0 0 20px red;}
 
-.active {
-  display:flex;
-}
+/* Slide2 */
+#slide2 {background:#ffd6e0; flex-direction:column; text-align:center; position:relative; overflow:hidden;}
+h1 {font-size:55px; margin:0 0 20px 0;}
+p {font-size:24px; margin:0 0 40px 0;}
+.choice-btn {padding:15px 30px; font-size:20px; border:none; border-radius:20px; cursor:pointer; position:absolute; transition:0.3s;}
+#yesBtn {background:#ff4d6d; color:white; left:40%; top:60%; display:none;}
+#noBtn {background:#555; color:white; left:55%; top:60%; display:none;}
 
-/* SLIDE 1 */
-#slide1 {
-  background:black;
-}
+/* Modal */
+.modal {position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:flex; justify-content:center; align-items:center; opacity:0; pointer-events:none; transition:0.3s; z-index:10;}
+.modal.show {opacity:1; pointer-events:auto;}
+.modal-box {background:white; padding:25px 40px; border-radius:15px; font-size:22px; text-align:center;}
 
-.start-btn {
-  background:red;
-  color:white;
-  padding:25px 50px;
-  font-size:24px;
-  border:none;
-  border-radius:15px;
-  cursor:pointer;
-  box-shadow:0 0 20px red;
-}
+/* Explosion */
+@keyframes explode {0%{transform:scale(1);opacity:1;}50%{transform:scale(2);background:red;}100%{transform:scale(0);opacity:0;}}
+.explode {animation:explode 0.5s forwards;}
 
-/* SLIDE 2 */
-#slide2 {
-  background:#ffd6e0;
-  text-align:center;
-  position:relative;
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-  width:100vw;
-  height:100vh;
-  overflow:hidden;
-}
-
-h1 {
-  font-size:55px;
-  margin:0 0 20px 0;
-}
-
-p {
-  font-size:24px;
-  margin:0 0 40px 0;
-}
-
-/* BUTTONS */
-.choice-btn {
-  padding:15px 30px;
-  font-size:20px;
-  border:none;
-  border-radius:20px;
-  cursor:pointer;
-  transition:0.3s;
-  position:absolute;
-  display:none; /* hidden initially */
-}
-
-#yesBtn {
-  background:#ff4d6d;
-  color:white;
-  left:40%;
-  top:60%;
-}
-
-#noBtn {
-  background:#555;
-  color:white;
-  left:55%;
-  top:60%;
-}
-
-/* MODAL POPUP */
-.modal {
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  background:rgba(0,0,0,0.5);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  opacity:0;
-  pointer-events:none;
-  transition:0.3s;
-  z-index:10;
-}
-
-.modal.show {
-  opacity:1;
-  pointer-events:auto;
-}
-
-.modal-box {
-  background:white;
-  padding:25px 40px;
-  border-radius:15px;
-  font-size:22px;
-  text-align:center;
-}
-
-/* EXPLOSION */
-@keyframes explode {
-  0%{ transform:scale(1); opacity:1; }
-  50%{ transform:scale(2); background:red; }
-  100%{ transform:scale(0); opacity:0; }
-}
-
-.explode {
-  animation:explode 0.5s forwards;
-}
-
-/* GLOW */
-.glow {
-  animation:pulse 1s infinite;
-}
-
-@keyframes pulse {
-  0%{ box-shadow:0 0 10px #ff4d6d; }
-  50%{ box-shadow:0 0 30px #ff4d6d; }
-  100%{ box-shadow:0 0 10px #ff4d6d; }
-}
+/* Glow */
+.glow {animation:pulse 1s infinite;}
+@keyframes pulse {0%{box-shadow:0 0 10px #ff4d6d;}50%{box-shadow:0 0 30px #ff4d6d;}100%{box-shadow:0 0 10px #ff4d6d;}}
 </style>
 </head>
 <body>
@@ -150,12 +40,12 @@ p {
   <source src="birthday.mp3" type="audio/mpeg">
 </audio>
 
-<!-- SLIDE 1 -->
+<!-- Slide1 -->
 <div class="slide active" id="slide1">
   <button class="start-btn" id="startBtn">PRESS</button>
 </div>
 
-<!-- SLIDE 2 -->
+<!-- Slide2 -->
 <div class="slide" id="slide2">
   <h1>Happy Birthday Shoon! ⸜(｡˃ ᵕ ˂ )⸝🎂</h1>
   <p>i have presents for you, want to open?</p>
@@ -163,7 +53,7 @@ p {
   <button class="choice-btn" id="noBtn">NO</button>
 </div>
 
-<!-- MODAL -->
+<!-- Modal -->
 <div id="modal" class="modal">
   <div class="modal-box" id="modalText"></div>
 </div>
@@ -173,10 +63,8 @@ let slide1 = document.getElementById("slide1");
 let slide2 = document.getElementById("slide2");
 let startBtn = document.getElementById("startBtn");
 let music = document.getElementById("music");
-
 let yesBtn = document.getElementById("yesBtn");
 let noBtn = document.getElementById("noBtn");
-
 let modal = document.getElementById("modal");
 let modalText = document.getElementById("modalText");
 
@@ -184,91 +72,87 @@ let noClickCount = 0;
 let moveInterval;
 let multipleButtons = [];
 
-startBtn.addEventListener("click",()=>{
+// Start button
+startBtn.addEventListener("click", ()=>{
   slide1.classList.remove("active");
   slide2.classList.add("active");
-  music.play();
   yesBtn.style.display="block";
   noBtn.style.display="block";
+  music.play();
 });
 
-// MODAL FUNCTION
+// Modal
 function showModal(text){
   modalText.innerText = text;
   modal.classList.add("show");
   setTimeout(()=>{ modal.classList.remove("show"); },2000);
 }
 
-// YES CLICK
-yesBtn.addEventListener("click",()=>{
+// YES
+yesBtn.addEventListener("click", ()=>{
   showModal("Yay! 🎉 Let's reveal the surprises 😌");
-  // add sparkles/animations here
 });
 
-// NO CLICK
-noBtn.addEventListener("click",()=>{
+// NO
+noBtn.addEventListener("click", ()=>{
   noClickCount++;
-
-  if(noClickCount === 1){
+  if(noClickCount===1){
     showModal("why no? ૮(◞ ‸ ◟ )ა");
     yesBtn.style.transform="scale(5)";
     teleportNo(noBtn);
-  }
-  else if(noClickCount === 2){
+  } else if(noClickCount===2){
     showModal("Let's multiply the NO buttons! ಠ_ಠ");
     multiplyNo();
-  }
-  else if(noClickCount === 3){
+  } else if(noClickCount===3){
     showModal("i've been preparing this for 20 days(っ╥﹏╥ς)");
     startSliding(noBtn);
-  }
-  else if(noClickCount === 4){
+  } else if(noClickCount===4){
     showModal("yep im removing that button before you pmo ς(≖_≖ )ﾉ🔪");
     explodeNo(noBtn);
   }
 });
 
-// TELEPORT
+// Teleport
 function teleportNo(btn){
-  let x = Math.random()*(window.innerWidth-100);
-  let y = Math.random()*(window.innerHeight-100);
-  btn.style.left = x+"px";
-  btn.style.top = y+"px";
+  let x=Math.random()*(window.innerWidth-100);
+  let y=Math.random()*(window.innerHeight-100);
+  btn.style.left=x+"px";
+  btn.style.top=y+"px";
 }
 
-// MULTIPLY
+// Multiply
 function multiplyNo(){
-  multipleButtons = [];
+  multipleButtons=[];
   for(let i=0;i<5;i++){
-    let newBtn = noBtn.cloneNode(true);
-    newBtn.onclick = function(){
-      let num = i+1;
+    let newBtn=noBtn.cloneNode(true);
+    newBtn.onclick=function(){
+      let num=i+1;
       showModal(num===5?"shoon lae thu…(  •̀⤙•́  )":num+".");
       newBtn.remove();
     };
-    let x = Math.random()*(window.innerWidth-100);
-    let y = Math.random()*(window.innerHeight-100);
-    newBtn.style.left = x+"px";
-    newBtn.style.top = y+"px";
+    let x=Math.random()*(window.innerWidth-100);
+    let y=Math.random()*(window.innerHeight-100);
+    newBtn.style.left=x+"px";
+    newBtn.style.top=y+"px";
     slide2.appendChild(newBtn);
     multipleButtons.push(newBtn);
   }
-  noBtn.style.display="none"; // hide original during multiply
+  noBtn.style.display="none";
 }
 
-// SLIDING
+// Sliding
 function startSliding(btn){
   btn.style.display="block";
-  moveInterval = setInterval(()=>{
-    let x = Math.random()*(window.innerWidth-120);
-    let y = Math.random()*(window.innerHeight-120);
-    btn.style.transition = "1.5s linear";
-    btn.style.left = x+"px";
-    btn.style.top = y+"px";
+  moveInterval=setInterval(()=>{
+    let x=Math.random()*(window.innerWidth-120);
+    let y=Math.random()*(window.innerHeight-120);
+    btn.style.transition="1.5s linear";
+    btn.style.left=x+"px";
+    btn.style.top=y+"px";
   },1500);
 }
 
-// EXPLODE
+// Explode
 function explodeNo(btn){
   clearInterval(moveInterval);
   btn.classList.add("explode");
