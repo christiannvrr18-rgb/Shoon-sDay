@@ -2,231 +2,119 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Birthday Surprise 🎉</title>
-
+<title>Happy Birthday Shoon!</title>
 <style>
-/* === BODY & BACKGROUND === */
 body {
-  margin:0;
-  font-family: 'Georgia', serif;
+  margin:0; padding:0;
+  height:100vh; width:100vw;
   overflow:hidden;
-  height:100vh;
-  width:100vw;
-  background: linear-gradient(135deg, #ffe4ec, #ffccd9, #8b0033);
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  color:#fff;
+  background: linear-gradient(135deg, #ffe4ec, #ffcce0);
+  font-family: 'Arial', sans-serif;
+  position:relative;
+  cursor: url('sparkle-cursor.png'), auto;
 }
 
-canvas {
-  position:fixed;
-  top:0;
-  left:0;
-  z-index:0;
-}
-
-/* === SLIDES === */
-.slide {
-  display:none;
+/* floating elements */
+.floating {
   position:absolute;
-  top:0; left:0;
-  height:100%;
-  width:100%;
-  text-align:center;
-  padding:50px 20px;
+  pointer-events:none;
   z-index:1;
+  transition: all 1s ease;
 }
 
-.active { display:block; animation:fade 0.8s ease; }
-
-@keyframes fade { from{opacity:0;} to{opacity:1;} }
-
-h1 { font-size:60px; color:#8b0033; text-shadow:2px 2px #fff; }
-h2 { font-size:45px; }
-p { font-size:28px; max-width:700px; margin:20px auto; line-height:1.4; }
-
-button {
-  padding:15px 30px;
-  font-size:20px;
-  border:none;
-  border-radius:30px;
-  margin:15px;
+#pom {
+  position:absolute;
+  top:50%; left:50%;
+  transform:translate(-50%,-50%);
+  width:250px;
   cursor:pointer;
-  box-shadow:0 4px 8px rgba(0,0,0,0.3);
-  transition:all 0.3s ease;
+  animation: bounce 2s infinite;
+  z-index:2;
 }
 
-button:hover { transform:scale(1.1); }
-
-.next { background:#ff4d6d; color:white; }
-.exit { background:#b3003c; color:white; }
-
-img { width:250px; margin:20px; border-radius:20px; animation:float 3s ease-in-out infinite; }
-
-@keyframes float {
-  0%,100%{ transform:translateY(0);}
-  50%{ transform:translateY(-15px);}
+@keyframes bounce {
+  0%,100% { transform: translate(-50%, -50%) translateY(0); }
+  50% { transform: translate(-50%, -50%) translateY(-25px); }
 }
 
-/* === TYPEWRITER TEXT === */
-.typewriter p {
+#message {
+  position:absolute;
+  top:20%; left:50%;
+  transform:translateX(-50%);
+  font-size:48px;
+  color:#8b0033;
+  text-align:center;
+  display:none;
+  text-shadow: 2px 2px #fff;
+}
+
+.typewriter {
   display:inline-block;
   overflow:hidden;
   border-right:0.15em solid #fff;
   white-space:nowrap;
-  animation: typing 3s steps(50, end), blink 0.7s step-end infinite;
+  animation: typing 3s steps(50,end) forwards, blink 0.7s step-end infinite;
 }
 
-@keyframes typing { from { width:0; } to { width:100%; } }
+@keyframes typing { from{width:0;} to{width:100%;} }
 @keyframes blink { 50% { border-color:transparent; } }
-
-/* === CONFETTI === */
-.confetti {
-  position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
-  pointer-events:none;
-  z-index:2;
-}
 </style>
 </head>
 <body>
 
-<!-- AUDIO -->
-<audio id="bgmusic" loop>
-  <source src="minmhamin.mp3">
+<!-- Floating hearts / stars / notes -->
+<div id="effects"></div>
+
+<!-- Pompom center -->
+<img id="pom" src="pompom.png" alt="Pompom Plushy">
+
+<!-- Hidden birthday message -->
+<div id="message">Happy Birthday Shoon! Love, Lloyd ❤️</div>
+
+<!-- Music -->
+<audio id="song">
+  <source src="minmhamin.mp3" type="audio/mpeg">
 </audio>
 
-<!-- === SLIDES === -->
-<div class="slide active" id="slide1">
-  <h1>Happy Birthday 🎂</h1>
-  <p>Ready for a little surprise?</p>
-  <img src="bunny1.jpg">
-  <br>
-  <button class="next" onclick="nextSlide()">Start</button>
-</div>
-
-<div class="slide" id="slide2">
-  <h2>Pompom’s here 🐰</h2>
-  <p class="typewriter">I hope she’s taking care of you for me…</p>
-  <img src="pompom.jpg">
-  <br>
-  <button class="next" onclick="nextSlide()">Continue</button>
-</div>
-
-<div class="slide" id="slide3">
-  <h2>Flowers for you 🌸</h2>
-  <p class="typewriter">Rose lilies and tulips… paying attention sometimes 😏</p>
-  <img src="flowers.jpg">
-  <br>
-  <button onclick="sendEmail()">Send Virtual Bouquet 💌</button>
-  <button class="next" onclick="nextSlide()">Next</button>
-</div>
-
-<div class="slide" id="slide4">
-  <h2>Fruit Time 🍓🥭🥥</h2>
-  <p class="typewriter">Here I bought you strawberries, mango, and durian!</p>
-  <img src="strawberry.jpg">
-  <img src="mango.jpg">
-  <img src="durian.jpg">
-  <br>
-  <button class="next" onclick="nextSlide()">Next</button>
-</div>
-
-<div class="slide" id="slide5">
-  <h2>Little Surprise 🎤</h2>
-  <p class="typewriter">Don’t laugh… i actually tried!</p>
-  <audio controls>
-    <source src="sing.mp3">
-  </audio>
-  <br>
-  <button class="next" onclick="nextSlide()">Be Honest</button>
-</div>
-
-<div class="slide" id="slide6">
-  <h2>Random Thoughts 🐰</h2>
-  <p class="typewriter">I like knowing something I gave you is there with you today.</p>
-  <img src="bunny2.jpg">
-  <br>
-  <button class="next" onclick="nextSlide()">Next</button>
-</div>
-
-<div class="slide" id="slide7">
-  <h2>Final Message ❤️</h2>
-  <p class="typewriter">
-    I know I’m not there in person, but I made this for you… <br>
-    You’re sarcastic, soft, and balanced… <br>
-    And yeah, I notice it all. <br>
-    Enjoy your day, birthday girl. <br>
-    – Lloyd
-  </p>
-  <br>
-  <button class="next" onclick="showConfetti()">Finish</button>
-</div>
-
-<canvas class="confetti" id="confetti"></canvas>
-
 <script>
-// === SLIDES & MUSIC ===
-let slides=document.querySelectorAll(".slide");
-let current=0;
-let bgmusic=document.getElementById("bgmusic");
-let started=false;
+// ===== MUSIC + POMPOM CLICK =====
+let pom = document.getElementById("pom");
+let song = document.getElementById("song");
+let message = document.getElementById("message");
+let effects = document.getElementById("effects");
 
-function startMusic(){ if(!started){ bgmusic.play(); started=true; } }
+pom.addEventListener("click", ()=>{
+  song.play();
+  message.style.display = "block";
+  pom.classList.add("dance");
 
-function nextSlide(){
-  startMusic();
-  slides[current].classList.remove("active");
-  current++;
-  slides[current].classList.add("active");
-}
+  createEffects(); // floating hearts, stars, notes
+});
 
-// === EMAIL BUTTON ===
-function sendEmail(){
-  window.location.href="mailto:?subject=For you 🌸&body=Imagine I’m giving you these flowers in person 😌";
-}
+// ===== FLOATING EFFECTS =====
+function createEffects() {
+  let icons = ["❤️","⭐","🎵","🍓","🐰"];
+  setInterval(()=>{
+    let icon = icons[Math.floor(Math.random()*icons.length)];
+    let el = document.createElement("div");
+    el.className = "floating";
+    el.innerHTML = icon;
+    el.style.left = Math.random()*window.innerWidth + "px";
+    el.style.top = window.innerHeight + "px";
+    el.style.fontSize = (20+Math.random()*30) + "px";
+    effects.appendChild(el);
 
-// === CONFETTI EFFECT ===
-function showConfetti(){
-  slides[current].classList.remove("active");
-  let c=document.getElementById("confetti");
-  let ctx=c.getContext("2d");
-  c.width=window.innerWidth;
-  c.height=window.innerHeight;
-
-  let pieces=[];
-  for(let i=0;i<150;i++){
-    pieces.push({
-      x:Math.random()*c.width,
-      y:Math.random()*c.height,
-      r:Math.random()*6+4,
-      d:Math.random()*c.height,
-      color:`hsl(${Math.random()*360}, 100%, 70%)`,
-      tilt:Math.random()*10
-    });
-  }
-
-  function draw(){
-    ctx.clearRect(0,0,c.width,c.height);
-    for(let i=0;i<pieces.length;i++){
-      let p=pieces[i];
-      ctx.fillStyle=p.color;
-      ctx.beginPath();
-      ctx.moveTo(p.x+ p.tilt,p.y);
-      ctx.lineTo(p.x + p.tilt +2,p.y+10);
-      ctx.lineTo(p.x + p.tilt -2,p.y+10);
-      ctx.fill();
-      p.y +=2;
-      p.x += Math.sin(p.y/10);
-      if(p.y>c.height){ p.y=-10; p.x=Math.random()*c.width; }
-    }
-    requestAnimationFrame(draw);
-  }
-  draw();
+    // animate upwards
+    let top = window.innerHeight;
+    let intv = setInterval(()=>{
+      top -= 2 + Math.random()*3;
+      el.style.top = top + "px";
+      if(top < -50) {
+        el.remove();
+        clearInterval(intv);
+      }
+    }, 20);
+  }, 300);
 }
 </script>
 
