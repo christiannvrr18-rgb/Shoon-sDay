@@ -2,146 +2,198 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Happy Birthday 🎂</title>
+<title>Birthday 🎂</title>
 
 <style>
 body{
   margin:0;
-  height:100vh;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background:#ffd6e0;
-  font-family: 'Georgia', serif;
+  font-family:Arial, sans-serif;
   overflow:hidden;
 }
 
-.container{
+/* === SLIDES === */
+.slide{
+  display:none;
+  position:absolute;
+  width:100%;
+  height:100%;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+}
+
+.active{
+  display:flex;
+}
+
+/* === SLIDE 1 (BLACK + RED BUTTON) === */
+#slide1{
+  background:black;
+}
+
+.start-btn{
+  background:red;
+  color:white;
+  padding:25px 50px;
+  font-size:24px;
+  border:none;
+  border-radius:15px;
+  cursor:pointer;
+  box-shadow:0 0 20px red;
+  transform:scale(1);
+  transition:0.2s;
+}
+
+.start-btn:hover{
+  transform:scale(1.1);
+}
+
+/* === SLIDE 2 === */
+#slide2{
+  background:#ffd6e0;
   text-align:center;
 }
 
 h1{
   font-size:50px;
-  color:#8b0033;
+  margin-bottom:10px;
 }
 
-button{
+p{
+  font-size:22px;
+}
+
+/* === BUTTONS === */
+.choice-btn{
   padding:15px 30px;
   font-size:20px;
-  border:none;
-  border-radius:30px;
-  cursor:pointer;
   margin:10px;
-  transition:0.3s;
+  border:none;
+  border-radius:20px;
+  cursor:pointer;
   position:relative;
 }
 
 #yesBtn{
   background:#ff4d6d;
   color:white;
+  transition:0.3s;
 }
 
 #noBtn{
-  background:#b3003c;
+  background:#555;
   color:white;
   position:absolute;
 }
 
+/* === POPUP TEXT === */
 .popup{
   position:absolute;
-  top:20%;
-  left:50%;
-  transform:translateX(-50%);
-  background:white;
-  padding:15px 25px;
-  border-radius:15px;
-  font-size:20px;
-  display:none;
+  top:65%;
+  font-size:22px;
+  color:#8b0033;
 }
 
-/* YES BUTTON GLOW */
+/* === GLOW EFFECT === */
 .glow{
   animation:pulse 1s infinite;
 }
 
 @keyframes pulse{
-  0%{transform:scale(1);}
-  50%{transform:scale(1.2);}
-  100%{transform:scale(1);}
-}
-
-/* EXPLOSION */
-.explode{
-  animation:boom 0.5s forwards;
-}
-
-@keyframes boom{
-  0%{transform:scale(1); opacity:1;}
-  100%{transform:scale(3); opacity:0;}
+  0%{ box-shadow:0 0 10px #ff4d6d; }
+  50%{ box-shadow:0 0 30px #ff4d6d; }
+  100%{ box-shadow:0 0 10px #ff4d6d; }
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
-  <h1>happy birthday shoon! 🎂</h1>
+<!-- AUDIO -->
+<audio id="music">
+  <source src="birthday.mp3">
+</audio>
 
-  <button id="yesBtn" onclick="goNext()">yes</button>
-  <button id="noBtn" onclick="handleNo()">no</button>
+<!-- SLIDE 1 -->
+<div class="slide active" id="slide1">
+  <button class="start-btn" onclick="startExperience()">PRESS</button>
 </div>
 
-<div class="popup" id="popup"></div>
+<!-- SLIDE 2 -->
+<div class="slide" id="slide2">
+  <h1>Happy Birthday Shoon! ⸜(｡˃ ᵕ ˂ )⸝🎂</h1>
+  <p>i have presents for you, want to open?</p>
+
+  <div>
+    <button id="yesBtn" class="choice-btn" onclick="yesPressed()">YES</button>
+    <button id="noBtn" class="choice-btn" onclick="noPressed()">NO</button>
+  </div>
+
+  <div id="popup" class="popup"></div>
+</div>
 
 <script>
-let noCount = 0;
-let yesBtn = document.getElementById("yesBtn");
-let noBtn = document.getElementById("noBtn");
-let popup = document.getElementById("popup");
+let slide1=document.getElementById("slide1");
+let slide2=document.getElementById("slide2");
+let music=document.getElementById("music");
 
-function showPopup(text){
-  popup.innerText = text;
-  popup.style.display = "block";
-  setTimeout(()=> popup.style.display="none",2000);
+let noCount=0;
+let yesBtn=document.getElementById("yesBtn");
+let noBtn=document.getElementById("noBtn");
+let popup=document.getElementById("popup");
+
+/* === START === */
+function startExperience(){
+  slide1.classList.remove("active");
+  slide2.classList.add("active");
+  music.play();
+  moveNo(); // initial position
 }
 
-function moveNo(){
-  let x = Math.random() * (window.innerWidth - 100);
-  let y = Math.random() * (window.innerHeight - 50);
-  noBtn.style.left = x + "px";
-  noBtn.style.top = y + "px";
+/* === YES === */
+function yesPressed(){
+  popup.innerText="good choice 😌 (next part soon)";
 }
 
-function handleNo(){
+/* === NO BUTTON LOGIC === */
+function noPressed(){
   noCount++;
 
-  if(noCount === 1){
+  if(noCount===1){
+    popup.innerText="why no?૮(◞ ‸ ◟ )ა";
+    scaleYes(1.5);
     moveNo();
-    yesBtn.style.transform="scale(1.5)";
-    showPopup("why no?૮(◞ ‸ ◟ )ა");
   }
-
-  else if(noCount === 2){
-    moveNo();
-    yesBtn.style.transform="scale(2)";
-    showPopup("i’ve been preparing this for 20 days(っ╥﹏╥ς)");
+  else if(noCount===2){
+    popup.innerText="i've been preparing this for 20 days(っ╥﹏╥ς)";
+    scaleYes(2);
+    startMovingNo();
   }
-
-  else if(noCount === 3){
-    noBtn.classList.add("explode");
-    setTimeout(()=> noBtn.style.display="none",500);
-    yesBtn.style.transform="scale(2.5)";
+  else if(noCount===3){
+    popup.innerText="yep im removing that button before you pmoς(≖_≖ )ﾉ🔪";
+    noBtn.style.display="none";
+    scaleYes(2.5);
     yesBtn.classList.add("glow");
-    showPopup("yep im removing that button before you pmoς(≖_≖ )ﾉ🔪");
-  }
-
-  else{
-    moveNo();
   }
 }
 
-function goNext(){
-  alert("NEXT SLIDE COMING NEXT STEP 👀");
+/* === MOVE NO RANDOMLY === */
+function moveNo(){
+  let x=Math.random()*(window.innerWidth-100);
+  let y=Math.random()*(window.innerHeight-100);
+  noBtn.style.left=x+"px";
+  noBtn.style.top=y+"px";
+}
+
+/* === CONSTANT MOVEMENT === */
+let movingInterval;
+function startMovingNo(){
+  movingInterval=setInterval(moveNo,500);
+}
+
+/* === SCALE YES BUTTON === */
+function scaleYes(mult){
+  yesBtn.style.transform=`scale(${mult})`;
 }
 </script>
 
