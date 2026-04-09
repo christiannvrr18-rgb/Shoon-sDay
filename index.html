@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Happy Birthday Shoon!</title>
+<title>Birthday Surprise 🎉</title>
 <style>
 body {
   margin:0; padding:0;
@@ -11,7 +11,7 @@ body {
   background: linear-gradient(135deg, #ffe4ec, #ffcce0);
   font-family: 'Arial', sans-serif;
   position:relative;
-  cursor: url('sparkle-cursor.png'), auto;
+  cursor: auto;
 }
 
 /* floating elements */
@@ -41,23 +41,12 @@ body {
   position:absolute;
   top:20%; left:50%;
   transform:translateX(-50%);
-  font-size:48px;
+  font-size:60px;
   color:#8b0033;
   text-align:center;
   display:none;
   text-shadow: 2px 2px #fff;
 }
-
-.typewriter {
-  display:inline-block;
-  overflow:hidden;
-  border-right:0.15em solid #fff;
-  white-space:nowrap;
-  animation: typing 3s steps(50,end) forwards, blink 0.7s step-end infinite;
-}
-
-@keyframes typing { from{width:0;} to{width:100%;} }
-@keyframes blink { 50% { border-color:transparent; } }
 </style>
 </head>
 <body>
@@ -69,7 +58,7 @@ body {
 <img id="pom" src="pompom.png" alt="Pompom Plushy">
 
 <!-- Hidden birthday message -->
-<div id="message">Happy Birthday Shoon! Love, Lloyd ❤️</div>
+<div id="message">HAPPY BIRTH DAY SHOON</div>
 
 <!-- Music -->
 <audio id="song">
@@ -86,7 +75,6 @@ let effects = document.getElementById("effects");
 pom.addEventListener("click", ()=>{
   song.play();
   message.style.display = "block";
-  pom.classList.add("dance");
 
   createEffects(); // floating hearts, stars, notes
 });
