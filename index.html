@@ -51,13 +51,16 @@ body,html{
   font-size:18px;
 }
 
+/* YES button uses variable scale */
 #yesBtn{
   background:#ff4d6d;
   color:white;
   left:40%;
   top:75%;
+  transform:scale(var(--scale,1));
 }
 
+/* NO */
 #noBtn{
   background:#444;
   color:white;
@@ -65,7 +68,7 @@ body,html{
   top:75%;
 }
 
-/* cat */
+/* CAT */
 #cat{
   width:130px;
   position:absolute;
@@ -90,12 +93,10 @@ body,html{
   transition:0.2s;
   z-index:9999;
 }
-
 .modal.show{
   opacity:1;
   pointer-events:auto;
 }
-
 .modal-box{
   background:white;
   padding:20px 30px;
@@ -103,15 +104,23 @@ body,html{
   font-size:18px;
 }
 
-/* YES FINAL GLOW */
+/* GLOW (adds to scale instead of overriding it) */
 .glow{
-  animation: pulseGlow 1s infinite;
+  animation:pulseGlow 1s infinite;
 }
-
 @keyframes pulseGlow{
-  0%{transform:scale(1.1); box-shadow:0 0 10px #ff4d6d;}
-  50%{transform:scale(1.3); box-shadow:0 0 40px #ff4d6d;}
-  100%{transform:scale(1.1); box-shadow:0 0 10px #ff4d6d;}
+  0%{
+    transform:scale(calc(var(--scale,1) + 0.05));
+    box-shadow:0 0 10px #ff4d6d;
+  }
+  50%{
+    transform:scale(calc(var(--scale,1) + 0.2));
+    box-shadow:0 0 40px #ff4d6d;
+  }
+  100%{
+    transform:scale(calc(var(--scale,1) + 0.05));
+    box-shadow:0 0 10px #ff4d6d;
+  }
 }
 
 /* explode */
@@ -171,15 +180,18 @@ let noBtn = document.getElementById("noBtn");
 let modal = document.getElementById("modal");
 let modalText = document.getElementById("modalText");
 
-let yesScale = 1;
 let noClicks = 0;
 
+/* FIXED SCALE SYSTEM */
+let baseScale = 1;
+
+/* multiply */
 let multiClicks = 0;
 let multiDone = false;
 
 let popupTimer;
 
-/* popup */
+/* POPUP */
 function pop(text){
   clearTimeout(popupTimer);
   modalText.innerText = text;
@@ -190,13 +202,13 @@ function pop(text){
   },1800);
 }
 
-/* grow yes */
+/* GROW YES */
 function grow(){
-  yesScale += 0.2;
-  yesBtn.style.transform = `scale(${yesScale})`;
+  baseScale += 0.15;
+  yesBtn.style.setProperty('--scale', baseScale);
 }
 
-/* start */
+/* START */
 startBtn.onclick = ()=>{
   slide1.classList.remove("active");
   slide2.classList.add("active");
@@ -218,20 +230,19 @@ noBtn.onclick = ()=>{
     pop("why no? ૮(◞ ‸ ◟ )ა");
     teleport(noBtn);
   }
-
   else if(noClicks === 2){
     pop("try pressing 5 buttons then (¬_ ´¬ )");
     multiply();
   }
 };
 
-/* teleport */
+/* TELEPORT */
 function teleport(btn){
   btn.style.left = Math.random()*80 + "%";
   btn.style.top = Math.random()*70 + "%";
 }
 
-/* multiply stage */
+/* MULTIPLY */
 function multiply(){
   noBtn.style.display = "none";
 
@@ -272,7 +283,7 @@ function multiply(){
   }
 }
 
-/* final moving NO */
+/* FINAL */
 function finalStage(){
   let b = noBtn.cloneNode(true);
   b.style.display="block";
@@ -299,7 +310,7 @@ function finalStage(){
   };
 }
 
-/* slide3 */
+/* SLIDE3 */
 function spawn(){
   let items=["💖","✨","🍓","🐱","🐰"];
 
