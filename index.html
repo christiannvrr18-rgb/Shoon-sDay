@@ -14,6 +14,7 @@ html,body{
   font-family:Arial;
 }
 
+/* Slides */
 .slide{
   display:none;
   position:absolute;
@@ -44,9 +45,11 @@ html,body{
 #slide2{
   background:#ffd6e0;
   position:relative;
+  overflow:hidden;
+  text-align:center;
 }
 
-h1{font-size:45px;}
+h1{font-size:45px;margin-bottom:10px;}
 p{font-size:22px;}
 
 .choice-btn{
@@ -55,8 +58,10 @@ p{font-size:22px;}
   border:none;
   border-radius:20px;
   cursor:pointer;
+  font-size:18px;
 }
 
+/* Buttons initial position */
 #yesBtn{
   background:#ff4d6d;
   color:white;
@@ -78,9 +83,10 @@ p{font-size:22px;}
   bottom:20px;
   right:20px;
   animation:float 3s infinite ease-in-out;
+  z-index:2;
 }
 
-/* Floating anim */
+/* Floating */
 @keyframes float{
   0%{transform:translateY(0);}
   50%{transform:translateY(-15px);}
@@ -90,14 +96,17 @@ p{font-size:22px;}
 /* Modal */
 .modal{
   position:fixed;
+  top:0;
+  left:0;
   width:100%;
   height:100%;
-  background:rgba(0,0,0,0.5);
   display:flex;
   justify-content:center;
   align-items:center;
+  background:rgba(0,0,0,0.5);
   opacity:0;
   pointer-events:none;
+  z-index:9999; /* FIXED */
 }
 
 .modal.show{
@@ -109,6 +118,7 @@ p{font-size:22px;}
   background:white;
   padding:20px 40px;
   border-radius:15px;
+  font-size:20px;
 }
 
 /* Glow */
@@ -122,7 +132,7 @@ p{font-size:22px;}
   100%{box-shadow:0 0 10px #ff4d6d;}
 }
 
-/* Explode */
+/* Explosion */
 @keyframes explode{
   to{transform:scale(0);opacity:0;}
 }
@@ -136,7 +146,7 @@ p{font-size:22px;}
 
 .float{
   position:absolute;
-  animation:float2 6s infinite;
+  animation:float2 6s infinite ease-in-out;
 }
 
 @keyframes float2{
@@ -154,12 +164,12 @@ p{font-size:22px;}
 </audio>
 
 <!-- Slide1 -->
-<div class="slide active" id="slide1">
+<div id="slide1" class="slide active">
 <button class="start-btn" id="startBtn">PRESS</button>
 </div>
 
 <!-- Slide2 -->
-<div class="slide" id="slide2">
+<div id="slide2" class="slide">
 <h1>Happy Birthday Shoon! ⸜(｡˃ ᵕ ˂ )⸝🎂</h1>
 <p>i have presents for you, want to open?</p>
 
@@ -170,11 +180,11 @@ p{font-size:22px;}
 </div>
 
 <!-- Slide3 -->
-<div class="slide" id="slide3"></div>
+<div id="slide3" class="slide"></div>
 
 <!-- Modal -->
-<div class="modal" id="modal">
-<div class="modal-box" id="modalText"></div>
+<div id="modal" class="modal">
+<div id="modalText" class="modal-box"></div>
 </div>
 
 <script>
@@ -191,22 +201,28 @@ let modalText=document.getElementById("modalText");
 
 let music=document.getElementById("music");
 
-let noClick=0;
+let noClicks=0;
 let yesScale=1;
 let count=5;
 
-/* Start */
+/* START */
 startBtn.onclick=()=>{
   slide1.classList.remove("active");
   slide2.classList.add("active");
   music.play();
 };
 
-/* Popup */
-function pop(txt){
-  modalText.innerText=txt;
+/* POPUP */
+function pop(text){
+  modalText.innerText=text;
   modal.classList.add("show");
   setTimeout(()=>modal.classList.remove("show"),2000);
+}
+
+/* GROW YES */
+function growYes(){
+  yesScale+=0.25;
+  yesBtn.style.transform=`scale(${yesScale})`;
 }
 
 /* YES */
@@ -216,30 +232,29 @@ yesBtn.onclick=()=>{
   spawnCute();
 };
 
-/* NO */
+/* NO BUTTON */
 noBtn.onclick=()=>{
-  noClick++;
-  yesScale+=0.3;
-  yesBtn.style.transform=`scale(${yesScale})`;
+  noClicks++;
+  growYes();
 
-  if(noClick===1){
+  if(noClicks===1){
     pop("why no? ૮(◞ ‸ ◟ )ა");
     teleport(noBtn);
   }
 
-  else if(noClick===2){
+  else if(noClicks===2){
     pop("try pressing 5 buttons then (¬_ ´¬ )");
     multiply();
   }
 };
 
-/* Teleport */
+/* TELEPORT */
 function teleport(btn){
   btn.style.left=Math.random()*80+"%";
   btn.style.top=Math.random()*80+"%";
 }
 
-/* Multiply */
+/* MULTIPLY */
 function multiply(){
   noBtn.style.display="none";
   count=5;
@@ -249,13 +264,16 @@ function multiply(){
     b.style.display="block";
 
     b.onclick=()=>{
+      growYes();
       count--;
+
       if(count>0){
         pop(count+1);
       }else{
         pop("shoon lae thu…(  •̀⤙•́ )");
         finalStage();
       }
+
       b.remove();
     };
 
@@ -265,7 +283,7 @@ function multiply(){
   }
 }
 
-/* Final stage */
+/* FINAL STAGE */
 function finalStage(){
   let btn1=noBtn.cloneNode(true);
   let btn2=noBtn.cloneNode(true);
@@ -277,17 +295,19 @@ function finalStage(){
   slide2.appendChild(btn2);
 
   btn1.onclick=()=>{
+    growYes();
     pop("shoon lae thu…(  •̀⤙•́ )");
     btn1.remove();
   };
 
   btn2.onclick=()=>{
+    growYes();
     pop("alr fine try catching it then <(ꐦㅍ _ㅍ)>");
     move(btn2);
   };
 }
 
-/* Move */
+/* MOVE */
 function move(btn){
   let interval=setInterval(()=>{
     btn.style.left=Math.random()*90+"%";
@@ -295,6 +315,7 @@ function move(btn){
   },1500);
 
   btn.onclick=()=>{
+    growYes();
     clearInterval(interval);
     pop("fine imma pop this before u pmo ς(≖_≖ )ﾉ🔪");
     btn.classList.add("explode");
@@ -302,17 +323,17 @@ function move(btn){
   };
 }
 
-/* Cute BG */
+/* SLIDE3 BG */
 function spawnCute(){
   let items=["💖","✨","🍓","🐱","🐰"];
 
   for(let i=0;i<40;i++){
-    let e=document.createElement("div");
-    e.className="float";
-    e.innerText=items[Math.floor(Math.random()*items.length)];
-    e.style.left=Math.random()*100+"%";
-    e.style.top=Math.random()*100+"%";
-    slide3.appendChild(e);
+    let el=document.createElement("div");
+    el.className="float";
+    el.innerText=items[Math.floor(Math.random()*items.length)];
+    el.style.left=Math.random()*100+"%";
+    el.style.top=Math.random()*100+"%";
+    slide3.appendChild(el);
   }
 }
 </script>
