@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Birthday</title>
+<title>Birthday Game</title>
 
 <style>
 body,html{
@@ -26,9 +26,13 @@ body,html{
 /* SLIDE 1 */
 #slide1{
   background:black;
-  flex-direction:column;
 }
 
+button{
+  cursor:pointer;
+}
+
+/* START */
 .start-btn{
   background:red;
   color:white;
@@ -36,35 +40,25 @@ body,html{
   font-size:24px;
   border:none;
   border-radius:15px;
-  cursor:pointer;
 }
 
-/* SLIDE 2 HERO LAYOUT */
+/* SLIDE 2 */
 #slide2{
   background:#ffd6e0;
   flex-direction:column;
   text-align:center;
-  padding-top:30px;
   position:relative;
+  padding-top:30px;
 }
 
-/* CAT (HERO IMAGE) */
 #cat{
   width:380px;
   max-width:85%;
   margin-bottom:10px;
 }
 
-/* TITLE */
-#slide2 h1{
-  margin:0;
-  font-size:28px;
-}
-
-/* SUBTEXT */
-#slide2 p{
-  margin-top:10px;
-}
+h1{margin:0;}
+p{margin:10px;}
 
 /* BUTTONS */
 .choice-btn{
@@ -72,37 +66,31 @@ body,html{
   padding:12px 25px;
   border:none;
   border-radius:20px;
-  cursor:pointer;
   font-size:18px;
+  z-index:10;
 }
 
-/* YES BUTTON (REAL FIXED GROW SYSTEM) */
+/* YES */
 #yesBtn{
   background:#ff4d6d;
   color:white;
   left:40%;
   top:75%;
   transform:scale(1);
-  transition:transform 0.2s ease;
-  z-index:10;
 }
 
-/* NO BUTTON */
+/* NO */
 #noBtn{
   background:#444;
   color:white;
   left:55%;
   top:75%;
-  z-index:10;
 }
 
 /* POPUP */
 .modal{
   position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
+  inset:0;
   display:flex;
   justify-content:center;
   align-items:center;
@@ -120,57 +108,40 @@ body,html{
 
 .modal-box{
   background:white;
-  padding:20px 30px;
+  padding:20px;
   border-radius:15px;
 }
 
-/* YES GROW + PULSE (FIXED PROPERLY) */
+/* YES GROW */
+@keyframes pulse{
+  0%{transform:scale(var(--s));}
+  50%{transform:scale(calc(var(--s) + 0.15));}
+  100%{transform:scale(var(--s));}
+}
+
 .grow{
   animation:pulse 0.6s infinite;
 }
 
-@keyframes pulse{
-  0%{transform:scale(var(--scale));}
-  50%{transform:scale(calc(var(--scale) + 0.15));}
-  100%{transform:scale(var(--scale));}
-}
-
-/* EXPLODE */
-@keyframes explode{
-  to{transform:scale(0);opacity:0;}
-}
-.explode{animation:explode .3s forwards;}
-
 /* SLIDE 3 */
 #slide3{
   background:#ffd6e0;
-  flex-wrap:wrap;
-}
-
-.float{
-  position:absolute;
-  font-size:24px;
-  animation:float 6s infinite;
-}
-
-@keyframes float{
-  0%{transform:translateY(0);}
-  50%{transform:translateY(-60px);}
-  100%{transform:translateY(0);}
 }
 </style>
 </head>
 
 <body>
 
-<audio id="bgMusic" src="minmhamin.mp3"></audio>
+<!-- AUDIO -->
+<audio id="music1" src="hotline.mp3"></audio>
+<audio id="music2" src="minmhamin.mp3"></audio>
 
 <!-- SLIDE 1 -->
 <div id="slide1" class="slide active">
 <button id="startBtn" class="start-btn">PRESS</button>
 </div>
 
-<!-- SLIDE 2 (HERO) -->
+<!-- SLIDE 2 -->
 <div id="slide2" class="slide">
 
 <img src="bdaycat.png" id="cat">
@@ -192,63 +163,91 @@ body,html{
 </div>
 
 <script>
-let startBtn = document.getElementById("startBtn");
-let bgMusic = document.getElementById("bgMusic");
-
 let slide1 = document.getElementById("slide1");
 let slide2 = document.getElementById("slide2");
 let slide3 = document.getElementById("slide3");
 
+let startBtn = document.getElementById("startBtn");
 let yesBtn = document.getElementById("yesBtn");
 let noBtn = document.getElementById("noBtn");
 
 let modal = document.getElementById("modal");
 let modalText = document.getElementById("modalText");
 
-let scale = 1;
-let noClicks = 0;
+let music1 = document.getElementById("music1");
+let music2 = document.getElementById("music2");
+
+let noCount = 0;
+let yesScale = 1;
+let noLocked = false;
 
 /* POPUP */
 function pop(text){
   modalText.innerText = text;
   modal.classList.add("show");
-
-  setTimeout(()=>{
-    modal.classList.remove("show");
-  },1500);
+  setTimeout(()=>modal.classList.remove("show"),1200);
 }
 
-/* YES GROW FIX (REAL WORKING VERSION) */
-function growYes(){
-  scale += 0.18;
-  yesBtn.style.setProperty('--scale', scale);
-  yesBtn.style.transform = `scale(${scale})`;
-}
-
-/* START */
-startBtn.onclick = ()=>{
+/* START → SLIDE 2 + HOTLINE MUSIC */
+startBtn.onclick = async ()=>{
   slide1.classList.remove("active");
   slide2.classList.add("active");
-  bgMusic.play();
+
+  try{
+    await music1.play();
+  }catch(e){}
 };
 
-/* YES */
-yesBtn.onclick = ()=>{
+/* YES → SLIDE 3 + MUSIC SWITCH */
+yesBtn.onclick = async ()=>{
   slide2.classList.remove("active");
   slide3.classList.add("active");
+
+  music1.pause();
+  music2.currentTime = 0;
+
+  try{
+    await music2.play();
+  }catch(e){}
 };
 
-/* NO */
+/* YES GROW FUNCTION */
+function growYes(){
+  yesScale += 0.2;
+  yesBtn.style.transform = `scale(${yesScale})`;
+}
+
+/* NO BUTTON LOGIC (FIXED TELEPORT + LOCK) */
 noBtn.onclick = ()=>{
-  noClicks++;
+
+  if(noLocked) return;
+  noLocked = true;
+
+  noCount++;
   growYes();
 
-  if(noClicks===1){
+  if(noCount === 1){
     pop("why no? ૮(◞ ‸ ◟ )ა");
   }
-  else if(noClicks===2){
+
+  if(noCount === 2){
     pop("try pressing 5 buttons then (¬_ ´¬ )");
   }
+
+  if(noCount === 3){
+    pop("that’s it, no more No button for you (ᗒᗣᗕ)");
+  }
+
+  /* TELEPORT EFFECT */
+  setTimeout(()=>{
+    let x = Math.random() * 60 + 20;
+    let y = Math.random() * 60 + 20;
+
+    noBtn.style.left = x + "%";
+    noBtn.style.top = y + "%";
+
+    noLocked = false;
+  },600);
 };
 </script>
 
