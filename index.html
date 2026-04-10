@@ -113,14 +113,14 @@ p{margin:10px;}
 }
 
 /* YES GROW */
-@keyframes pulse{
-  0%{transform:scale(var(--s));}
-  50%{transform:scale(calc(var(--s) + 0.15));}
-  100%{transform:scale(var(--s));}
-}
-
 .grow{
   animation:pulse 0.6s infinite;
+}
+
+@keyframes pulse{
+  0%{transform:scale(var(--s,1));}
+  50%{transform:scale(calc(var(--s,1) + 0.2));}
+  100%{transform:scale(var(--s,1));}
 }
 
 /* SLIDE 3 */
@@ -177,9 +177,13 @@ let modalText = document.getElementById("modalText");
 let music1 = document.getElementById("music1");
 let music2 = document.getElementById("music2");
 
+/* STATE */
 let noCount = 0;
 let yesScale = 1;
 let noLocked = false;
+let stage = 1;
+
+let noClones = [];
 
 /* POPUP */
 function pop(text){
@@ -188,17 +192,15 @@ function pop(text){
   setTimeout(()=>modal.classList.remove("show"),1200);
 }
 
-/* START → SLIDE 2 + HOTLINE MUSIC */
+/* START → HOTLINE MUSIC */
 startBtn.onclick = async ()=>{
   slide1.classList.remove("active");
   slide2.classList.add("active");
 
-  try{
-    await music1.play();
-  }catch(e){}
+  try{ await music1.play(); }catch(e){}
 };
 
-/* YES → SLIDE 3 + MUSIC SWITCH */
+/* YES → FINAL MUSIC */
 yesBtn.onclick = async ()=>{
   slide2.classList.remove("active");
   slide3.classList.add("active");
@@ -206,18 +208,47 @@ yesBtn.onclick = async ()=>{
   music1.pause();
   music2.currentTime = 0;
 
-  try{
-    await music2.play();
-  }catch(e){}
+  try{ await music2.play(); }catch(e){}
 };
 
-/* YES GROW FUNCTION */
+/* YES GROW FIX */
 function growYes(){
-  yesScale += 0.2;
+  yesScale += 0.25;
   yesBtn.style.transform = `scale(${yesScale})`;
 }
 
-/* NO BUTTON LOGIC (FIXED TELEPORT + LOCK) */
+/* SPAWN CLONES */
+function spawnNoClones(){
+  for(let i=0;i<5;i++){
+    let clone = noBtn.cloneNode(true);
+    clone.removeAttribute("id");
+
+    clone.style.position = "absolute";
+    clone.style.left = (Math.random()*70 + 15) + "%";
+    clone.style.top = (Math.random()*60 + 20) + "%";
+
+    clone.onclick = ()=>{
+      pop("alr fine try catching it then <(ꐦㅍ _ㅍ)>");
+    };
+
+    document.getElementById("slide2").appendChild(clone);
+    noClones.push(clone);
+  }
+
+  noBtn.style.display = "none";
+}
+
+/* FINAL NO STATE */
+function finalNoState(){
+  pop("that’s it, no more No button for you (ᗒᗣᗕ)");
+
+  noClones.forEach(c => c.remove());
+  noClones = [];
+
+  yesBtn.classList.add("grow");
+}
+
+/* NO BUTTON ENGINE */
 noBtn.onclick = ()=>{
 
   if(noLocked) return;
@@ -230,24 +261,31 @@ noBtn.onclick = ()=>{
     pop("why no? ૮(◞ ‸ ◟ )ა");
   }
 
-  if(noCount === 2){
+  else if(noCount === 2){
     pop("try pressing 5 buttons then (¬_ ´¬ )");
   }
 
-  if(noCount === 3){
-    pop("that’s it, no more No button for you (ᗒᗣᗕ)");
+  else if(noCount === 3){
+    spawnNoClones();
+    stage = 2;
   }
 
-  /* TELEPORT EFFECT */
-  setTimeout(()=>{
-    let x = Math.random() * 60 + 20;
-    let y = Math.random() * 60 + 20;
+  else if(noCount >= 4){
+    finalNoState();
+    stage = 3;
+  }
 
-    noBtn.style.left = x + "%";
-    noBtn.style.top = y + "%";
+  setTimeout(()=>{
+    if(stage < 2){
+      let x = Math.random()*60 + 20;
+      let y = Math.random()*60 + 20;
+
+      noBtn.style.left = x + "%";
+      noBtn.style.top = y + "%";
+    }
 
     noLocked = false;
-  },600);
+  },500);
 };
 </script>
 
