@@ -12,7 +12,6 @@ body,html{
   font-family:Arial;
 }
 
-/* SLIDES */
 .slide{
   display:none;
   width:100%;
@@ -23,10 +22,7 @@ body,html{
 
 .active{display:flex;}
 
-/* SLIDE 1 */
-#slide1{
-  background:black;
-}
+#slide1{background:black;}
 
 .start-btn{
   background:red;
@@ -38,7 +34,6 @@ body,html{
   cursor:pointer;
 }
 
-/* SLIDE 2 */
 #slide2{
   background:#ffd6e0;
   flex-direction:column;
@@ -53,10 +48,6 @@ body,html{
   margin-bottom:10px;
 }
 
-h1{margin:0;}
-p{margin:10px;}
-
-/* BUTTONS */
 .choice-btn{
   position:absolute;
   padding:12px 25px;
@@ -64,18 +55,18 @@ p{margin:10px;}
   border-radius:20px;
   font-size:18px;
   z-index:10;
+  user-select:none;
 }
 
-/* YES */
 #yesBtn{
   background:#ff4d6d;
   color:white;
   left:40%;
   top:75%;
-  transform:scale(1);
+  --s:1;
+  transform:scale(var(--s));
 }
 
-/* NO */
 #noBtn{
   background:#444;
   color:white;
@@ -83,7 +74,6 @@ p{margin:10px;}
   top:75%;
 }
 
-/* POPUP */
 .modal{
   position:fixed;
   inset:0;
@@ -94,7 +84,6 @@ p{margin:10px;}
   opacity:0;
   pointer-events:none;
   transition:0.2s;
-  z-index:9999;
 }
 
 .modal.show{
@@ -108,18 +97,16 @@ p{margin:10px;}
   border-radius:15px;
 }
 
-/* YES GROW */
 .grow{
   animation:pulse 0.6s infinite;
 }
 
 @keyframes pulse{
-  0%{transform:scale(var(--s,1));}
-  50%{transform:scale(calc(var(--s,1) + 0.2));}
-  100%{transform:scale(var(--s,1));}
+  0%{transform:scale(var(--s));}
+  50%{transform:scale(calc(var(--s) + 0.2));}
+  100%{transform:scale(var(--s));}
 }
 
-/* SLIDE 3 */
 #slide3{
   background:#ffd6e0;
 }
@@ -128,16 +115,13 @@ p{margin:10px;}
 
 <body>
 
-<!-- AUDIO -->
 <audio id="music1" src="hotline.mp3"></audio>
 <audio id="music2" src="minmhamin.mp3"></audio>
 
-<!-- SLIDE 1 -->
 <div id="slide1" class="slide active">
 <button id="startBtn" class="start-btn">PRESS</button>
 </div>
 
-<!-- SLIDE 2 -->
 <div id="slide2" class="slide">
 
 <img src="bdaycat.png" id="cat">
@@ -150,10 +134,8 @@ p{margin:10px;}
 
 </div>
 
-<!-- SLIDE 3 -->
 <div id="slide3" class="slide"></div>
 
-<!-- POPUP -->
 <div id="modal" class="modal">
 <div id="modalText" class="modal-box"></div>
 </div>
@@ -173,24 +155,20 @@ let modalText = document.getElementById("modalText");
 let music1 = document.getElementById("music1");
 let music2 = document.getElementById("music2");
 
-/* =========================
-   GLOBAL STATE ENGINE
-========================= */
-
 let noRemaining = 5;
 let yesScale = 1;
-
-let stage = 1;
 let noClones = [];
 
 /* POPUP */
 function pop(text){
+  modal.classList.remove("show");
+  void modal.offsetWidth;
   modalText.innerText = text;
   modal.classList.add("show");
   setTimeout(()=>modal.classList.remove("show"),1200);
 }
 
-/* YES MUSIC FLOW */
+/* START */
 startBtn.onclick = async ()=>{
   slide1.classList.remove("active");
   slide2.classList.add("active");
@@ -198,6 +176,7 @@ startBtn.onclick = async ()=>{
   try{ await music1.play(); }catch(e){}
 };
 
+/* YES */
 yesBtn.onclick = async ()=>{
   slide2.classList.remove("active");
   slide3.classList.add("active");
@@ -208,16 +187,13 @@ yesBtn.onclick = async ()=>{
   try{ await music2.play(); }catch(e){}
 };
 
-/* YES GROW (FIXED STABLE SYSTEM) */
+/* GROW YES */
 function growYes(){
   yesScale += 0.25;
-  yesBtn.style.transform = `scale(${yesScale})`;
+  yesBtn.style.setProperty("--s", yesScale);
 }
 
-/* =========================
-   CORE NO ENGINE
-========================= */
-
+/* NO LOGIC */
 function consumeNo(){
   noRemaining--;
   growYes();
@@ -225,19 +201,15 @@ function consumeNo(){
   if(noRemaining === 4){
     pop("why no? ૮(◞ ‸ ◟ )ა");
   }
-
   else if(noRemaining === 3){
     pop("try pressing 5 buttons then (¬_ ´¬ )");
   }
-
   else if(noRemaining === 2){
     pop("alr fine try catching it then <(ꐦㅍ _ㅍ)>");
   }
-
   else if(noRemaining === 1){
     pop("that’s it, no more No button for you (ᗒᗣᗕ)");
   }
-
   else if(noRemaining <= 0){
     finalState();
   }
@@ -246,77 +218,66 @@ function consumeNo(){
 /* MAIN NO BUTTON */
 noBtn.onclick = ()=>{
 
-  if(stage === 3) return;
-
   if(noRemaining > 3){
-
     consumeNo();
 
-    let x = Math.random()*60 + 20;
-    let y = Math.random()*60 + 20;
-
-    noBtn.style.left = x + "%";
-    noBtn.style.top = y + "%";
+    noBtn.style.left = (Math.random()*60 + 20) + "%";
+    noBtn.style.top = (Math.random()*60 + 20) + "%";
   }
 
   else if(noRemaining === 3){
-
     consumeNo();
-
     spawnClones();
-    stage = 2;
   }
 
-  else {
+  else{
     consumeNo();
   }
 };
 
-/* =========================
-   CLONES SYSTEM
-========================= */
-
+/* CLONES (FIXED) */
 function spawnClones(){
 
   noBtn.style.display = "none";
 
   for(let i=0;i<5;i++){
-    let c = noBtn.cloneNode(true);
-    c.removeAttribute("id");
 
-    c.style.position = "absolute";
-    c.style.left = (Math.random()*70 + 15) + "%";
-    c.style.top = (Math.random()*60 + 20) + "%";
+    let clone = document.createElement("button");
+    clone.innerText = "NO";
+    clone.className = "choice-btn";
 
-    c.onclick = ()=>{
+    clone.style.background = "#444";
+    clone.style.color = "white";
+
+    clone.style.left = (Math.random()*60 + 20) + "%";
+    clone.style.top = (Math.random()*60 + 20) + "%";
+
+    clone.onclick = ()=>{
 
       if(noRemaining <= 0) return;
 
       consumeNo();
 
-      c.remove();
-      noClones = noClones.filter(x => x !== c);
+      clone.remove();
+      noClones = noClones.filter(btn => btn !== clone);
 
       if(noRemaining <= 0){
         finalState();
       }
     };
 
-    document.getElementById("slide2").appendChild(c);
-    noClones.push(c);
+    slide2.appendChild(clone);
+    noClones.push(clone);
   }
 }
 
-/* =========================
-   FINAL STATE
-========================= */
-
+/* FINAL */
 function finalState(){
 
-  noClones.forEach(c => c.remove());
+  noClones.forEach(btn => btn.remove());
   noClones = [];
 
-  noBtn.remove();
+  if(noBtn) noBtn.remove();
 
   yesBtn.classList.add("grow");
 
