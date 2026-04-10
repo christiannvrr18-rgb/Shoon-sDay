@@ -42,6 +42,7 @@ body,html{
   text-align:center;
 }
 
+/* Buttons */
 .choice-btn{
   position:absolute;
   padding:12px 25px;
@@ -51,7 +52,6 @@ body,html{
   font-size:18px;
 }
 
-/* YES button uses variable scale */
 #yesBtn{
   background:#ff4d6d;
   color:white;
@@ -60,7 +60,6 @@ body,html{
   transform:scale(var(--scale,1));
 }
 
-/* NO */
 #noBtn{
   background:#444;
   color:white;
@@ -70,14 +69,43 @@ body,html{
 
 /* CAT */
 #cat{
-  width:130px;
+  width:300px;
+  max-width:75%;
   position:absolute;
-  top:100px;
+  top:70px;
   left:50%;
   transform:translateX(-50%);
+  animation:catFloat 3s ease-in-out infinite, catGlow 2s ease-in-out infinite;
+  cursor:pointer;
 }
 
-/* POPUP */
+@keyframes catFloat{
+  0%{transform:translate(-50%,0);}
+  50%{transform:translate(-50%,-18px);}
+  100%{transform:translate(-50%,0);}
+}
+
+@keyframes catGlow{
+  0%{filter:drop-shadow(0 10px 15px rgba(0,0,0,0.2));}
+  50%{filter:drop-shadow(0 15px 25px rgba(255,100,150,0.4));}
+  100%{filter:drop-shadow(0 10px 15px rgba(0,0,0,0.2));}
+}
+
+/* sparkle */
+.sparkle{
+  position:absolute;
+  font-size:20px;
+  animation:sparkleFloat 2s infinite ease-in-out;
+  pointer-events:none;
+}
+
+@keyframes sparkleFloat{
+  0%{transform:translateY(0); opacity:0.7;}
+  50%{transform:translateY(-10px); opacity:1;}
+  100%{transform:translateY(0); opacity:0.7;}
+}
+
+/* popup */
 .modal{
   position:fixed;
   top:0;
@@ -93,34 +121,27 @@ body,html{
   transition:0.2s;
   z-index:9999;
 }
+
 .modal.show{
   opacity:1;
   pointer-events:auto;
 }
+
 .modal-box{
   background:white;
   padding:20px 30px;
   border-radius:15px;
-  font-size:18px;
 }
 
-/* GLOW (adds to scale instead of overriding it) */
+/* glow YES */
 .glow{
   animation:pulseGlow 1s infinite;
 }
+
 @keyframes pulseGlow{
-  0%{
-    transform:scale(calc(var(--scale,1) + 0.05));
-    box-shadow:0 0 10px #ff4d6d;
-  }
-  50%{
-    transform:scale(calc(var(--scale,1) + 0.2));
-    box-shadow:0 0 40px #ff4d6d;
-  }
-  100%{
-    transform:scale(calc(var(--scale,1) + 0.05));
-    box-shadow:0 0 10px #ff4d6d;
-  }
+  0%{transform:scale(calc(var(--scale,1)+0.05)); box-shadow:0 0 10px pink;}
+  50%{transform:scale(calc(var(--scale,1)+0.2)); box-shadow:0 0 40px pink;}
+  100%{transform:scale(calc(var(--scale,1)+0.05)); box-shadow:0 0 10px pink;}
 }
 
 /* explode */
@@ -146,6 +167,9 @@ body,html{
 
 <body>
 
+<!-- AUDIO -->
+<audio id="bgMusic" src="minmhamin.mp3"></audio>
+
 <!-- Slide1 -->
 <div id="slide1" class="slide active">
 <button id="startBtn" class="start-btn">PRESS</button>
@@ -154,7 +178,15 @@ body,html{
 <!-- Slide2 -->
 <div id="slide2" class="slide">
 <h1>Happy Birthday Shoon! 🎂</h1>
+
 <img src="bdaycat.png" id="cat">
+
+<!-- sparkles -->
+<div class="sparkle" style="left:45%; top:120px;">✨</div>
+<div class="sparkle" style="left:60%; top:160px;">💖</div>
+<div class="sparkle" style="left:40%; top:200px;">✨</div>
+<div class="sparkle" style="left:55%; top:90px;">💖</div>
+
 <p>Open your presents?</p>
 
 <button id="yesBtn" class="choice-btn">YES</button>
@@ -164,12 +196,15 @@ body,html{
 <!-- Slide3 -->
 <div id="slide3" class="slide"></div>
 
-<!-- POPUP -->
+<!-- popup -->
 <div id="modal" class="modal">
 <div id="modalText" class="modal-box"></div>
 </div>
 
 <script>
+let startBtn = document.getElementById("startBtn");
+let bgMusic = document.getElementById("bgMusic");
+
 let slide1 = document.getElementById("slide1");
 let slide2 = document.getElementById("slide2");
 let slide3 = document.getElementById("slide3");
@@ -177,21 +212,20 @@ let slide3 = document.getElementById("slide3");
 let yesBtn = document.getElementById("yesBtn");
 let noBtn = document.getElementById("noBtn");
 
+let cat = document.getElementById("cat");
+
 let modal = document.getElementById("modal");
 let modalText = document.getElementById("modalText");
 
 let noClicks = 0;
-
-/* FIXED SCALE SYSTEM */
 let baseScale = 1;
 
-/* multiply */
 let multiClicks = 0;
 let multiDone = false;
 
 let popupTimer;
 
-/* POPUP */
+/* popup */
 function pop(text){
   clearTimeout(popupTimer);
   modalText.innerText = text;
@@ -202,16 +236,28 @@ function pop(text){
   },1800);
 }
 
-/* GROW YES */
+/* grow */
 function grow(){
   baseScale += 0.15;
   yesBtn.style.setProperty('--scale', baseScale);
 }
 
-/* START */
+/* START + MUSIC */
 startBtn.onclick = ()=>{
   slide1.classList.remove("active");
   slide2.classList.add("active");
+
+  bgMusic.play();
+};
+
+/* CAT INTERACTION */
+cat.onclick = ()=>{
+  cat.style.transform = "translateX(-50%) scale(1.15)";
+  setTimeout(()=>{
+    cat.style.transform = "translateX(-50%) scale(1)";
+  },200);
+
+  pop("meow… pay attention to me 😼");
 };
 
 /* YES */
@@ -226,38 +272,36 @@ noBtn.onclick = ()=>{
   noClicks++;
   grow();
 
-  if(noClicks === 1){
+  if(noClicks===1){
     pop("why no? ૮(◞ ‸ ◟ )ა");
     teleport(noBtn);
   }
-  else if(noClicks === 2){
+  else if(noClicks===2){
     pop("try pressing 5 buttons then (¬_ ´¬ )");
     multiply();
   }
 };
 
-/* TELEPORT */
+/* teleport */
 function teleport(btn){
-  btn.style.left = Math.random()*80 + "%";
-  btn.style.top = Math.random()*70 + "%";
+  btn.style.left=Math.random()*80+"%";
+  btn.style.top=Math.random()*70+"%";
 }
 
-/* MULTIPLY */
+/* multiply */
 function multiply(){
-  noBtn.style.display = "none";
-
-  multiClicks = 0;
-  multiDone = false;
+  noBtn.style.display="none";
+  multiClicks=0;
+  multiDone=false;
 
   for(let i=0;i<5;i++){
-    let b = noBtn.cloneNode(true);
+    let b=noBtn.cloneNode(true);
     b.style.display="block";
     b.style.left=Math.random()*80+"%";
     b.style.top=Math.random()*60+"%";
-
     slide2.appendChild(b);
 
-    b.onclick = ()=>{
+    b.onclick=()=>{
       if(multiDone) return;
 
       grow();
@@ -269,7 +313,7 @@ function multiply(){
       else if(multiClicks===4) pop("shoon lae thu…(  •̀⤙•́ )");
 
       else if(multiClicks===5){
-        multiDone = true;
+        multiDone=true;
 
         document.querySelectorAll("#slide2 button").forEach(btn=>{
           if(btn.innerText==="NO") btn.remove();
@@ -283,20 +327,20 @@ function multiply(){
   }
 }
 
-/* FINAL */
+/* final */
 function finalStage(){
-  let b = noBtn.cloneNode(true);
+  let b=noBtn.cloneNode(true);
   b.style.display="block";
   slide2.appendChild(b);
 
   pop("alr fine try catching it then <(ꐦㅍ _ㅍ)>");
 
-  let move = setInterval(()=>{
+  let move=setInterval(()=>{
     b.style.left=Math.random()*80+"%";
     b.style.top=Math.random()*60+"%";
   },1200);
 
-  b.onclick = ()=>{
+  b.onclick=()=>{
     grow();
     clearInterval(move);
 
@@ -310,18 +354,15 @@ function finalStage(){
   };
 }
 
-/* SLIDE3 */
+/* slide3 */
 function spawn(){
   let items=["💖","✨","🍓","🐱","🐰"];
-
   for(let i=0;i<40;i++){
     let e=document.createElement("div");
     e.className="float";
     e.innerText=items[Math.floor(Math.random()*items.length)];
-
     e.style.left=Math.random()*100+"%";
     e.style.top=Math.random()*100+"%";
-
     slide3.appendChild(e);
   }
 }
