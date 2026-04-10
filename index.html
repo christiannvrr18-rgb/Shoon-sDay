@@ -15,18 +15,19 @@ body,html{
 /* SLIDES */
 .slide{
   display:none;
-  position:absolute;
   width:100%;
   height:100%;
   justify-content:center;
   align-items:center;
-  flex-direction:column;
 }
 
 .active{display:flex;}
 
 /* SLIDE 1 */
-#slide1{background:black;}
+#slide1{
+  background:black;
+  flex-direction:column;
+}
 
 .start-btn{
   background:red;
@@ -38,33 +39,34 @@ body,html{
   cursor:pointer;
 }
 
-/* SLIDE 2 */
+/* SLIDE 2 HERO LAYOUT */
 #slide2{
   background:#ffd6e0;
-  position:relative;
+  flex-direction:column;
   text-align:center;
-  overflow:hidden;
-}
-
-/* CAT (RIGHT ABOVE TITLE) */
-#cat{
-  width:360px;
-  max-width:85%;
-  position:absolute;
-  top:10px;
-  left:50%;
-  transform:translateX(-50%);
-  z-index:1;
-}
-
-/* TITLE (CLOSE UNDER CAT) */
-#slide2 h1{
-  margin-top:220px;
+  padding-top:30px;
   position:relative;
-  z-index:2;
 }
 
-/* BUTTON BASE */
+/* CAT (HERO IMAGE) */
+#cat{
+  width:380px;
+  max-width:85%;
+  margin-bottom:10px;
+}
+
+/* TITLE */
+#slide2 h1{
+  margin:0;
+  font-size:28px;
+}
+
+/* SUBTEXT */
+#slide2 p{
+  margin-top:10px;
+}
+
+/* BUTTONS */
 .choice-btn{
   position:absolute;
   padding:12px 25px;
@@ -72,10 +74,9 @@ body,html{
   border-radius:20px;
   cursor:pointer;
   font-size:18px;
-  z-index:5; /* IMPORTANT FIX so it's never behind cat */
 }
 
-/* YES BUTTON (FIXED GROW + GLOW) */
+/* YES BUTTON (REAL FIXED GROW SYSTEM) */
 #yesBtn{
   background:#ff4d6d;
   color:white;
@@ -83,6 +84,7 @@ body,html{
   top:75%;
   transform:scale(1);
   transition:transform 0.2s ease;
+  z-index:10;
 }
 
 /* NO BUTTON */
@@ -91,6 +93,7 @@ body,html{
   color:white;
   left:55%;
   top:75%;
+  z-index:10;
 }
 
 /* POPUP */
@@ -119,12 +122,11 @@ body,html{
   background:white;
   padding:20px 30px;
   border-radius:15px;
-  font-size:18px;
 }
 
-/* YES GLOW + PULSE (REAL FIX) */
-.glow{
-  animation:pulse 0.8s infinite;
+/* YES GROW + PULSE (FIXED PROPERLY) */
+.grow{
+  animation:pulse 0.6s infinite;
 }
 
 @keyframes pulse{
@@ -140,7 +142,10 @@ body,html{
 .explode{animation:explode .3s forwards;}
 
 /* SLIDE 3 */
-#slide3{background:#ffd6e0;}
+#slide3{
+  background:#ffd6e0;
+  flex-wrap:wrap;
+}
 
 .float{
   position:absolute;
@@ -165,12 +170,12 @@ body,html{
 <button id="startBtn" class="start-btn">PRESS</button>
 </div>
 
-<!-- SLIDE 2 -->
+<!-- SLIDE 2 (HERO) -->
 <div id="slide2" class="slide">
 
 <img src="bdaycat.png" id="cat">
-<h1>Happy Birthday Shoon! 🎂</h1>
 
+<h1>Happy Birthday Shoon! 🎂</h1>
 <p>Open your presents?</p>
 
 <button id="yesBtn" class="choice-btn">YES</button>
@@ -200,33 +205,27 @@ let noBtn = document.getElementById("noBtn");
 let modal = document.getElementById("modal");
 let modalText = document.getElementById("modalText");
 
-let noClicks = 0;
 let scale = 1;
-
-let multiClicks = 0;
-let multiDone = false;
-
-let popupTimer;
+let noClicks = 0;
 
 /* POPUP */
 function pop(text){
-  clearTimeout(popupTimer);
   modalText.innerText = text;
   modal.classList.add("show");
 
-  popupTimer = setTimeout(()=>{
+  setTimeout(()=>{
     modal.classList.remove("show");
-  },1800);
+  },1500);
 }
 
-/* YES GROW FIX */
-function grow(){
+/* YES GROW FIX (REAL WORKING VERSION) */
+function growYes(){
   scale += 0.18;
   yesBtn.style.setProperty('--scale', scale);
   yesBtn.style.transform = `scale(${scale})`;
 }
 
-/* START MUSIC */
+/* START */
 startBtn.onclick = ()=>{
   slide1.classList.remove("active");
   slide2.classList.add("active");
@@ -237,113 +236,20 @@ startBtn.onclick = ()=>{
 yesBtn.onclick = ()=>{
   slide2.classList.remove("active");
   slide3.classList.add("active");
-  spawn();
 };
 
 /* NO */
 noBtn.onclick = ()=>{
   noClicks++;
-  grow();
+  growYes();
 
   if(noClicks===1){
     pop("why no? ૮(◞ ‸ ◟ )ა");
-    move(noBtn);
   }
   else if(noClicks===2){
     pop("try pressing 5 buttons then (¬_ ´¬ )");
-    multiply();
   }
 };
-
-/* MOVE */
-function move(btn){
-  btn.style.left=Math.random()*70+"%";
-  btn.style.top=Math.random()*70+"%";
-}
-
-/* MULTIPLY */
-function multiply(){
-  noBtn.style.display="none";
-
-  multiClicks=0;
-  multiDone=false;
-
-  for(let i=0;i<5;i++){
-    let b=noBtn.cloneNode(true);
-    b.style.display="block";
-    b.style.left=Math.random()*70+"%";
-    b.style.top=Math.random()*60+"%";
-    b.style.zIndex=5;
-
-    slide2.appendChild(b);
-
-    b.onclick=()=>{
-      if(multiDone) return;
-
-      grow();
-      multiClicks++;
-
-      if(multiClicks===1) pop("3");
-      else if(multiClicks===2) pop("2");
-      else if(multiClicks===3) pop("1");
-      else if(multiClicks===4) pop("almost there ( •̀⤙•́ )");
-
-      else if(multiClicks===5){
-        multiDone=true;
-
-        document.querySelectorAll("#slide2 button").forEach(btn=>{
-          if(btn.innerText==="NO") btn.remove();
-        });
-
-        finalStage();
-      }
-
-      b.remove();
-    };
-  }
-}
-
-/* FINAL */
-function finalStage(){
-  let b=noBtn.cloneNode(true);
-  b.style.display="block";
-  b.style.zIndex=6;
-  slide2.appendChild(b);
-
-  pop("alr fine try catching it then <(ꐦㅍ _ㅍ)>");
-
-  let move=setInterval(()=>{
-    b.style.left=Math.random()*70+"%";
-    b.style.top=Math.random()*60+"%";
-  },900);
-
-  b.onclick=()=>{
-    grow();
-    clearInterval(move);
-
-    pop("that’s it, no more No button for you  (ᗒᗣᗕ)");
-
-    b.classList.add("explode");
-
-    setTimeout(()=>{
-      yesBtn.classList.add("glow");
-    },200);
-  };
-}
-
-/* SLIDE 3 */
-function spawn(){
-  let items=["💖","✨","🍓","🐱","🐰"];
-
-  for(let i=0;i<40;i++){
-    let e=document.createElement("div");
-    e.className="float";
-    e.innerText=items[Math.floor(Math.random()*items.length)];
-    e.style.left=Math.random()*100+"%";
-    e.style.top=Math.random()*100+"%";
-    slide3.appendChild(e);
-  }
-}
 </script>
 
 </body>
