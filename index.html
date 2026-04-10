@@ -42,6 +42,24 @@ body,html{
   text-align:center;
 }
 
+/* CAT ABOVE */
+#cat{
+  width:380px;
+  max-width:85%;
+  position:absolute;
+  top:20px;
+  left:50%;
+  transform:translateX(-50%);
+  z-index:1;
+}
+
+/* TITLE UNDER CAT */
+#slide2 h1{
+  margin-top:260px;
+  text-align:center;
+  z-index:2;
+}
+
 /* Buttons */
 .choice-btn{
   position:absolute;
@@ -65,44 +83,6 @@ body,html{
   color:white;
   left:55%;
   top:75%;
-}
-
-/* CAT */
-#cat{
-  width:300px;
-  max-width:75%;
-  position:absolute;
-  top:70px;
-  left:50%;
-  transform:translateX(-50%);
-  animation:catFloat 3s ease-in-out infinite, catGlow 2s ease-in-out infinite;
-  cursor:pointer;
-}
-
-@keyframes catFloat{
-  0%{transform:translate(-50%,0);}
-  50%{transform:translate(-50%,-18px);}
-  100%{transform:translate(-50%,0);}
-}
-
-@keyframes catGlow{
-  0%{filter:drop-shadow(0 10px 15px rgba(0,0,0,0.2));}
-  50%{filter:drop-shadow(0 15px 25px rgba(255,100,150,0.4));}
-  100%{filter:drop-shadow(0 10px 15px rgba(0,0,0,0.2));}
-}
-
-/* sparkle */
-.sparkle{
-  position:absolute;
-  font-size:20px;
-  animation:sparkleFloat 2s infinite ease-in-out;
-  pointer-events:none;
-}
-
-@keyframes sparkleFloat{
-  0%{transform:translateY(0); opacity:0.7;}
-  50%{transform:translateY(-10px); opacity:1;}
-  100%{transform:translateY(0); opacity:0.7;}
 }
 
 /* popup */
@@ -177,15 +157,8 @@ body,html{
 
 <!-- Slide2 -->
 <div id="slide2" class="slide">
-<h1>Happy Birthday Shoon! 🎂</h1>
-
 <img src="bdaycat.png" id="cat">
-
-<!-- sparkles -->
-<div class="sparkle" style="left:45%; top:120px;">✨</div>
-<div class="sparkle" style="left:60%; top:160px;">💖</div>
-<div class="sparkle" style="left:40%; top:200px;">✨</div>
-<div class="sparkle" style="left:55%; top:90px;">💖</div>
+<h1>Happy Birthday Shoon! 🎂</h1>
 
 <p>Open your presents?</p>
 
@@ -211,8 +184,6 @@ let slide3 = document.getElementById("slide3");
 
 let yesBtn = document.getElementById("yesBtn");
 let noBtn = document.getElementById("noBtn");
-
-let cat = document.getElementById("cat");
 
 let modal = document.getElementById("modal");
 let modalText = document.getElementById("modalText");
@@ -246,18 +217,7 @@ function grow(){
 startBtn.onclick = ()=>{
   slide1.classList.remove("active");
   slide2.classList.add("active");
-
   bgMusic.play();
-};
-
-/* CAT INTERACTION */
-cat.onclick = ()=>{
-  cat.style.transform = "translateX(-50%) scale(1.15)";
-  setTimeout(()=>{
-    cat.style.transform = "translateX(-50%) scale(1)";
-  },200);
-
-  pop("meow… pay attention to me 😼");
 };
 
 /* YES */
@@ -344,7 +304,7 @@ function finalStage(){
     grow();
     clearInterval(move);
 
-    pop("fine imma pop this before u pmo ς(≖_≖ )ﾉ🔪");
+    pop("that’s it, no more No button for you  (ᗒᗣᗕ)");
 
     b.classList.add("explode");
 
