@@ -12,6 +12,7 @@ body,html{
   font-family:Arial;
 }
 
+/* SLIDES */
 .slide{
   display:none;
   width:100%;
@@ -22,7 +23,10 @@ body,html{
 
 .active{display:flex;}
 
-#slide1{background:black;}
+/* SLIDE 1 */
+#slide1{
+  background:black;
+}
 
 .start-btn{
   background:red;
@@ -34,20 +38,25 @@ body,html{
   cursor:pointer;
 }
 
+/* SLIDE 2 */
 #slide2{
   background:#ffd6e0;
   flex-direction:column;
   text-align:center;
   position:relative;
-  padding-top:30px;
+  padding-top:20px;
 }
 
 #cat{
-  width:380px;
-  max-width:85%;
-  margin-bottom:10px;
+  width:420px;
+  max-width:90%;
+  margin-bottom:5px;
 }
 
+h1{margin:0;}
+p{margin:10px;}
+
+/* BUTTONS */
 .choice-btn{
   position:absolute;
   padding:12px 25px;
@@ -55,18 +64,18 @@ body,html{
   border-radius:20px;
   font-size:18px;
   z-index:10;
-  user-select:none;
 }
 
+/* YES */
 #yesBtn{
   background:#ff4d6d;
   color:white;
   left:40%;
   top:75%;
-  --s:1;
-  transform:scale(var(--s));
+  transform:scale(1);
 }
 
+/* NO */
 #noBtn{
   background:#444;
   color:white;
@@ -74,6 +83,7 @@ body,html{
   top:75%;
 }
 
+/* POPUP */
 .modal{
   position:fixed;
   inset:0;
@@ -84,6 +94,7 @@ body,html{
   opacity:0;
   pointer-events:none;
   transition:0.2s;
+  z-index:9999;
 }
 
 .modal.show{
@@ -97,16 +108,18 @@ body,html{
   border-radius:15px;
 }
 
+/* YES FINAL GLOW */
 .grow{
-  animation:pulse 0.6s infinite;
+  animation:pulse 0.7s infinite;
 }
 
 @keyframes pulse{
-  0%{transform:scale(var(--s));}
-  50%{transform:scale(calc(var(--s) + 0.2));}
-  100%{transform:scale(var(--s));}
+  0%{transform:scale(var(--s,1));}
+  50%{transform:scale(calc(var(--s,1) + 0.2));}
+  100%{transform:scale(var(--s,1));}
 }
 
+/* SLIDE 3 */
 #slide3{
   background:#ffd6e0;
 }
@@ -115,13 +128,16 @@ body,html{
 
 <body>
 
+<!-- AUDIO -->
 <audio id="music1" src="hotline.mp3"></audio>
 <audio id="music2" src="minmhamin.mp3"></audio>
 
+<!-- SLIDE 1 -->
 <div id="slide1" class="slide active">
 <button id="startBtn" class="start-btn">PRESS</button>
 </div>
 
+<!-- SLIDE 2 -->
 <div id="slide2" class="slide">
 
 <img src="bdaycat.png" id="cat">
@@ -134,8 +150,10 @@ body,html{
 
 </div>
 
+<!-- SLIDE 3 -->
 <div id="slide3" class="slide"></div>
 
+<!-- POPUP -->
 <div id="modal" class="modal">
 <div id="modalText" class="modal-box"></div>
 </div>
@@ -155,14 +173,16 @@ let modalText = document.getElementById("modalText");
 let music1 = document.getElementById("music1");
 let music2 = document.getElementById("music2");
 
-let noRemaining = 5;
+/* STATE */
+let stageClick = 0;
 let yesScale = 1;
-let noClones = [];
+
+let clones = [];
+let countdown = 3;
+let finalMode = false;
 
 /* POPUP */
 function pop(text){
-  modal.classList.remove("show");
-  void modal.offsetWidth;
   modalText.innerText = text;
   modal.classList.add("show");
   setTimeout(()=>modal.classList.remove("show"),1200);
@@ -172,7 +192,6 @@ function pop(text){
 startBtn.onclick = async ()=>{
   slide1.classList.remove("active");
   slide2.classList.add("active");
-
   try{ await music1.play(); }catch(e){}
 };
 
@@ -183,106 +202,100 @@ yesBtn.onclick = async ()=>{
 
   music1.pause();
   music2.currentTime = 0;
-
   try{ await music2.play(); }catch(e){}
 };
 
-/* GROW YES */
+/* YES GROW */
 function growYes(){
   yesScale += 0.25;
-  yesBtn.style.setProperty("--s", yesScale);
+  yesBtn.style.transform = `scale(${yesScale})`;
 }
 
-/* NO LOGIC */
-function consumeNo(){
-  noRemaining--;
-  growYes();
-
-  if(noRemaining === 4){
-    pop("why no? ૮(◞ ‸ ◟ )ა");
-  }
-  else if(noRemaining === 3){
-    pop("try pressing 5 buttons then (¬_ ´¬ )");
-  }
-  else if(noRemaining === 2){
-    pop("alr fine try catching it then <(ꐦㅍ _ㅍ)>");
-  }
-  else if(noRemaining === 1){
-    pop("that’s it, no more No button for you (ᗒᗣᗕ)");
-  }
-  else if(noRemaining <= 0){
-    finalState();
-  }
+/* TELEPORT */
+function teleport(btn){
+  btn.style.left = (Math.random()*60 + 20) + "%";
+  btn.style.top = (Math.random()*60 + 20) + "%";
 }
 
-/* MAIN NO BUTTON */
-noBtn.onclick = ()=>{
-
-  if(noRemaining > 3){
-    consumeNo();
-
-    noBtn.style.left = (Math.random()*60 + 20) + "%";
-    noBtn.style.top = (Math.random()*60 + 20) + "%";
-  }
-
-  else if(noRemaining === 3){
-    consumeNo();
-    spawnClones();
-  }
-
-  else{
-    consumeNo();
-  }
-};
-
-/* CLONES (FIXED) */
+/* SPAWN CLONES */
 function spawnClones(){
 
   noBtn.style.display = "none";
 
   for(let i=0;i<5;i++){
+    let c = noBtn.cloneNode(true);
+    c.removeAttribute("id");
 
-    let clone = document.createElement("button");
-    clone.innerText = "NO";
-    clone.className = "choice-btn";
+    c.style.position = "absolute";
+    teleport(c);
 
-    clone.style.background = "#444";
-    clone.style.color = "white";
+    c.onclick = ()=>{
 
-    clone.style.left = (Math.random()*60 + 20) + "%";
-    clone.style.top = (Math.random()*60 + 20) + "%";
+      if(finalMode) return;
 
-    clone.onclick = ()=>{
+      c.remove();
+      clones = clones.filter(x=>x!==c);
 
-      if(noRemaining <= 0) return;
+      if(countdown > 0){
+        pop(countdown + "...");
+        countdown--;
+      }
 
-      consumeNo();
+      if(countdown === 0){
+        pop("Shoon lae thu…( •̀⤙•́ )");
 
-      clone.remove();
-      noClones = noClones.filter(btn => btn !== clone);
+        /* KEEP ONLY ONE */
+        clones.forEach(btn=>{
+          if(btn !== clones[0]) btn.remove();
+        });
 
-      if(noRemaining <= 0){
-        finalState();
+        clones = [clones[0]];
+        finalMode = true;
+
+        startMoving(clones[0]);
       }
     };
 
-    slide2.appendChild(clone);
-    noClones.push(clone);
+    slide2.appendChild(c);
+    clones.push(c);
   }
 }
 
-/* FINAL */
-function finalState(){
+/* FINAL MOVING BUTTON */
+function startMoving(btn){
 
-  noClones.forEach(btn => btn.remove());
-  noClones = [];
+  let move = setInterval(()=>{
+    teleport(btn);
+  },800);
 
-  if(noBtn) noBtn.remove();
-
-  yesBtn.classList.add("grow");
-
-  pop("that’s it, no more No button for you (ᗒᗣᗕ)");
+  btn.onclick = ()=>{
+    clearInterval(move);
+    pop("that’s it, no more No button for you (ᗒᗣᗕ)");
+    btn.remove();
+    yesBtn.classList.add("grow");
+  };
 }
+
+/* MAIN NO */
+noBtn.onclick = ()=>{
+
+  growYes();
+  stageClick++;
+
+  if(stageClick === 1){
+    pop("why no? ૮(◞ ‸ ◟ )ა");
+    teleport(noBtn);
+  }
+
+  else if(stageClick === 2){
+    pop("try pressing 5 buttons then (¬_ ´¬ )");
+    teleport(noBtn);
+  }
+
+  else if(stageClick === 3){
+    spawnClones();
+  }
+};
 </script>
 
 </body>
