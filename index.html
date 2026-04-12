@@ -19,6 +19,7 @@ body,html{
   height:100%;
   justify-content:center;
   align-items:center;
+  flex-direction:column;
 }
 
 .active{display:flex;}
@@ -39,15 +40,13 @@ body,html{
 /* SLIDE 2 */
 #slide2{
   background:#ffd6e0;
-  flex-direction:column;
   text-align:center;
   position:relative;
-  padding-top:30px;
 }
 
 #cat{
   width:380px;
-  max-width:85%;
+  margin-bottom:10px;
 }
 
 .choice-btn{
@@ -59,7 +58,6 @@ body,html{
   cursor:pointer;
 }
 
-/* YES */
 #yesBtn{
   background:#ff4d6d;
   color:white;
@@ -67,7 +65,6 @@ body,html{
   top:75%;
 }
 
-/* NO */
 #noBtn{
   background:#444;
   color:white;
@@ -86,6 +83,7 @@ body,html{
   opacity:0;
   pointer-events:none;
   transition:0.2s;
+  z-index:9999;
 }
 
 .modal.show{
@@ -100,50 +98,48 @@ body,html{
 }
 
 /* YES GROW */
-@keyframes pulse{
-  0%{transform:scale(var(--s));}
-  50%{transform:scale(calc(var(--s) + 0.15));}
-  100%{transform:scale(var(--s));}
+.grow{
+  animation:pulse 0.7s infinite;
 }
 
-.grow{
-  animation:pulse 0.6s infinite;
+@keyframes pulse{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.2);}
+  100%{transform:scale(1);}
 }
 
 /* SLIDE 3 */
 #slide3{
   background:#ffd6e0;
-  flex-direction:column;
-  align-items:center;
-  justify-content:center;
   position:relative;
   overflow:hidden;
 }
+
+.hidden{display:none;}
 
 /* BIG GIFT */
 #bigGift{
   font-size:80px;
   cursor:pointer;
-  transition:0.3s;
 }
-#bigGift:hover{transform:scale(1.2);}
 
-/* GAME */
+/* CARD GRID */
 #cardGrid{
   display:grid;
   grid-template-columns:repeat(5,70px);
-  gap:15px;
+  gap:10px;
   margin-top:20px;
 }
 
+/* CARD */
 .card{
   width:70px;
   height:90px;
   background:white;
   display:flex;
-  align-items:center;
   justify-content:center;
-  font-size:30px;
+  align-items:center;
+  font-size:28px;
   border-radius:10px;
   cursor:pointer;
   transition:0.3s;
@@ -167,13 +163,16 @@ body,html{
 
 #bigContent{
   background:white;
-  padding:30px;
+  padding:25px;
   border-radius:15px;
 }
 
-.hidden{display:none;}
+#backBtn{
+  margin-top:10px;
+  padding:10px 20px;
+}
 
-/* FLOAT BG */
+/* FLOATING BG */
 #bgFloat{
   position:absolute;
   inset:0;
@@ -182,11 +181,11 @@ body,html{
 
 .floatItem{
   position:absolute;
-  opacity:0.4;
-  animation:fall linear infinite;
+  animation:float 8s linear infinite;
+  opacity:0.5;
 }
 
-@keyframes fall{
+@keyframes float{
   from{transform:translateY(-10vh);}
   to{transform:translateY(110vh);}
 }
@@ -195,6 +194,7 @@ body,html{
 
 <body>
 
+<!-- AUDIO -->
 <audio id="music1" src="hotline.mp3"></audio>
 <audio id="music2" src="minmhamin.mp3"></audio>
 
@@ -208,8 +208,7 @@ body,html{
 
 <img src="bdaycat.png" id="cat">
 
-<h1>Happy Birthday Shoon! 🎂</h1>
-<p>Open your presents?</p>
+<h1>Happy Birthday Shoon 🎂</h1>
 
 <button id="yesBtn" class="choice-btn">YES</button>
 <button id="noBtn" class="choice-btn">NO</button>
@@ -219,7 +218,6 @@ body,html{
 <!-- SLIDE 3 -->
 <div id="slide3" class="slide">
 
-<h2>🎁 Tap the gift</h2>
 <div id="bigGift">🎁</div>
 
 <div id="gameArea" class="hidden">
@@ -243,19 +241,34 @@ body,html{
 </div>
 
 <script>
+
+/* SLIDES */
 let slide1 = document.getElementById("slide1");
 let slide2 = document.getElementById("slide2");
 let slide3 = document.getElementById("slide3");
 
+/* BUTTONS */
 let startBtn = document.getElementById("startBtn");
 let yesBtn = document.getElementById("yesBtn");
 let noBtn = document.getElementById("noBtn");
 
+/* POPUP */
 let modal = document.getElementById("modal");
 let modalText = document.getElementById("modalText");
 
+/* MUSIC */
 let music1 = document.getElementById("music1");
 let music2 = document.getElementById("music2");
+
+/* STATE */
+let stage = 0;
+let yesScale = 1;
+
+/* CLONE GAME */
+let clones = [];
+let clicks = 0;
+let moving = false;
+let moveInterval = null;
 
 /* POPUP */
 function pop(text){
@@ -268,39 +281,118 @@ function pop(text){
 startBtn.onclick = async ()=>{
   slide1.classList.remove("active");
   slide2.classList.add("active");
-  try{ await music1.play(); }catch(e){}
+  try{await music1.play();}catch(e){}
 };
 
 /* YES */
 yesBtn.onclick = async ()=>{
   slide2.classList.remove("active");
   slide3.classList.add("active");
-
   music1.pause();
-  music2.currentTime = 0;
-  try{ await music2.play(); }catch(e){}
+  music2.play();
 };
 
-/* NO SIMPLE (skip game issues for now) */
+/* YES GROW */
+function growYes(){
+  yesScale += 0.25;
+  yesBtn.style.transform = `scale(${yesScale})`;
+}
+
+/* TELEPORT */
+function teleport(btn){
+  btn.style.left = (Math.random()*70 + 10) + "%";
+  btn.style.top = (Math.random()*60 + 20) + "%";
+}
+
+/* NO LOGIC */
 noBtn.onclick = ()=>{
-  pop("just press yes 😭");
+  growYes();
+  stage++;
+
+  if(stage === 1){
+    pop("why no? ૮(◞ ‸ ◟ )ა");
+    teleport(noBtn);
+  }
+
+  else if(stage === 2){
+    pop("try pressing 5 buttons then (¬_ ´¬ )");
+    spawnClones();
+  }
 };
 
-/* SLIDE 3 GAME */
+/* SPAWN CLONES */
+function spawnClones(){
 
+  noBtn.style.display = "none";
+  clones = [];
+  clicks = 0;
+
+  for(let i=0;i<5;i++){
+    let c = document.createElement("button");
+    c.className = "choice-btn";
+    c.innerText = "NO";
+
+    teleport(c);
+
+    c.onclick = ()=>handleClone(c);
+
+    slide2.appendChild(c);
+    clones.push(c);
+  }
+}
+
+/* HANDLE CLONES */
+function handleClone(btn){
+
+  if(moving) return;
+
+  btn.remove();
+  clicks++;
+
+  if(clicks === 1) pop("3...");
+  if(clicks === 2) pop("2...");
+  if(clicks === 3) pop("1...");
+
+  if(clicks === 4){
+    pop("Shoon lae thu…( •̀⤙•́ )");
+  }
+
+  if(clicks === 5){
+    pop("alr fine try catching it then <(ꐦㅍ _ㅍ)>");
+    startMoving(btn);
+  }
+}
+
+/* FINAL MOVE */
+function startMoving(btn){
+
+  moving = true;
+
+  moveInterval = setInterval(()=>{
+    teleport(btn);
+  },1000);
+
+  btn.onclick = ()=>{
+    clearInterval(moveInterval);
+    pop("that’s it, no more No button for you (ᗒᗣᗕ)");
+    btn.remove();
+    yesBtn.classList.add("grow");
+  };
+}
+
+/* SLIDE 3 */
 let bigGift = document.getElementById("bigGift");
 let gameArea = document.getElementById("gameArea");
 let cardGrid = document.getElementById("cardGrid");
-let progressText = document.getElementById("progress");
-
+let progress = document.getElementById("progress");
 let bigCard = document.getElementById("bigCard");
 let bigContent = document.getElementById("bigContent");
 let backBtn = document.getElementById("backBtn");
 
 let found = 0;
+
 let icons = ["🎆","🎇","🌌","🌠"];
 
-/* OPEN */
 bigGift.onclick = ()=>{
   bigGift.classList.add("hidden");
   gameArea.classList.remove("hidden");
@@ -309,41 +401,42 @@ bigGift.onclick = ()=>{
 
 function createCards(){
 
-  let total = 20;
   let giftIndexes = [];
 
   while(giftIndexes.length < 10){
-    let r = Math.floor(Math.random()*total);
+    let r = Math.floor(Math.random()*20);
     if(!giftIndexes.includes(r)) giftIndexes.push(r);
   }
 
-  for(let i=0;i<total;i++){
+  for(let i=0;i<20;i++){
 
-    let card = document.createElement("div");
-    card.className = "card";
-    card.innerText = icons[Math.floor(Math.random()*icons.length)];
+    let c = document.createElement("div");
+    c.className = "card";
+
+    c.innerText = icons[Math.floor(Math.random()*icons.length)];
 
     let isGift = giftIndexes.includes(i);
 
-    card.onclick = ()=>{
+    c.onclick = ()=>{
 
-      if(card.classList.contains("flipped")) return;
-      card.classList.add("flipped");
+      if(c.classList.contains("flipped")) return;
+
+      c.classList.add("flipped");
 
       if(isGift){
         found++;
-        progressText.innerText = `${found} / 10 found`;
-        showBigCard("🎁 Gift (placeholder)");
+        progress.innerText = found + " / 10 found";
+        show("🎁 Gift found!");
       }else{
-        showBigCard("😂 Fake gift");
+        show("😂 Fake gift");
       }
     };
 
-    cardGrid.appendChild(card);
+    cardGrid.appendChild(c);
   }
 }
 
-function showBigCard(text){
+function show(text){
   bigContent.innerText = text;
   bigCard.classList.remove("hidden");
 }
@@ -352,21 +445,20 @@ backBtn.onclick = ()=>{
   bigCard.classList.add("hidden");
 };
 
-/* FLOAT BG */
+/* FLOATING BG */
 let bg = document.getElementById("bgFloat");
-let bgIcons = ["🐱","🐰","🌸","🌷","🎂"];
+let items = ["🐱","🐰","🌸","🌷","🎂"];
 
-for(let i=0;i<25;i++){
-  let item = document.createElement("div");
-  item.className = "floatItem";
-  item.innerText = bgIcons[Math.floor(Math.random()*bgIcons.length)];
-
-  item.style.left = Math.random()*100 + "%";
-  item.style.animationDuration = (5 + Math.random()*5) + "s";
-  item.style.fontSize = (15 + Math.random()*20) + "px";
-
-  bg.appendChild(item);
+for(let i=0;i<30;i++){
+  let d = document.createElement("div");
+  d.className = "floatItem";
+  d.innerText = items[Math.floor(Math.random()*items.length)];
+  d.style.left = Math.random()*100 + "%";
+  d.style.fontSize = (15 + Math.random()*25) + "px";
+  d.style.animationDuration = (5 + Math.random()*6) + "s";
+  bg.appendChild(d);
 }
+
 </script>
 
 </body>
