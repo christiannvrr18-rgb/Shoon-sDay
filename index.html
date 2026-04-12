@@ -257,7 +257,7 @@ yesBtn.onclick = async ()=>{
 
 /* FLOATING BG */
 function spawnFloating(){
-  let emojis = ["🐱","🐰","🌸","🌷","🌹","🎂"];
+  let emojis = ["🐱","🐰","🌸","🍓","🎀","🌷","🌹","🎂"];
 
   setInterval(()=>{
     let el = document.createElement("div");
@@ -265,7 +265,7 @@ function spawnFloating(){
     el.innerText = emojis[Math.floor(Math.random()*emojis.length)];
 
     el.style.left = Math.random()*100 + "%";
-    el.style.fontSize = (18 + Math.random()*20) + "px";
+    el.style.fontSize = (25 + Math.random()*20) + "px";
     el.style.animationDuration = (6 + Math.random()*6) + "s";
 
     slide3.appendChild(el);
