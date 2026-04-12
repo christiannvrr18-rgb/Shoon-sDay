@@ -106,7 +106,86 @@ body,html{
 }
 
 #slide3{background:#ffd6e0;}
-</style>
+/* ===== SLIDE 3 GAME ===== */
+
+#slide3{
+  background:#ffd6e0;
+  flex-direction:column;
+  text-align:center;
+  position:relative;
+  overflow:hidden;
+}
+
+#bigGift{
+  font-size:100px;
+  cursor:pointer;
+  margin-top:40px;
+  transition:0.3s;
+}
+#bigGift:hover{
+  transform:scale(1.2);
+}
+
+#cardGame{
+  margin-top:20px;
+}
+
+#cardContainer{
+  display:grid;
+  grid-template-columns:repeat(5, 70px);
+  gap:15px;
+  justify-content:center;
+}
+
+.card{
+  width:70px;
+  height:90px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:28px;
+  background:white;
+  border-radius:10px;
+  cursor:pointer;
+  transition:0.4s;
+}
+
+.card.flipped{
+  background:#ffd6e0;
+  transform:rotateY(180deg);
+}
+
+#viewer{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  z-index:20;
+  width:80%;
+  max-width:300px;
+}
+
+#backBtn{
+  margin-top:15px;
+}
+
+/* floating bg */
+.float{
+  position:absolute;
+  font-size:20px;
+  animation:floatUp linear infinite;
+  opacity:0.7;
+}
+
+@keyframes floatUp{
+  from{transform:translateY(100vh);}
+  to{transform:translateY(-10vh);}
+}
+
+.hidden{display:none;}
 </head>
 
 <body>
@@ -126,7 +205,23 @@ body,html{
 <button id="noBtn" class="choice-btn">NO</button>
 </div>
 
-<div id="slide3" class="slide"></div>
+<div id="slide3" class="slide">
+
+  <h2 id="giftHeader">Open your gift 🎁</h2>
+
+  <div id="bigGift">🎁</div>
+
+  <div id="cardGame" class="hidden">
+    <h3 id="progress">Gifts found: 0/10</h3>
+    <div id="cardContainer"></div>
+  </div>
+
+  <div id="viewer" class="hidden">
+    <div id="viewerContent"></div>
+    <button id="backBtn">Back</button>
+  </div>
+
+</div>
 
 <div id="modal" class="modal">
 <div id="modalText" class="modal-box"></div>
@@ -304,6 +399,137 @@ noBtn.onclick = ()=>{
     spawnClones(); // ✅ CORRECT TIMING
   }
 };
+/* ===== SLIDE 3 GAME ===== */
+
+let bigGift = document.getElementById("bigGift");
+let cardGame = document.getElementById("cardGame");
+let cardContainer = document.getElementById("cardContainer");
+let viewer = document.getElementById("viewer");
+let viewerContent = document.getElementById("viewerContent");
+let backBtn = document.getElementById("backBtn");
+let progressText = document.getElementById("progress");
+
+let found = 0;
+
+let icons = ["🎆","🎇","🌌","🌠"];
+
+let realGifts = [
+"Bartholomew & Pompompurin remind me of you 🐱🐰",
+"i hope you have a really good day today",
+"you randomly cross my mind a lot",
+"i hope you sleep peacefully tonight",
+"your presence is actually comforting",
+"i made something for you… 👀",
+"you matter more than you think",
+"i appreciate you quietly",
+"you have a calm kind of beauty",
+"happy birthday ❤️"
+];
+
+let fakeGifts = [
+"wrong one 😛",
+"try again",
+"nope",
+"almost 😭",
+"you got scammed",
+"nahhh",
+"miss",
+"again",
+"no luck",
+"not this one"
+];
+
+let allCards = [];
+
+function shuffle(arr){
+  for(let i=arr.length-1;i>0;i--){
+    let j = Math.floor(Math.random()*(i+1));
+    [arr[i],arr[j]]=[arr[j],arr[i]];
+  }
+}
+
+function createCards(){
+
+  allCards = [];
+  found = 0;
+  progressText.innerText = "Gifts found: 0/10";
+
+  realGifts.forEach(g=>allCards.push({type:"real",content:g}));
+  fakeGifts.forEach(f=>allCards.push({type:"fake",content:f}));
+
+  shuffle(allCards);
+
+  cardContainer.innerHTML = "";
+
+  allCards.forEach(data=>{
+
+    let card = document.createElement("div");
+    card.className = "card";
+    card.innerText = icons[Math.floor(Math.random()*icons.length)];
+
+    card.onclick = ()=>{
+
+      if(card.classList.contains("flipped")) return;
+
+      card.classList.add("flipped");
+
+      setTimeout(()=>{
+
+        if(data.type==="real"){
+          found++;
+          progressText.innerText = `Gifts found: ${found}/10`;
+
+          viewerContent.innerText = data.content;
+          viewer.classList.remove("hidden");
+
+        }else{
+          pop(data.content);
+        }
+
+      },300);
+    };
+
+    cardContainer.appendChild(card);
+  });
+}
+
+/* OPEN GIFT */
+bigGift.onclick = ()=>{
+  bigGift.style.display = "none";
+  document.getElementById("giftHeader").innerText = "Find the hidden gifts 🎁";
+  cardGame.classList.remove("hidden");
+  createCards();
+};
+
+/* BACK */
+backBtn.onclick = ()=>{
+  viewer.classList.add("hidden");
+
+  if(found===10){
+    setTimeout(()=>{
+      pop("you found everything… ❤️");
+    },500);
+  }
+};
+
+/* FLOATING BG */
+function spawnFloat(){
+
+  let emojis=["🐱","🐰","🌸","🌷","🌹","🎂"];
+
+  let el=document.createElement("div");
+  el.className="float";
+  el.innerText=emojis[Math.floor(Math.random()*emojis.length)];
+
+  el.style.left=Math.random()*100+"vw";
+  el.style.animationDuration=(5+Math.random()*5)+"s";
+
+  slide3.appendChild(el);
+
+  setTimeout(()=>el.remove(),10000);
+}
+
+setInterval(spawnFloat,800);
 </script>
 
 </body>
