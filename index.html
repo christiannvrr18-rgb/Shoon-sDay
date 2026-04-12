@@ -105,7 +105,7 @@ body,html{
   100%{transform:scale(1);}
 }
 
-/* ===== SLIDE 3 ADDITIONS ONLY ===== */
+/* ===== SLIDE 3 ===== */
 
 #slide3{
   background:#ffd6e0;
@@ -121,13 +121,12 @@ body,html{
 }
 
 #cardGrid{
-  display:none;
+  display:none; /* FIXED */
   position:absolute;
   top:80px;
   width:100%;
   padding:20px;
   box-sizing:border-box;
-  display:grid;
   grid-template-columns:repeat(5,1fr);
   gap:10px;
 }
@@ -189,13 +188,11 @@ body,html{
 <button id="noBtn" class="choice-btn">NO</button>
 </div>
 
-<!-- ✅ SLIDE 3 CONTENT ADDED -->
 <div id="slide3" class="slide">
   <div id="bigGift">🎁</div>
   <div id="cardGrid"></div>
 </div>
 
-<!-- ✅ REWARD POPUP -->
 <div id="rewardBox">
   <div id="rewardContent">
     <div id="rewardText"></div>
@@ -232,11 +229,11 @@ let finalBtn = null;
 let moving = false;
 let moveInterval = null;
 
-/* POPUP */
+/* POPUP (SLOWER) */
 function pop(text){
   modalText.innerText = text;
   modal.classList.add("show");
-  setTimeout(()=>modal.classList.remove("show"),1200);
+  setTimeout(()=>modal.classList.remove("show"),2500);
 }
 
 /* START */
@@ -255,10 +252,10 @@ yesBtn.onclick = async ()=>{
   music2.currentTime = 0;
   try{ await music2.play(); }catch(e){}
 
-  spawnFloating(); // ✅ ADDED ONLY
+  spawnFloating();
 };
 
-/* ===== FLOATING BG ===== */
+/* FLOATING BG */
 function spawnFloating(){
   let emojis = ["🐱","🐰","🌸","🌷","🌹","🎂"];
 
@@ -268,14 +265,15 @@ function spawnFloating(){
     el.innerText = emojis[Math.floor(Math.random()*emojis.length)];
 
     el.style.left = Math.random()*100 + "%";
-    el.style.animationDuration = (5 + Math.random()*5) + "s";
+    el.style.fontSize = (18 + Math.random()*20) + "px";
+    el.style.animationDuration = (6 + Math.random()*6) + "s";
 
     slide3.appendChild(el);
-    setTimeout(()=>el.remove(),10000);
-  },600);
+    setTimeout(()=>el.remove(),12000);
+  },400);
 }
 
-/* ===== GIFT GAME ===== */
+/* GIFT GAME */
 let bigGift = document.getElementById("bigGift");
 let cardGrid = document.getElementById("cardGrid");
 let rewardBox = document.getElementById("rewardBox");
@@ -319,35 +317,29 @@ function generateCards(){
   });
 }
 
-/* ===== YOUR ORIGINAL CODE BELOW (UNCHANGED) ===== */
+/* ===== ORIGINAL GAME ===== */
 
-/* YES GROW */
 function growYes(){
   yesScale += 0.25;
   yesBtn.style.transform = `scale(${yesScale})`;
 }
 
-/* TELEPORT */
 function teleport(btn){
   btn.style.left = (Math.random()*70 + 10) + "%";
   btn.style.top = (Math.random()*60 + 20) + "%";
 }
 
-/* SPAWN CLONES */
 function spawnClones(){
-
   noBtn.style.display = "none";
   clones = [];
   clickCount = 0;
 
   for(let i=0;i<5;i++){
-
     let c = document.createElement("button");
     c.className = "choice-btn";
     c.innerText = "NO";
 
     teleport(c);
-
     c.onclick = ()=>handleCloneClick(c);
 
     slide2.appendChild(c);
@@ -355,7 +347,6 @@ function spawnClones(){
   }
 }
 
-/* HANDLE CLONE CLICK */
 function handleCloneClick(btn){
 
   if(moving) return;
@@ -390,7 +381,6 @@ function handleCloneClick(btn){
   }
 }
 
-/* FINAL MOVING BUTTON */
 function startMoving(btn){
 
   moving = true;
@@ -422,7 +412,6 @@ function startMoving(btn){
   };
 }
 
-/* MAIN NO */
 noBtn.onclick = ()=>{
 
   growYes();
