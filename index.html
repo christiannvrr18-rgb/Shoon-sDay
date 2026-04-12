@@ -152,7 +152,7 @@ let stage = 0;
 let yesScale = 1;
 
 let clones = [];
-let clicksLeft = 5;
+let clicks = 0;
 let finalBtn = null;
 let moving = false;
 let moveInterval = null;
@@ -198,10 +198,9 @@ function spawnClones(){
 
   noBtn.style.display = "none";
   clones = [];
-  clicksLeft = 5;
+  clicks = 0;
 
   for(let i=0;i<5;i++){
-
     let c = document.createElement("button");
     c.className = "choice-btn";
     c.innerText = "NO";
@@ -222,16 +221,15 @@ function handleCloneClick(btn){
 
   btn.remove();
   clones = clones.filter(b=>b!==btn);
-  clicksLeft--;
+  clicks++;
 
   /* COUNTDOWN */
-  if(clicksLeft === 4) pop("3...");
-  if(clicksLeft === 3) pop("2...");
-  if(clicksLeft === 2) pop("1...");
+  if(clicks === 1) pop("3...");
+  if(clicks === 2) pop("2...");
+  if(clicks === 3) pop("1...");
 
-  /* LAST BUTTON LEFT */
-  if(clicksLeft === 1){
-
+  /* WHEN ONLY 1 LEFT → PREP FINAL */
+  if(clones.length === 1 && !finalBtn){
     finalBtn = clones[0];
 
     finalBtn.onclick = ()=>{
@@ -279,11 +277,7 @@ noBtn.onclick = ()=>{
 
   else if(stage === 2){
     pop("try pressing 5 buttons then (¬_ ´¬ )");
-    teleport(noBtn);
-  }
-
-  else if(stage === 3){
-    spawnClones();
+    spawnClones(); // ✅ FIXED: happens immediately
   }
 };
 </script>
