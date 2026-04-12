@@ -260,8 +260,22 @@ function startMoving(btn){
   moving = true;
 
   moveInterval = setInterval(()=>{
-    teleport(btn);
-  },700);
+
+    let currentLeft = parseFloat(btn.style.left) || 50;
+    let currentTop = parseFloat(btn.style.top) || 50;
+
+    /* SMALLER MOVEMENT RANGE */
+    let newLeft = currentLeft + (Math.random()*20 - 10);
+    let newTop = currentTop + (Math.random()*20 - 10);
+
+    /* KEEP INSIDE SCREEN */
+    newLeft = Math.max(10, Math.min(80, newLeft));
+    newTop = Math.max(20, Math.min(80, newTop));
+
+    btn.style.left = newLeft + "%";
+    btn.style.top = newTop + "%";
+
+  },1200); // 👈 SLOWER
 
   btn.onclick = ()=>{
     clearInterval(moveInterval);
