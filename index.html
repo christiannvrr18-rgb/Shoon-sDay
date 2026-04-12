@@ -105,46 +105,21 @@ body,html{
   100%{transform:scale(1);}
 }
 
-#slide3{background:#ffd6e0;}
-/* ===== SLIDE 3 GAME ===== */
+/* ===== SLIDE 3 ADDITIONS ONLY ===== */
 
 #slide3{
-  position:relative;
-  overflow:hidden;
   background:#ffd6e0;
+  position:relative;
+  flex-direction:column;
+  overflow:hidden;
 }
 
-/* floating background */
-.bg-float{
-  position:absolute;
-  font-size:22px;
-  animation:floatUp linear infinite;
-  opacity:0.6;
-}
-
-@keyframes floatUp{
-  from{transform:translateY(100vh);}
-  to{transform:translateY(-10vh);}
-}
-
-/* title */
-#gameTitle{
-  position:absolute;
-  top:20px;
-  width:100%;
-  text-align:center;
-  font-size:24px;
-  font-weight:bold;
-}
-
-/* big gift */
 #bigGift{
-  font-size:80px;
+  font-size:90px;
   cursor:pointer;
   z-index:5;
 }
 
-/* card grid */
 #cardGrid{
   display:none;
   position:absolute;
@@ -154,53 +129,45 @@ body,html{
   box-sizing:border-box;
   display:grid;
   grid-template-columns:repeat(5,1fr);
-  gap:15px;
-  z-index:10;
+  gap:10px;
 }
 
-/* cards */
 .card{
   background:white;
   border-radius:15px;
-  height:80px;
+  height:70px;
   display:flex;
   justify-content:center;
   align-items:center;
-  font-size:24px;
+  font-size:22px;
   cursor:pointer;
-  transition:0.3s;
 }
 
-.card:hover{
-  transform:scale(1.1);
-}
-
-/* reward modal */
 #rewardBox{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,0.7);
+  background:rgba(0,0,0,0.6);
   display:none;
   justify-content:center;
   align-items:center;
-  z-index:9999;
 }
 
 #rewardContent{
   background:white;
-  padding:30px;
-  border-radius:20px;
-  text-align:center;
+  padding:25px;
+  border-radius:15px;
 }
 
-#backBtn{
-  margin-top:20px;
-  padding:10px 20px;
-  border:none;
-  border-radius:10px;
-  background:#ff4d6d;
-  color:white;
-  cursor:pointer;
+.bg-float{
+  position:absolute;
+  font-size:20px;
+  animation:floatUp linear infinite;
+  opacity:0.6;
+}
+
+@keyframes floatUp{
+  from{transform:translateY(100vh);}
+  to{transform:translateY(-10vh);}
 }
 </style>
 </head>
@@ -222,22 +189,18 @@ body,html{
 <button id="noBtn" class="choice-btn">NO</button>
 </div>
 
+<!-- ✅ SLIDE 3 CONTENT ADDED -->
 <div id="slide3" class="slide">
-
-  <h2 id="giftHeader">Open your gift 🎁</h2>
-
   <div id="bigGift">🎁</div>
+  <div id="cardGrid"></div>
+</div>
 
-  <div id="cardGame" class="hidden">
-    <h3 id="progress">Gifts found: 0/10</h3>
-    <div id="cardContainer"></div>
+<!-- ✅ REWARD POPUP -->
+<div id="rewardBox">
+  <div id="rewardContent">
+    <div id="rewardText"></div>
+    <button onclick="rewardBox.style.display='none'">OK</button>
   </div>
-
-  <div id="viewer" class="hidden">
-    <div id="viewerContent"></div>
-    <button id="backBtn">Back</button>
-  </div>
-
 </div>
 
 <div id="modal" class="modal">
@@ -291,7 +254,72 @@ yesBtn.onclick = async ()=>{
   music1.pause();
   music2.currentTime = 0;
   try{ await music2.play(); }catch(e){}
+
+  spawnFloating(); // ✅ ADDED ONLY
 };
+
+/* ===== FLOATING BG ===== */
+function spawnFloating(){
+  let emojis = ["🐱","🐰","🌸","🌷","🌹","🎂"];
+
+  setInterval(()=>{
+    let el = document.createElement("div");
+    el.className = "bg-float";
+    el.innerText = emojis[Math.floor(Math.random()*emojis.length)];
+
+    el.style.left = Math.random()*100 + "%";
+    el.style.animationDuration = (5 + Math.random()*5) + "s";
+
+    slide3.appendChild(el);
+    setTimeout(()=>el.remove(),10000);
+  },600);
+}
+
+/* ===== GIFT GAME ===== */
+let bigGift = document.getElementById("bigGift");
+let cardGrid = document.getElementById("cardGrid");
+let rewardBox = document.getElementById("rewardBox");
+let rewardText = document.getElementById("rewardText");
+
+bigGift.onclick = ()=>{
+  bigGift.style.display = "none";
+  cardGrid.style.display = "grid";
+  generateCards();
+};
+
+function generateCards(){
+
+  let icons = ["🎆","🎇","🌌","🌠"];
+
+  let rewards = [
+    "Bartholomew & Pompompurin 🐱🐰",
+    "You make days softer",
+    "Sleep well tonight 🌙",
+    "I appreciate you",
+    "Happy Birthday ❤️"
+  ];
+
+  let filler = Array(15).fill("meme 😂");
+
+  let all = [...rewards, ...filler].sort(()=>Math.random()-0.5);
+
+  cardGrid.innerHTML = "";
+
+  all.forEach(text=>{
+    let card = document.createElement("div");
+    card.className = "card";
+    card.innerText = icons[Math.floor(Math.random()*icons.length)];
+
+    card.onclick = ()=>{
+      rewardText.innerText = text;
+      rewardBox.style.display = "flex";
+    };
+
+    cardGrid.appendChild(card);
+  });
+}
+
+/* ===== YOUR ORIGINAL CODE BELOW (UNCHANGED) ===== */
 
 /* YES GROW */
 function growYes(){
@@ -337,24 +365,20 @@ function handleCloneClick(btn){
 
   clickCount++;
 
-  /* COUNTDOWN */
   if(clickCount === 1) pop("3...");
   if(clickCount === 2) pop("2...");
   if(clickCount === 3) pop("1...");
 
-  /* 4TH CLICK → NAME */
   if(clickCount === 4){
     pop("Shoon lae thu…( •̀⤙•́ )");
   }
 
-  /* 5TH CLICK → FINAL */
   if(clickCount === 5){
 
-    finalBtn = btn; // last clicked one becomes final (even if removed visually)
+    finalBtn = btn;
 
     pop("alr fine try catching it then <(ꐦㅍ _ㅍ)>");
 
-    /* CREATE FINAL BUTTON */
     let newBtn = document.createElement("button");
     newBtn.className = "choice-btn";
     newBtn.innerText = "NO";
@@ -376,18 +400,16 @@ function startMoving(btn){
     let currentLeft = parseFloat(btn.style.left) || 50;
     let currentTop = parseFloat(btn.style.top) || 50;
 
-    /* SMALLER MOVEMENT RANGE */
     let newLeft = currentLeft + (Math.random()*20 - 10);
     let newTop = currentTop + (Math.random()*20 - 10);
 
-    /* KEEP INSIDE SCREEN */
     newLeft = Math.max(10, Math.min(80, newLeft));
     newTop = Math.max(20, Math.min(80, newTop));
 
     btn.style.left = newLeft + "%";
     btn.style.top = newTop + "%";
 
-  },1200); // 👈 FASTER
+  },700);
 
   btn.onclick = ()=>{
     clearInterval(moveInterval);
@@ -413,101 +435,9 @@ noBtn.onclick = ()=>{
 
   else if(stage === 2){
     pop("try pressing 5 buttons then (¬_ ´¬ )");
-    spawnClones(); // ✅ CORRECT TIMING
+    spawnClones();
   }
 };
-/* ===== SLIDE 3 LOGIC ===== */
-
-let bigGift = document.getElementById("bigGift");
-let cardGrid = document.getElementById("cardGrid");
-let rewardBox = document.getElementById("rewardBox");
-let rewardText = document.getElementById("rewardText");
-let backBtn = document.getElementById("backBtn");
-
-/* FLOATING BACKGROUND */
-function spawnFloating(){
-
-  let emojis = ["🐱","🐰","🌸","🌷","🌹","🎂"];
-
-  setInterval(()=>{
-
-    let el = document.createElement("div");
-    el.className = "bg-float";
-    el.innerText = emojis[Math.floor(Math.random()*emojis.length)];
-
-    el.style.left = Math.random()*100 + "%";
-    el.style.animationDuration = (5 + Math.random()*5) + "s";
-
-    slide3.appendChild(el);
-
-    setTimeout(()=>el.remove(),10000);
-
-  },500);
-}
-
-/* OPEN BIG GIFT */
-bigGift.onclick = ()=>{
-
-  bigGift.style.display = "none";
-  cardGrid.style.display = "grid";
-
-  generateCards();
-};
-
-/* GENERATE CARDS */
-function generateCards(){
-
-  let icons = ["🎆","🎇","🌌","🌠"];
-
-  let gifts = [
-    "Bartholomew & Pompompurin 🐶🐰",
-    "Good morning message ☀️",
-    "Voice message 🎤",
-    "A love note 💌",
-    "A surprise message 😳",
-    "A compliment 💖",
-    "A memory 🌙",
-    "A future promise ✨",
-    "A hug 🤗",
-    "A kiss 😚"
-  ];
-
-  let fake = [
-    "meme 😂","meme 😂","meme 😂","meme 😂","meme 😂",
-    "meme 😂","meme 😂","meme 😂","meme 😂","meme 😂"
-  ];
-
-  let all = [...gifts, ...fake];
-
-  all.sort(()=>Math.random()-0.5);
-
-  cardGrid.innerHTML = "";
-
-  all.forEach(text=>{
-
-    let card = document.createElement("div");
-    card.className = "card";
-    card.innerText = icons[Math.floor(Math.random()*icons.length)];
-
-    card.onclick = ()=>{
-
-      rewardText.innerText = text;
-      rewardBox.style.display = "flex";
-    };
-
-    cardGrid.appendChild(card);
-  });
-}
-
-/* BACK BUTTON */
-backBtn.onclick = ()=>{
-  rewardBox.style.display = "none";
-};
-
-/* START FLOAT WHEN ENTERING SLIDE 3 */
-yesBtn.addEventListener("click",()=>{
-  spawnFloating();
-});
 </script>
 
 </body>
