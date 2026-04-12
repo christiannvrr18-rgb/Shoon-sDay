@@ -19,14 +19,20 @@ body,html{
   height:100%;
   justify-content:center;
   align-items:center;
-  flex-direction:column;
 }
 
 .active{display:flex;}
 
 /* SLIDE 1 */
-#slide1{background:black;}
+#slide1{
+  background:black;
+}
 
+button{
+  cursor:pointer;
+}
+
+/* START */
 .start-btn{
   background:red;
   color:white;
@@ -34,37 +40,46 @@ body,html{
   font-size:24px;
   border:none;
   border-radius:15px;
-  cursor:pointer;
 }
 
 /* SLIDE 2 */
 #slide2{
   background:#ffd6e0;
+  flex-direction:column;
   text-align:center;
   position:relative;
+  padding-top:30px;
 }
 
 #cat{
   width:380px;
+  max-width:85%;
   margin-bottom:10px;
 }
 
+h1{margin:0;}
+p{margin:10px;}
+
+/* BUTTONS */
 .choice-btn{
   position:absolute;
   padding:12px 25px;
   border:none;
   border-radius:20px;
   font-size:18px;
-  cursor:pointer;
+  z-index:10;
 }
 
+/* YES */
 #yesBtn{
   background:#ff4d6d;
   color:white;
   left:40%;
   top:75%;
+  transform:scale(1);
 }
 
+/* NO */
 #noBtn{
   background:#444;
   color:white;
@@ -98,96 +113,19 @@ body,html{
 }
 
 /* YES GROW */
-.grow{
-  animation:pulse 0.7s infinite;
+@keyframes pulse{
+  0%{transform:scale(var(--s));}
+  50%{transform:scale(calc(var(--s) + 0.15));}
+  100%{transform:scale(var(--s));}
 }
 
-@keyframes pulse{
-  0%{transform:scale(1);}
-  50%{transform:scale(1.2);}
-  100%{transform:scale(1);}
+.grow{
+  animation:pulse 0.6s infinite;
 }
 
 /* SLIDE 3 */
 #slide3{
   background:#ffd6e0;
-  position:relative;
-  overflow:hidden;
-}
-
-.hidden{display:none;}
-
-/* BIG GIFT */
-#bigGift{
-  font-size:80px;
-  cursor:pointer;
-}
-
-/* CARD GRID */
-#cardGrid{
-  display:grid;
-  grid-template-columns:repeat(5,70px);
-  gap:10px;
-  margin-top:20px;
-}
-
-/* CARD */
-.card{
-  width:70px;
-  height:90px;
-  background:white;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  font-size:28px;
-  border-radius:10px;
-  cursor:pointer;
-  transition:0.3s;
-}
-
-.card.flipped{
-  background:#ff4d6d;
-  color:white;
-}
-
-/* BIG CARD */
-#bigCard{
-  position:absolute;
-  inset:0;
-  background:rgba(0,0,0,0.6);
-  display:flex;
-  flex-direction:column;
-  justify-content:center;
-  align-items:center;
-}
-
-#bigContent{
-  background:white;
-  padding:25px;
-  border-radius:15px;
-}
-
-#backBtn{
-  margin-top:10px;
-  padding:10px 20px;
-}
-
-/* FLOATING BG */
-#bgFloat{
-  position:absolute;
-  inset:0;
-  pointer-events:none;
-}
-
-.floatItem{
-  position:absolute;
-  animation:float 8s linear infinite;
-  opacity:0.5;
-}
-
-@keyframes float{
-  from{transform:translateY(-10vh);}
-  to{transform:translateY(110vh);}
 }
 </style>
 </head>
@@ -208,7 +146,8 @@ body,html{
 
 <img src="bdaycat.png" id="cat">
 
-<h1>Happy Birthday Shoon 🎂</h1>
+<h1>Happy Birthday Shoon! 🎂</h1>
+<p>Open your presents?</p>
 
 <button id="yesBtn" class="choice-btn">YES</button>
 <button id="noBtn" class="choice-btn">NO</button>
@@ -216,24 +155,7 @@ body,html{
 </div>
 
 <!-- SLIDE 3 -->
-<div id="slide3" class="slide">
-
-<div id="bigGift">🎁</div>
-
-<div id="gameArea" class="hidden">
-<h2>Find the hidden gifts 🎁</h2>
-<p id="progress">0 / 10 found</p>
-<div id="cardGrid"></div>
-</div>
-
-<div id="bigCard" class="hidden">
-<div id="bigContent"></div>
-<button id="backBtn">Back</button>
-</div>
-
-<div id="bgFloat"></div>
-
-</div>
+<div id="slide3" class="slide"></div>
 
 <!-- POPUP -->
 <div id="modal" class="modal">
@@ -241,34 +163,23 @@ body,html{
 </div>
 
 <script>
-
-/* SLIDES */
 let slide1 = document.getElementById("slide1");
 let slide2 = document.getElementById("slide2");
 let slide3 = document.getElementById("slide3");
 
-/* BUTTONS */
 let startBtn = document.getElementById("startBtn");
 let yesBtn = document.getElementById("yesBtn");
 let noBtn = document.getElementById("noBtn");
 
-/* POPUP */
 let modal = document.getElementById("modal");
 let modalText = document.getElementById("modalText");
 
-/* MUSIC */
 let music1 = document.getElementById("music1");
 let music2 = document.getElementById("music2");
 
-/* STATE */
-let stage = 0;
+let noCount = 0;
 let yesScale = 1;
-
-/* CLONE GAME */
-let clones = [];
-let clicks = 0;
-let moving = false;
-let moveInterval = null;
+let noLocked = false;
 
 /* POPUP */
 function pop(text){
@@ -277,188 +188,67 @@ function pop(text){
   setTimeout(()=>modal.classList.remove("show"),1200);
 }
 
-/* START */
+/* START → SLIDE 2 + HOTLINE MUSIC */
 startBtn.onclick = async ()=>{
   slide1.classList.remove("active");
   slide2.classList.add("active");
-  try{await music1.play();}catch(e){}
+
+  try{
+    await music1.play();
+  }catch(e){}
 };
 
-/* YES */
+/* YES → SLIDE 3 + MUSIC SWITCH */
 yesBtn.onclick = async ()=>{
   slide2.classList.remove("active");
   slide3.classList.add("active");
+
   music1.pause();
-  music2.play();
+  music2.currentTime = 0;
+
+  try{
+    await music2.play();
+  }catch(e){}
 };
 
-/* YES GROW */
+/* YES GROW FUNCTION */
 function growYes(){
-  yesScale += 0.25;
+  yesScale += 0.2;
   yesBtn.style.transform = `scale(${yesScale})`;
 }
 
-/* TELEPORT */
-function teleport(btn){
-  btn.style.left = (Math.random()*70 + 10) + "%";
-  btn.style.top = (Math.random()*60 + 20) + "%";
-}
-
-/* NO LOGIC */
+/* NO BUTTON LOGIC (FIXED TELEPORT + LOCK) */
 noBtn.onclick = ()=>{
+
+  if(noLocked) return;
+  noLocked = true;
+
+  noCount++;
   growYes();
-  stage++;
 
-  if(stage === 1){
+  if(noCount === 1){
     pop("why no? ૮(◞ ‸ ◟ )ა");
-    teleport(noBtn);
   }
 
-  else if(stage === 2){
+  if(noCount === 2){
     pop("try pressing 5 buttons then (¬_ ´¬ )");
-    spawnClones();
-  }
-};
-
-/* SPAWN CLONES */
-function spawnClones(){
-
-  noBtn.style.display = "none";
-  clones = [];
-  clicks = 0;
-
-  for(let i=0;i<5;i++){
-    let c = document.createElement("button");
-    c.className = "choice-btn";
-    c.innerText = "NO";
-
-    teleport(c);
-
-    c.onclick = ()=>handleClone(c);
-
-    slide2.appendChild(c);
-    clones.push(c);
-  }
-}
-
-/* HANDLE CLONES */
-function handleClone(btn){
-
-  if(moving) return;
-
-  btn.remove();
-  clicks++;
-
-  if(clicks === 1) pop("3...");
-  if(clicks === 2) pop("2...");
-  if(clicks === 3) pop("1...");
-
-  if(clicks === 4){
-    pop("Shoon lae thu…( •̀⤙•́ )");
   }
 
-  if(clicks === 5){
-    pop("alr fine try catching it then <(ꐦㅍ _ㅍ)>");
-    startMoving(btn);
-  }
-}
-
-/* FINAL MOVE */
-function startMoving(btn){
-
-  moving = true;
-
-  moveInterval = setInterval(()=>{
-    teleport(btn);
-  },1000);
-
-  btn.onclick = ()=>{
-    clearInterval(moveInterval);
+  if(noCount === 3){
     pop("that’s it, no more No button for you (ᗒᗣᗕ)");
-    btn.remove();
-    yesBtn.classList.add("grow");
-  };
-}
-
-/* SLIDE 3 */
-let bigGift = document.getElementById("bigGift");
-let gameArea = document.getElementById("gameArea");
-let cardGrid = document.getElementById("cardGrid");
-let progress = document.getElementById("progress");
-let bigCard = document.getElementById("bigCard");
-let bigContent = document.getElementById("bigContent");
-let backBtn = document.getElementById("backBtn");
-
-let found = 0;
-
-let icons = ["🎆","🎇","🌌","🌠"];
-
-bigGift.onclick = ()=>{
-  bigGift.classList.add("hidden");
-  gameArea.classList.remove("hidden");
-  createCards();
-};
-
-function createCards(){
-
-  let giftIndexes = [];
-
-  while(giftIndexes.length < 10){
-    let r = Math.floor(Math.random()*20);
-    if(!giftIndexes.includes(r)) giftIndexes.push(r);
   }
 
-  for(let i=0;i<20;i++){
+  /* TELEPORT EFFECT */
+  setTimeout(()=>{
+    let x = Math.random() * 60 + 20;
+    let y = Math.random() * 60 + 20;
 
-    let c = document.createElement("div");
-    c.className = "card";
+    noBtn.style.left = x + "%";
+    noBtn.style.top = y + "%";
 
-    c.innerText = icons[Math.floor(Math.random()*icons.length)];
-
-    let isGift = giftIndexes.includes(i);
-
-    c.onclick = ()=>{
-
-      if(c.classList.contains("flipped")) return;
-
-      c.classList.add("flipped");
-
-      if(isGift){
-        found++;
-        progress.innerText = found + " / 10 found";
-        show("🎁 Gift found!");
-      }else{
-        show("😂 Fake gift");
-      }
-    };
-
-    cardGrid.appendChild(c);
-  }
-}
-
-function show(text){
-  bigContent.innerText = text;
-  bigCard.classList.remove("hidden");
-}
-
-backBtn.onclick = ()=>{
-  bigCard.classList.add("hidden");
+    noLocked = false;
+  },600);
 };
-
-/* FLOATING BG */
-let bg = document.getElementById("bgFloat");
-let items = ["🐱","🐰","🌸","🌷","🎂"];
-
-for(let i=0;i<30;i++){
-  let d = document.createElement("div");
-  d.className = "floatItem";
-  d.innerText = items[Math.floor(Math.random()*items.length)];
-  d.style.left = Math.random()*100 + "%";
-  d.style.fontSize = (15 + Math.random()*25) + "px";
-  d.style.animationDuration = (5 + Math.random()*6) + "s";
-  bg.appendChild(d);
-}
-
 </script>
 
 </body>
