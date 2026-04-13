@@ -39,13 +39,11 @@ body,html{
   flex-direction:column;
   text-align:center;
   position:relative;
-  padding-top:20px;
 }
 
 #cat{
   width:420px;
   max-width:90%;
-  margin-bottom:5px;
 }
 
 .choice-btn{
@@ -54,123 +52,21 @@ body,html{
   border:none;
   border-radius:20px;
   font-size:18px;
-  z-index:10;
 }
 
-#yesBtn{
-  background:#ff4d6d;
-  color:white;
-  left:40%;
-  top:75%;
-}
+#yesBtn{background:#ff4d6d;color:white;left:40%;top:75%;}
+#noBtn{background:#444;color:white;left:55%;top:75%;}
 
-#noBtn{
-  background:#444;
-  color:white;
-  left:55%;
-  top:75%;
-}
-
-.modal{
-  position:fixed;
-  inset:0;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  background:rgba(0,0,0,0.5);
-  opacity:0;
-  pointer-events:none;
-  transition:0.2s;
-  z-index:9999;
-}
-
-.modal.show{
-  opacity:1;
-  pointer-events:auto;
-}
-
-.modal-box{
-  background:white;
-  padding:20px;
-  border-radius:15px;
-}
-
-.grow{
-  animation:pulse 0.7s infinite;
-}
-
-@keyframes pulse{
-  0%{transform:scale(1);}
-  50%{transform:scale(1.2);}
-  100%{transform:scale(1);}
-}
-
-/* ===== SLIDE 3 ===== */
+/* SLIDE 3 */
 
 #slide3{
   background:#ffd6e0;
   position:relative;
-  flex-direction:column;
   overflow:hidden;
 }
 
-#bigGift{
-  font-size:90px;
-  cursor:pointer;
-  z-index:5;
-}
-
-#cardGrid{
-  display:none; /* FIXED */
-  position:absolute;
-  top:80px;
-  width:100%;
-  padding:20px;
-  box-sizing:border-box;
-  grid-template-columns:repeat(5,1fr);
-  gap:10px;
-}
-
-.card{
-  background:white;
-  border-radius:15px;
-  height:70px;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  font-size:22px;
-  cursor:pointer;
-}
-
-#rewardBox{
-  position:fixed;
-  inset:0;
-  background:rgba(0,0,0,0.6);
-  display:none;
-  justify-content:center;
-  align-items:center;
-}
-
-#rewardContent{
-  background:white;
-  padding:25px;
-  border-radius:15px;
-}
-
-.bg-float{
-  position:absolute;
-  font-size:20px;
-  animation:floatUp linear infinite;
-  opacity:0.6;
-}
-
-@keyframes floatUp{
-  from{transform:translateY(100vh);}
-  to{transform:translateY(-10vh);}
-}
-/* ===== NEW SLIDE 3 UI ===== */
-
 #gameTitle{
+  display:none;
   position:absolute;
   top:15px;
   width:100%;
@@ -184,13 +80,10 @@ body,html{
   flex-direction:column;
   justify-content:center;
   align-items:center;
-  height:50%;
-  width:100%;
-  z-index:5;
+  height:100%;
 }
 
 #giftText{
-  font-size:18px;
   margin-bottom:10px;
 }
 
@@ -199,20 +92,17 @@ body,html{
   cursor:pointer;
 }
 
-/* FIX GRID */
 #cardGrid{
   display:none;
   position:absolute;
-  top:100px;
+  top:80px;
   width:100%;
-  padding:10px;
-  box-sizing:border-box;
+  display:grid;
   grid-template-columns:repeat(5,1fr);
   gap:12px;
   justify-items:center;
 }
 
-/* BETTER CARDS */
 .card{
   width:70px;
   height:70px;
@@ -223,24 +113,43 @@ body,html{
   align-items:center;
   font-size:30px;
   cursor:pointer;
-  box-shadow:0 4px 10px rgba(0,0,0,0.1);
-  transition:0.2s;
 }
 
-.card:hover{
-  transform:scale(1.1);
+#rewardBox{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.7);
+  display:none;
+  justify-content:center;
+  align-items:center;
+  z-index:99999;
 }
 
-/* CONFETTI */
+#rewardContent{
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  text-align:center;
+}
+
+.bg-float{
+  position:absolute;
+  animation:floatUp linear infinite;
+}
+
+@keyframes floatUp{
+  from{transform:translateY(100vh);}
+  to{transform:translateY(-10vh);}
+}
+
 .confetti{
   position:absolute;
-  font-size:18px;
   animation:fall 1.8s linear forwards;
 }
 
 @keyframes fall{
-  from{transform:translateY(-10vh) rotate(0);}
-  to{transform:translateY(110vh) rotate(360deg);}
+  from{transform:translateY(-10vh);}
+  to{transform:translateY(110vh);}
 }
 </style>
 </head>
@@ -263,7 +172,6 @@ body,html{
 </div>
 
 <div id="slide3" class="slide">
-
   <div id="gameTitle">find your gifts₍₍⚞(˶>ᗜ<˶)⚟⁾⁾</div>
 
   <div id="giftWrap">
@@ -277,12 +185,9 @@ body,html{
 <div id="rewardBox">
   <div id="rewardContent">
     <div id="rewardText"></div>
-    <button onclick="rewardBox.style.display='none'">OK</button>
+    <br>
+    <button onclick="closeReward()">OK</button>
   </div>
-</div>
-
-<div id="modal" class="modal">
-<div id="modalText" class="modal-box"></div>
 </div>
 
 <script>
@@ -290,241 +195,128 @@ let slide1 = document.getElementById("slide1");
 let slide2 = document.getElementById("slide2");
 let slide3 = document.getElementById("slide3");
 
-let startBtn = document.getElementById("startBtn");
-let yesBtn = document.getElementById("yesBtn");
-let noBtn = document.getElementById("noBtn");
-
-let modal = document.getElementById("modal");
-let modalText = document.getElementById("modalText");
-
 let music1 = document.getElementById("music1");
 let music2 = document.getElementById("music2");
 
-/* STATE */
-let stage = 0;
-let yesScale = 1;
-
-let clones = [];
-let clickCount = 0;
-let finalBtn = null;
-let moving = false;
-let moveInterval = null;
-
-/* POPUP (SLOWER) */
-function pop(text){
-  modalText.innerText = text;
-  modal.classList.add("show");
-  setTimeout(()=>modal.classList.remove("show"),3500);
-}
-
-/* START */
-startBtn.onclick = async ()=>{
+document.getElementById("startBtn").onclick = async ()=>{
   slide1.classList.remove("active");
   slide2.classList.add("active");
-  try{ await music1.play(); }catch(e){}
+  try{await music1.play();}catch{}
 };
 
-/* YES */
-yesBtn.onclick = async ()=>{
+document.getElementById("yesBtn").onclick = async ()=>{
   slide2.classList.remove("active");
   slide3.classList.add("active");
 
   music1.pause();
-  music2.currentTime = 0;
-  try{ await music2.play(); }catch(e){}
+  try{await music2.play();}catch{}
 
   spawnFloating();
 };
 
-/* FLOATING BG */
 function spawnFloating(){
-  let emojis = ["🐱","🐰","🌸","🍓","🎀","🌷","🌹","🎂"];
-
+  let emojis=["🐱","🐰","🌸","🎀","🎂"];
   setInterval(()=>{
-    let el = document.createElement("div");
-    el.className = "bg-float";
-    el.innerText = emojis[Math.floor(Math.random()*emojis.length)];
-
-    el.style.left = Math.random()*100 + "%";
-    el.style.fontSize = (25 + Math.random()*20) + "px";
-    el.style.animationDuration = (6 + Math.random()*6) + "s";
-
-    slide3.appendChild(el);
-    setTimeout(()=>el.remove(),12000);
-  },400);
+    let e=document.createElement("div");
+    e.className="bg-float";
+    e.innerText=emojis[Math.floor(Math.random()*emojis.length)];
+    e.style.left=Math.random()*100+"%";
+    e.style.animationDuration=(5+Math.random()*5)+"s";
+    document.getElementById("slide3").appendChild(e);
+    setTimeout(()=>e.remove(),10000);
+  },500);
 }
 
-/* GIFT GAME */
-let bigGift = document.getElementById("bigGift");
-let cardGrid = document.getElementById("cardGrid");
-let rewardBox = document.getElementById("rewardBox");
-let rewardText = document.getElementById("rewardText");
+/* GIFT SYSTEM */
 
-bigGift.onclick = ()=>{
-  document.getElementById("giftWrap").style.display = "none"; // 🔥 FIX
-  cardGrid.style.display = "grid";
+let bigGift=document.getElementById("bigGift");
+let cardGrid=document.getElementById("cardGrid");
+let rewardText=document.getElementById("rewardText");
+
+bigGift.onclick=()=>{
+  document.getElementById("giftWrap").style.display="none";
+  document.getElementById("gameTitle").style.display="block";
+  cardGrid.style.display="grid";
   generateCards();
   explodeConfetti();
 };
 
 function generateCards(){
+  let icons=["🎆","🎇","🌌","🌠"];
 
-  let icons = ["🎆","🎇","🌌","🌠"];
+  let gifts=[
+    {type:"text",content:"Bartholomew & Pompompurin 🐱🐰"},
+    {type:"text",content:"You make days softer"},
+    {type:"text",content:"Sleep well tonight 🌙"},
+    {type:"text",content:"I appreciate you"},
+    {type:"text",content:"Happy Birthday ❤️"},
 
-  let rewards = [
-    "Bartholomew & Pompompurin 🐱🐰",
-    "You make days softer",
-    "Sleep well tonight 🌙",
-    "I appreciate you",
-    "Happy Birthday ❤️"
+    {type:"image",content:"pic1.jpg"},
+    {type:"image",content:"pic2.jpg"},
+    {type:"image",content:"pic3.jpg"},
+    {type:"image",content:"pic4.jpg"},
+    {type:"image",content:"pic5.jpg"},
+
+    {type:"video",content:"vid1.mp4"},
+    {type:"video",content:"vid2.mp4"},
+    {type:"video",content:"singing1.mp4"},
+    {type:"video",content:"singing2.mp4"},
+
+    {type:"youtube",content:"https://www.youtube.com/embed/YOUR_VIDEO_ID"},
+
+    {type:"text",content:"You deserve everything good"},
+    {type:"text",content:"I’m always here"},
+    {type:"text",content:"Stay cute okay"},
+    {type:"text",content:"You mean a lot to me"},
+    {type:"text",content:"More memories soon ❤️"}
   ];
 
-  let filler = Array(15).fill("meme 😂");
+  gifts=gifts.sort(()=>Math.random()-0.5);
 
-  let all = [...rewards, ...filler].sort(()=>Math.random()-0.5);
+  cardGrid.innerHTML="";
 
-  cardGrid.innerHTML = "";
-
-  all.forEach(text=>{
-    let card = document.createElement("div");
-    card.className = "card";
-    card.innerText = icons[Math.floor(Math.random()*icons.length)];
-
-    card.onclick = ()=>{
-      rewardText.innerText = text;
-      rewardBox.style.display = "flex";
-    };
-
-    cardGrid.appendChild(card);
+  gifts.forEach(g=>{
+    let c=document.createElement("div");
+    c.className="card";
+    c.innerText=icons[Math.floor(Math.random()*icons.length)];
+    c.onclick=()=>openGift(g);
+    cardGrid.appendChild(c);
   });
 }
 
-/* ===== ORIGINAL GAME ===== */
+function openGift(g){
+  rewardText.innerHTML="";
+  music2.pause();
 
-function growYes(){
-  yesScale += 0.25;
-  yesBtn.style.transform = `scale(${yesScale})`;
-}
-
-function teleport(btn){
-  btn.style.left = (Math.random()*70 + 10) + "%";
-  btn.style.top = (Math.random()*60 + 20) + "%";
-}
-
-function spawnClones(){
-  noBtn.style.display = "none";
-  clones = [];
-  clickCount = 0;
-
-  for(let i=0;i<5;i++){
-    let c = document.createElement("button");
-    c.className = "choice-btn";
-    c.innerText = "NO";
-
-    teleport(c);
-    c.onclick = ()=>handleCloneClick(c);
-
-    slide2.appendChild(c);
-    clones.push(c);
+  if(g.type==="text"){
+    rewardText.innerText=g.content;
   }
-}
-
-function handleCloneClick(btn){
-
-  if(moving) return;
-
-  btn.remove();
-  clones = clones.filter(b=>b!==btn);
-
-  clickCount++;
-
-  if(clickCount === 1) pop("3...");
-  if(clickCount === 2) pop("2...");
-  if(clickCount === 3) pop("1...");
-
-  if(clickCount === 4){
-    pop("Shoon lae thu…( •̀⤙•́ )");
+  if(g.type==="image"){
+    rewardText.innerHTML=`<img src="${g.content}" style="max-width:250px;border-radius:10px;">`;
+  }
+  if(g.type==="video"){
+    rewardText.innerHTML=`<video controls style="max-width:250px"><source src="${g.content}"></video>`;
+  }
+  if(g.type==="youtube"){
+    rewardText.innerHTML=`<iframe width="250" height="150" src="${g.content}" frameborder="0" allowfullscreen></iframe>`;
   }
 
-  if(clickCount === 5){
-
-    finalBtn = btn;
-
-    pop("alr fine try catching it then <(ꐦㅍ _ㅍ)>");
-
-    let newBtn = document.createElement("button");
-    newBtn.className = "choice-btn";
-    newBtn.innerText = "NO";
-
-    teleport(newBtn);
-    slide2.appendChild(newBtn);
-
-    startMoving(newBtn);
-  }
+  document.getElementById("rewardBox").style.display="flex";
 }
 
-function startMoving(btn){
-
-  moving = true;
-
-  moveInterval = setInterval(()=>{
-
-    let currentLeft = parseFloat(btn.style.left) || 50;
-    let currentTop = parseFloat(btn.style.top) || 50;
-
-    let newLeft = currentLeft + (Math.random()*20 - 10);
-    let newTop = currentTop + (Math.random()*20 - 10);
-
-    newLeft = Math.max(10, Math.min(80, newLeft));
-    newTop = Math.max(20, Math.min(80, newTop));
-
-    btn.style.left = newLeft + "%";
-    btn.style.top = newTop + "%";
-
-  },700);
-
-  btn.onclick = ()=>{
-    clearInterval(moveInterval);
-
-    pop("that’s it, no more No button for you (ᗒᗣᗕ)");
-
-    btn.remove();
-
-    yesBtn.classList.add("grow");
-  };
+function closeReward(){
+  document.getElementById("rewardBox").style.display="none";
+  music2.currentTime=0;
+  music2.play();
 }
 
-noBtn.onclick = ()=>{
-
-  growYes();
-  stage++;
-
-  if(stage === 1){
-    pop("why no? ૮(◞ ‸ ◟ )ა");
-    teleport(noBtn);
-  }
-
-  else if(stage === 2){
-    pop("try pressing 5 buttons then (¬_ ´¬ )");
-    spawnClones();
-  }
-};
 function explodeConfetti(){
-
-  let emojis = ["🎉","🎊","✨","🌸","💖","🎀"];
-
   for(let i=0;i<60;i++){
-
-    let c = document.createElement("div");
-    c.className = "confetti";
-    c.innerText = emojis[Math.floor(Math.random()*emojis.length)];
-
-    c.style.left = Math.random()*100 + "%";
-    c.style.top = "-10%";
-    c.style.fontSize = (12 + Math.random()*20) + "px";
-
+    let c=document.createElement("div");
+    c.className="confetti";
+    c.innerText="🎉";
+    c.style.left=Math.random()*100+"%";
     document.body.appendChild(c);
-
     setTimeout(()=>c.remove(),2000);
   }
 }
