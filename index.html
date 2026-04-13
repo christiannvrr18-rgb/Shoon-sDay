@@ -168,6 +168,80 @@ body,html{
   from{transform:translateY(100vh);}
   to{transform:translateY(-10vh);}
 }
+/* ===== NEW SLIDE 3 UI ===== */
+
+#gameTitle{
+  position:absolute;
+  top:15px;
+  width:100%;
+  text-align:center;
+  font-size:22px;
+  font-weight:bold;
+}
+
+#giftWrap{
+  display:flex;
+  flex-direction:column;
+  justify-content:center;
+  align-items:center;
+  height:50%;
+  width:100%;
+  z-index:5;
+}
+
+#giftText{
+  font-size:18px;
+  margin-bottom:10px;
+}
+
+#bigGift{
+  font-size:140px;
+  cursor:pointer;
+}
+
+/* FIX GRID */
+#cardGrid{
+  display:none;
+  position:absolute;
+  top:100px;
+  width:100%;
+  padding:10px;
+  box-sizing:border-box;
+  grid-template-columns:repeat(5,1fr);
+  gap:12px;
+  justify-items:center;
+}
+
+/* BETTER CARDS */
+.card{
+  width:70px;
+  height:70px;
+  background:white;
+  border-radius:14px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  font-size:30px;
+  cursor:pointer;
+  box-shadow:0 4px 10px rgba(0,0,0,0.1);
+  transition:0.2s;
+}
+
+.card:hover{
+  transform:scale(1.1);
+}
+
+/* CONFETTI */
+.confetti{
+  position:absolute;
+  font-size:18px;
+  animation:fall 1.8s linear forwards;
+}
+
+@keyframes fall{
+  from{transform:translateY(-10vh) rotate(0);}
+  to{transform:translateY(110vh) rotate(360deg);}
+}
 </style>
 </head>
 
@@ -189,7 +263,14 @@ body,html{
 </div>
 
 <div id="slide3" class="slide">
-  <div id="bigGift">🎁</div>
+
+  <div id="gameTitle">find your gifts₍₍⚞(˶>ᗜ<˶)⚟⁾⁾</div>
+
+  <div id="giftWrap">
+    <div id="giftText">well open it already ৻(  •̀ ᗜ •́  ৻)</div>
+    <div id="bigGift">🎁</div>
+  </div>
+
   <div id="cardGrid"></div>
 </div>
 
@@ -283,6 +364,7 @@ bigGift.onclick = ()=>{
   bigGift.style.display = "none";
   cardGrid.style.display = "grid";
   generateCards();
+  explodeConfetti();
 };
 
 function generateCards(){
@@ -427,6 +509,25 @@ noBtn.onclick = ()=>{
     spawnClones();
   }
 };
+function explodeConfetti(){
+
+  let emojis = ["🎉","🎊","✨","🌸","💖","🎀"];
+
+  for(let i=0;i<60;i++){
+
+    let c = document.createElement("div");
+    c.className = "confetti";
+    c.innerText = emojis[Math.floor(Math.random()*emojis.length)];
+
+    c.style.left = Math.random()*100 + "%";
+    c.style.top = "-10%";
+    c.style.fontSize = (12 + Math.random()*20) + "px";
+
+    document.body.appendChild(c);
+
+    setTimeout(()=>c.remove(),2000);
+  }
+}
 </script>
 
 </body>
