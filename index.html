@@ -54,53 +54,68 @@ body,html{
   font-size:18px;
 }
 
-#yesBtn{background:#ff4d6d;color:white;left:40%;top:75%;}
-#noBtn{background:#444;color:white;left:55%;top:75%;}
+#yesBtn{left:40%; top:75%; background:#ff4d6d; color:white;}
+#noBtn{left:55%; top:75%; background:#444; color:white;}
+
+.modal{
+  position:fixed;
+  inset:0;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  background:rgba(0,0,0,0.5);
+  opacity:0;
+  pointer-events:none;
+  transition:0.2s;
+}
+
+.modal.show{opacity:1; pointer-events:auto;}
+
+.modal-box{
+  background:white;
+  padding:20px;
+  border-radius:15px;
+}
 
 /* SLIDE 3 */
 
 #slide3{
   background:#ffd6e0;
   position:relative;
+  flex-direction:column;
   overflow:hidden;
-}
-
-#gameTitle{
-  display:none;
-  position:absolute;
-  top:15px;
-  width:100%;
-  text-align:center;
-  font-size:22px;
-  font-weight:bold;
 }
 
 #giftWrap{
   display:flex;
   flex-direction:column;
-  justify-content:center;
   align-items:center;
-  height:100%;
+  justify-content:center;
+  height:50%;
+  z-index:1;
 }
 
-#giftText{
-  margin-bottom:10px;
-}
+#giftText{margin-bottom:10px;}
+#bigGift{font-size:140px; cursor:pointer;}
 
-#bigGift{
-  font-size:140px;
-  cursor:pointer;
+#gameTitle{
+  position:absolute;
+  top:10px;
+  width:100%;
+  text-align:center;
+  font-weight:bold;
 }
 
 #cardGrid{
   display:none;
   position:absolute;
-  top:80px;
+  top:100px;
   width:100%;
   display:grid;
   grid-template-columns:repeat(5,1fr);
-  gap:12px;
+  gap:10px;
   justify-items:center;
+  z-index:5;
 }
 
 .card{
@@ -144,7 +159,7 @@ body,html{
 
 .confetti{
   position:absolute;
-  animation:fall 1.8s linear forwards;
+  animation:fall 1.5s linear forwards;
 }
 
 @keyframes fall{
@@ -158,6 +173,7 @@ body,html{
 
 <audio id="music1" src="hotline.mp3"></audio>
 <audio id="music2" src="minmhamin.mp3"></audio>
+<audio id="finalMusic" src="wings.mp3"></audio>
 
 <div id="slide1" class="slide active">
 <button id="startBtn" class="start-btn">PRESS</button>
@@ -172,22 +188,26 @@ body,html{
 </div>
 
 <div id="slide3" class="slide">
-  <div id="gameTitle">find your gifts₍₍⚞(˶>ᗜ<˶)⚟⁾⁾</div>
 
-  <div id="giftWrap">
-    <div id="giftText">well open it already ৻(  •̀ ᗜ •́  ৻)</div>
-    <div id="bigGift">🎁</div>
-  </div>
+<div id="gameTitle">find your gifts₍₍⚞(˶>ᗜ<˶)⚟⁾⁾</div>
 
-  <div id="cardGrid"></div>
+<div id="giftWrap">
+<div id="giftText">well open it already ৻( •̀ ᗜ •́ ৻)</div>
+<div id="bigGift">🎁</div>
+</div>
+
+<div id="cardGrid"></div>
 </div>
 
 <div id="rewardBox">
-  <div id="rewardContent">
-    <div id="rewardText"></div>
-    <br>
-    <button onclick="closeReward()">OK</button>
-  </div>
+<div id="rewardContent">
+<div id="rewardBody"></div><br>
+<button onclick="closeReward()">OK</button>
+</div>
+</div>
+
+<div id="modal" class="modal">
+<div id="modalText" class="modal-box"></div>
 </div>
 
 <script>
@@ -195,85 +215,100 @@ let slide1 = document.getElementById("slide1");
 let slide2 = document.getElementById("slide2");
 let slide3 = document.getElementById("slide3");
 
+let startBtn = document.getElementById("startBtn");
+let yesBtn = document.getElementById("yesBtn");
+let noBtn = document.getElementById("noBtn");
+
+let modal = document.getElementById("modal");
+let modalText = document.getElementById("modalText");
+
 let music1 = document.getElementById("music1");
 let music2 = document.getElementById("music2");
 
-document.getElementById("startBtn").onclick = async ()=>{
+let cardGrid = document.getElementById("cardGrid");
+let rewardBox = document.getElementById("rewardBox");
+
+function pop(text){
+  modalText.innerText = text;
+  modal.classList.add("show");
+  setTimeout(()=>modal.classList.remove("show"),3500);
+}
+
+startBtn.onclick = async ()=>{
   slide1.classList.remove("active");
   slide2.classList.add("active");
-  try{await music1.play();}catch{}
+  try{await music1.play();}catch(e){}
 };
 
-document.getElementById("yesBtn").onclick = async ()=>{
+yesBtn.onclick = async ()=>{
   slide2.classList.remove("active");
   slide3.classList.add("active");
 
   music1.pause();
-  try{await music2.play();}catch{}
+  music2.currentTime=0;
+  try{await music2.play();}catch(e){}
 
   spawnFloating();
 };
 
 function spawnFloating(){
-  let emojis=["🐱","🐰","🌸","🎀","🎂"];
+  let emojis=["🐱","🐰","🌸","🎂"];
   setInterval(()=>{
-    let e=document.createElement("div");
-    e.className="bg-float";
-    e.innerText=emojis[Math.floor(Math.random()*emojis.length)];
-    e.style.left=Math.random()*100+"%";
-    e.style.animationDuration=(5+Math.random()*5)+"s";
-    document.getElementById("slide3").appendChild(e);
-    setTimeout(()=>e.remove(),10000);
+    let el=document.createElement("div");
+    el.className="bg-float";
+    el.innerText=emojis[Math.floor(Math.random()*emojis.length)];
+    el.style.left=Math.random()*100+"%";
+    el.style.animationDuration=(5+Math.random()*5)+"s";
+    slide3.appendChild(el);
+    setTimeout(()=>el.remove(),10000);
   },500);
 }
 
-/* GIFT SYSTEM */
-
-let bigGift=document.getElementById("bigGift");
-let cardGrid=document.getElementById("cardGrid");
-let rewardText=document.getElementById("rewardText");
-
-bigGift.onclick=()=>{
+document.getElementById("bigGift").onclick=()=>{
   document.getElementById("giftWrap").style.display="none";
-  document.getElementById("gameTitle").style.display="block";
   cardGrid.style.display="grid";
   generateCards();
   explodeConfetti();
 };
 
 function generateCards(){
+
   let icons=["🎆","🎇","🌌","🌠"];
 
   let gifts=[
-    {type:"text",content:"Bartholomew & Pompompurin 🐱🐰"},
-    {type:"text",content:"You make days softer"},
-    {type:"text",content:"Sleep well tonight 🌙"},
-    {type:"text",content:"I appreciate you"},
-    {type:"text",content:"Happy Birthday ❤️"},
 
-    {type:"image",content:"pic1.jpg"},
-    {type:"image",content:"pic2.jpg"},
-    {type:"image",content:"pic3.jpg"},
-    {type:"image",content:"pic4.jpg"},
-    {type:"image",content:"pic5.jpg"},
+    {type:"video",src:"vid1.mp4"},
+    {type:"video",src:"vid2.mp4"},
+    {type:"video",src:"vid3.mp4"},
+    {type:"video",src:"vid4.mp4"},
+    {type:"video",src:"vid5.mp4"},
+    {type:"video",src:"vid6.mp4"},
+    {type:"video",src:"vid7.mp4"},
+    {type:"video",src:"vid8.mp4"},
+    {type:"video",src:"vid9.mp4"},
+    {type:"video",src:"vid10.mp4"},
+    {type:"video",src:"vid11.mp4"},
 
-    {type:"video",content:"vid1.mp4"},
-    {type:"video",content:"vid2.mp4"},
-    {type:"video",content:"singing1.mp4"},
-    {type:"video",content:"singing2.mp4"},
+    {type:"image",src:"img1.jpg"},
+    {type:"image",src:"img2.jpg"},
+    {type:"image",src:"img3.jpg"},
+    {type:"image",src:"img4.jpg"},
+    {type:"image",src:"img5.jpg"},
+    {type:"image",src:"img6.jpg"},
+    {type:"image",src:"img7.jpg"},
 
-    {type:"youtube",content:"https://www.youtube.com/embed/YOUR_VIDEO_ID"},
+    {type:"youtube",src:"https://www.youtube.com/embed/1o00J04ThXQ"},
 
-    {type:"text",content:"You deserve everything good"},
-    {type:"text",content:"I’m always here"},
-    {type:"text",content:"Stay cute okay"},
-    {type:"text",content:"You mean a lot to me"},
-    {type:"text",content:"More memories soon ❤️"}
+    {type:"final",text:`happy birthday, i hope today is filled with so much happiness, laughter, and moments that make u genuinely smile.
+
+you deserve that.
+
+happy birthday again shooney. – the goat and yo boi Lloyd ᕙ( •̀ ᗜ •́ )ᕗ`}
   ];
 
-  gifts=gifts.sort(()=>Math.random()-0.5);
-
-  cardGrid.innerHTML="";
+  let final=gifts.pop();
+  gifts.sort(()=>Math.random()-0.5);
+  gifts.push(final);
 
   gifts.forEach(g=>{
     let c=document.createElement("div");
@@ -285,39 +320,46 @@ function generateCards(){
 }
 
 function openGift(g){
-  rewardText.innerHTML="";
+
+  let body=document.getElementById("rewardBody");
+  body.innerHTML="";
   music2.pause();
 
-  if(g.type==="text"){
-    rewardText.innerText=g.content;
-  }
-  if(g.type==="image"){
-    rewardText.innerHTML=`<img src="${g.content}" style="max-width:250px;border-radius:10px;">`;
-  }
   if(g.type==="video"){
-    rewardText.innerHTML=`<video controls style="max-width:250px"><source src="${g.content}"></video>`;
-  }
-  if(g.type==="youtube"){
-    rewardText.innerHTML=`<iframe width="250" height="150" src="${g.content}" frameborder="0" allowfullscreen></iframe>`;
+    body.innerHTML=`<video controls autoplay width="300"><source src="${g.src}"></video>`;
   }
 
-  document.getElementById("rewardBox").style.display="flex";
+  else if(g.type==="image"){
+    body.innerHTML=`<img src="${g.src}" width="300">`;
+  }
+
+  else if(g.type==="youtube"){
+    body.innerHTML=`<iframe width="300" height="200" src="${g.src}" allowfullscreen></iframe>`;
+  }
+
+  else if(g.type==="final"){
+    document.getElementById("finalMusic").play();
+    body.innerHTML=`<div style="max-width:300px">${g.text}</div>`;
+  }
+
+  rewardBox.style.display="flex";
 }
 
 function closeReward(){
-  document.getElementById("rewardBox").style.display="none";
-  music2.currentTime=0;
-  music2.play();
+  rewardBox.style.display="none";
+  let finalMusic=document.getElementById("finalMusic");
+  if(finalMusic.paused){music2.play();}
+  else{finalMusic.pause();}
 }
 
 function explodeConfetti(){
-  for(let i=0;i<60;i++){
+  for(let i=0;i<40;i++){
     let c=document.createElement("div");
     c.className="confetti";
     c.innerText="🎉";
     c.style.left=Math.random()*100+"%";
     document.body.appendChild(c);
-    setTimeout(()=>c.remove(),2000);
+    setTimeout(()=>c.remove(),1500);
   }
 }
 </script>
