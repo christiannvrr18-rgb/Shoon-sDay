@@ -151,6 +151,17 @@ body,html{
   from{transform:translateY(-10vh);}
   to{transform:translateY(110vh);}
 }
+#giftWrap{
+  z-index:1;
+}
+
+#cardGrid{
+  z-index:5;
+}
+
+#rewardBox{
+  z-index:99999;
+}
 </style>
 </head>
 
@@ -158,7 +169,8 @@ body,html{
 
 <audio id="music1" src="hotline.mp3"></audio>
 <audio id="music2" src="minmhamin.mp3"></audio>
-
+<audio id="finalMusic" src="wings.mp3"></audio>
+  
 <div id="slide1" class="slide active">
 <button id="startBtn" class="start-btn">PRESS</button>
 </div>
@@ -242,72 +254,128 @@ bigGift.onclick=()=>{
 };
 
 function generateCards(){
-  let icons=["🎆","🎇","🌌","🌠"];
 
-  let gifts=[
-    {type:"text",content:"Bartholomew & Pompompurin 🐱🐰"},
-    {type:"text",content:"You make days softer"},
-    {type:"text",content:"Sleep well tonight 🌙"},
-    {type:"text",content:"I appreciate you"},
-    {type:"text",content:"Happy Birthday ❤️"},
+  let icons = ["🎆","🎇","🌌","🌠"];
 
-    {type:"image",content:"pic1.jpg"},
-    {type:"image",content:"pic2.jpg"},
-    {type:"image",content:"pic3.jpg"},
-    {type:"image",content:"pic4.jpg"},
-    {type:"image",content:"pic5.jpg"},
+  // ===== YOUR 20 GIFTS =====
+  let gifts = [
 
-    {type:"video",content:"vid1.mp4"},
-    {type:"video",content:"vid2.mp4"},
-    {type:"video",content:"singing1.mp4"},
-    {type:"video",content:"singing2.mp4"},
+    // 🎥 VIDEOS (11)
+    {type:"video", src:"vid1.mp4"},
+    {type:"video", src:"vid2.mp4"},
+    {type:"video", src:"vid3.mp4"},
+    {type:"video", src:"vid4.mp4"},
+    {type:"video", src:"vid5.mp4"},
+    {type:"video", src:"vid6.mp4"},
+    {type:"video", src:"vid7.mp4"},
+    {type:"video", src:"vid8.mp4"},
+    {type:"video", src:"vid9.mp4"},
+    {type:"video", src:"vid10.mp4"},
+    {type:"video", src:"vid11.mp4"},
 
-    {type:"youtube",content:"https://www.youtube.com/embed/YOUR_VIDEO_ID"},
+    // 🖼️ IMAGES (7)
+    {type:"image", src:"img1.jpg"},
+    {type:"image", src:"img2.jpg"},
+    {type:"image", src:"img3.jpg"},
+    {type:"image", src:"img4.jpg"},
+    {type:"image", src:"img5.jpg"},
+    {type:"image", src:"img6.jpg"},
+    {type:"image", src:"img7.jpg"},
 
-    {type:"text",content:"You deserve everything good"},
-    {type:"text",content:"I’m always here"},
-    {type:"text",content:"Stay cute okay"},
-    {type:"text",content:"You mean a lot to me"},
-    {type:"text",content:"More memories soon ❤️"}
+    // 🎬 YOUTUBE (1)
+    {
+      type:"youtube",
+      src:"https://www.youtube.com/embed/1o00J04ThXQ"
+    },
+
+    // 💌 FINAL MESSAGE (LAST GIFT)
+    {
+      type:"final",
+      text:`happy birthday, i hope today is filled with so much happiness, laughter, and moments that make u genuinely smile...
+      
+you deserve that.
+
+happy birthday again shooney. – the goat and yo boi Lloyd ᕙ( •̀ ᗜ •́ )ᕗ`
+    }
+
   ];
 
-  gifts=gifts.sort(()=>Math.random()-0.5);
+  // shuffle except final message (keep last)
+  let finalGift = gifts.pop();
+  gifts.sort(()=>Math.random()-0.5);
+  gifts.push(finalGift);
 
-  cardGrid.innerHTML="";
+  cardGrid.innerHTML = "";
 
-  gifts.forEach(g=>{
-    let c=document.createElement("div");
-    c.className="card";
-    c.innerText=icons[Math.floor(Math.random()*icons.length)];
-    c.onclick=()=>openGift(g);
-    cardGrid.appendChild(c);
+  gifts.forEach(gift=>{
+    let card = document.createElement("div");
+    card.className = "card";
+    card.innerText = icons[Math.floor(Math.random()*icons.length)];
+
+    card.onclick = ()=>openGift(gift);
+
+    cardGrid.appendChild(card);
   });
 }
 
-function openGift(g){
-  rewardText.innerHTML="";
+function openGift(gift){
+
+  let rewardBody = document.getElementById("rewardBody");
+
+  // STOP BG MUSIC
   music2.pause();
 
-  if(g.type==="text"){
-    rewardText.innerText=g.content;
-  }
-  if(g.type==="image"){
-    rewardText.innerHTML=`<img src="${g.content}" style="max-width:250px;border-radius:10px;">`;
-  }
-  if(g.type==="video"){
-    rewardText.innerHTML=`<video controls style="max-width:250px"><source src="${g.content}"></video>`;
-  }
-  if(g.type==="youtube"){
-    rewardText.innerHTML=`<iframe width="250" height="150" src="${g.content}" frameborder="0" allowfullscreen></iframe>`;
+  rewardBody.innerHTML = "";
+
+  if(gift.type === "video"){
+    rewardBody.innerHTML = `
+      <video controls autoplay style="max-width:300px;">
+        <source src="${gift.src}" type="video/mp4">
+      </video>
+    `;
   }
 
-  document.getElementById("rewardBox").style.display="flex";
+  else if(gift.type === "image"){
+    rewardBody.innerHTML = `
+      <img src="${gift.src}" style="max-width:300px; border-radius:10px;">
+    `;
+  }
+
+  else if(gift.type === "youtube"){
+    rewardBody.innerHTML = `
+      <iframe width="300" height="200"
+      src="${gift.src}"
+      frameborder="0"
+      allowfullscreen></iframe>
+    `;
+  }
+
+  else if(gift.type === "final"){
+
+    document.getElementById("finalMusic").currentTime = 0;
+    document.getElementById("finalMusic").play();
+
+    rewardBody.innerHTML = `
+      <div style="max-width:300px; font-size:14px; text-align:left;">
+        ${gift.text}
+      </div>
+    `;
+  }
+
+  rewardBox.style.display = "flex";
 }
 
 function closeReward(){
-  document.getElementById("rewardBox").style.display="none";
-  music2.currentTime=0;
-  music2.play();
+  rewardBox.style.display = "none";
+
+  // resume bg music if not final
+  let finalMusic = document.getElementById("finalMusic");
+
+  if(finalMusic.paused){
+    music2.play();
+  }else{
+    finalMusic.pause();
+  }
 }
 
 function explodeConfetti(){
