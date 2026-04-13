@@ -19,7 +19,6 @@ body,html{
   justify-content:center;
   align-items:center;
 }
-
 .active{display:flex;}
 
 #slide1{background:black;}
@@ -41,11 +40,6 @@ body,html{
   position:relative;
 }
 
-#cat{
-  width:420px;
-  max-width:90%;
-}
-
 .choice-btn{
   position:absolute;
   padding:12px 25px;
@@ -57,8 +51,6 @@ body,html{
 
 #yesBtn{background:#ff4d6d;color:white;left:40%;top:75%;}
 #noBtn{background:#444;color:white;left:55%;top:75%;}
-
-/* SLIDE 3 */
 
 #slide3{
   background:#ffd6e0;
@@ -82,11 +74,6 @@ body,html{
   justify-content:center;
   align-items:center;
   height:100%;
-  z-index:1;
-}
-
-#giftText{
-  margin-bottom:10px;
 }
 
 #bigGift{
@@ -103,12 +90,11 @@ body,html{
   grid-template-columns:repeat(5,1fr);
   gap:12px;
   justify-items:center;
-  z-index:5;
 }
 
 .card{
-  width:70px;
-  height:70px;
+  width:80px;
+  height:80px;
   background:white;
   border-radius:14px;
   display:flex;
@@ -121,7 +107,7 @@ body,html{
 #rewardBox{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,0.7);
+  background:rgba(0,0,0,0.8);
   display:none;
   justify-content:center;
   align-items:center;
@@ -133,27 +119,31 @@ body,html{
   padding:20px;
   border-radius:15px;
   text-align:center;
+  max-width:90%;
+  max-height:90%;
+  overflow:auto;
 }
 
-.bg-float{
+#rewardBody video,
+#rewardBody img,
+#rewardBody iframe{
+  max-width:90vw;
+  max-height:75vh;
+  border-radius:10px;
+}
+
+.popup{
   position:absolute;
-  animation:floatUp linear infinite;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:white;
+  padding:15px 25px;
+  border-radius:12px;
+  font-size:18px;
+  z-index:9999;
 }
 
-@keyframes floatUp{
-  from{transform:translateY(100vh);}
-  to{transform:translateY(-10vh);}
-}
-
-.confetti{
-  position:absolute;
-  animation:fall 1.8s linear forwards;
-}
-
-@keyframes fall{
-  from{transform:translateY(-10vh);}
-  to{transform:translateY(110vh);}
-}
 </style>
 </head>
 
@@ -163,278 +153,225 @@ body,html{
 <audio id="music2" src="minmhamin.mp3"></audio>
 <audio id="finalMusic" src="wings.mp3"></audio>
 
-<!-- SLIDE 1 -->
 <div id="slide1" class="slide active">
-  <button id="startBtn" class="start-btn">PRESS</button>
+<button id="startBtn" class="start-btn">PRESS</button>
 </div>
 
-<!-- SLIDE 2 -->
 <div id="slide2" class="slide">
-  <img src="bdaycat.png" id="cat">
-  <h1>Happy Birthday Shoon! 🎂</h1>
-  <p>Open your presents?</p>
-  <button id="yesBtn" class="choice-btn">YES</button>
-  <button id="noBtn" class="choice-btn">NO</button>
+<h1>Happy Birthday Shoon! 🎂</h1>
+<p>Open your presents?</p>
+<button id="yesBtn" class="choice-btn">YES</button>
+<button id="noBtn" class="choice-btn">NO</button>
 </div>
 
-<!-- SLIDE 3 -->
 <div id="slide3" class="slide">
-  <div id="gameTitle">find your gifts₍₍⚞(˶>ᗜ<˶)⚟⁾⁾</div>
+<div id="gameTitle">find your gifts₍₍⚞(˶>ᗜ<˶)⚟⁾⁾</div>
 
-  <div id="giftWrap">
-    <div id="giftText">well open it already ৻(  •̀ ᗜ •́  ৻)</div>
-    <div id="bigGift">🎁</div>
-  </div>
-
-  <div id="cardGrid"></div>
+<div id="giftWrap">
+<div>well open it already ৻(  •̀ ᗜ •́  ৻)</div>
+<div id="bigGift">🎁</div>
 </div>
 
-<!-- REWARD BOX -->
+<div id="cardGrid"></div>
+</div>
+
 <div id="rewardBox">
-  <div id="rewardContent">
-    <div id="rewardBody"></div>
-    <br>
-    <button onclick="closeReward()">OK</button>
-  </div>
+<div id="rewardContent">
+<div id="rewardBody"></div>
+<br>
+<button onclick="closeReward()">OK</button>
+</div>
 </div>
 
 <script>
-let slide1 = document.getElementById("slide1");
-let slide2 = document.getElementById("slide2");
-let slide3 = document.getElementById("slide3");
-
 let music1 = document.getElementById("music1");
 let music2 = document.getElementById("music2");
 let finalMusic = document.getElementById("finalMusic");
 let rewardBox = document.getElementById("rewardBox");
 
-let clickCount = 0;
-let clones = [];
-let moving = false;
-let moveInterval = null;
-let stage = 0;
-let yesScale = 1;
+let stage=0, clickCount=0, clones=[], moving=false;
 
 /* START */
-document.getElementById("startBtn").onclick = async ()=>{
-  slide1.classList.remove("active");
-  slide2.classList.add("active");
-  try{await music1.play();}catch{}
+startBtn.onclick=async()=>{
+slide1.classList.remove("active");
+slide2.classList.add("active");
+try{await music1.play();}catch{}
 };
 
 /* YES */
-document.getElementById("yesBtn").onclick = async ()=>{
-  slide2.classList.remove("active");
-  slide3.classList.add("active");
-
-  music1.pause();
-  music1.currentTime = 0;
-
-  try{await music2.play();}catch{}
-  spawnFloating();
+yesBtn.onclick=async()=>{
+slide2.classList.remove("active");
+slide3.classList.add("active");
+music1.pause(); music1.currentTime=0;
+try{await music2.play();}catch{}
 };
 
-/* FLOATING BG */
-function spawnFloating(){
-  let emojis=["🐱","🐰","🌸","🎀","🎂"];
-  setInterval(()=>{
-    let e=document.createElement("div");
-    e.className="bg-float";
-    e.innerText=emojis[Math.floor(Math.random()*emojis.length)];
-    e.style.left=Math.random()*100+"%";
-    e.style.animationDuration=(5+Math.random()*5)+"s";
-    slide3.appendChild(e);
-    setTimeout(()=>e.remove(),10000);
-  },500);
-}
-
-/* POPUP */
+/* POPUP CENTER */
 function pop(text){
-  let p=document.createElement("div");
-  p.innerText=text;
-  p.style.position="absolute";
-  p.style.top="10%";
-  p.style.left="50%";
-  p.style.transform="translateX(-50%)";
-  p.style.background="white";
-  p.style.padding="10px 20px";
-  p.style.borderRadius="10px";
-  p.style.zIndex="9999";
-  slide2.appendChild(p);
-  setTimeout(()=>p.remove(),1500);
+let p=document.createElement("div");
+p.className="popup";
+p.innerText=text;
+slide2.appendChild(p);
+setTimeout(()=>p.remove(),2500);
 }
 
-/* NO BUTTON LOGIC */
-document.getElementById("noBtn").onclick = ()=>{
-  growYes();
-  stage++;
+/* NO LOGIC */
+noBtn.onclick=()=>{
+stage++;
+yesBtn.style.transform=`scale(${1+stage*0.2})`;
 
-  if(stage === 1){
-    pop("why no? ૮(◞ ‸ ◟ )ა");
-    teleport(noBtn);
-  }
-
-  else if(stage === 2){
-    pop("try pressing 5 buttons then (¬_ ´¬ )");
-    spawnClones();
-  }
+if(stage===1){
+pop("why no? ૮(◞ ‸ ◟ )ა");
+teleport(noBtn);
+}
+else if(stage===2){
+pop("try pressing 5 buttons then (¬_ ´¬ )");
+spawnClones();
+}
 };
-
-function growYes(){
-  yesScale += 0.25;
-  yesBtn.style.transform = `scale(${yesScale})`;
-}
 
 function teleport(btn){
-  btn.style.left = (Math.random()*70+10)+"%";
-  btn.style.top = (Math.random()*60+20)+"%";
+btn.style.left=(Math.random()*70+10)+"%";
+btn.style.top=(Math.random()*60+20)+"%";
 }
 
-/* CLONES */
 function spawnClones(){
-  noBtn.style.display="none";
-  clones=[];
-  clickCount=0;
+noBtn.style.display="none";
+clickCount=0;
 
-  for(let i=0;i<5;i++){
-    let c=document.createElement("button");
-    c.className="choice-btn";
-    c.innerText="NO";
-    teleport(c);
-    c.onclick=()=>handleCloneClick(c);
-    slide2.appendChild(c);
-    clones.push(c);
-  }
+for(let i=0;i<5;i++){
+let c=document.createElement("button");
+c.className="choice-btn";
+c.innerText="NO";
+teleport(c);
+c.onclick=()=>handleClone(c);
+slide2.appendChild(c);
+clones.push(c);
+}
 }
 
-function handleCloneClick(btn){
-  if(moving) return;
+function handleClone(btn){
+if(moving) return;
 
-  btn.remove();
-  clickCount++;
+btn.remove();
+clickCount++;
 
-  if(clickCount===1) pop("3...");
-  if(clickCount===2) pop("2...");
-  if(clickCount===3) pop("1...");
-  if(clickCount===4) pop("Shoon lae thu…");
+if(clickCount===1) pop("3...");
+if(clickCount===2) pop("2...");
+if(clickCount===3) pop("1...");
+if(clickCount===4) pop("Shoon lae thu…");
 
-  if(clickCount===5){
-    pop("alr fine try catching it then");
-    let finalBtn=document.createElement("button");
-    finalBtn.className="choice-btn";
-    finalBtn.innerText="NO";
-    teleport(finalBtn);
-    slide2.appendChild(finalBtn);
-    startMoving(finalBtn);
-  }
+if(clickCount===5){
+pop("alr fine try catching it then");
+let f=document.createElement("button");
+f.className="choice-btn";
+f.innerText="NO";
+teleport(f);
+slide2.appendChild(f);
+startMoving(f);
+}
 }
 
 function startMoving(btn){
-  moving=true;
+moving=true;
 
-  moveInterval=setInterval(()=>{
-    let x=parseFloat(btn.style.left)||50;
-    let y=parseFloat(btn.style.top)||50;
+let int=setInterval(()=>{
+btn.style.left=(Math.random()*70+10)+"%";
+btn.style.top=(Math.random()*60+20)+"%";
+},650);
 
-    x+=Math.random()*20-10;
-    y+=Math.random()*20-10;
-
-    x=Math.max(10,Math.min(80,x));
-    y=Math.max(20,Math.min(80,y));
-
-    btn.style.left=x+"%";
-    btn.style.top=y+"%";
-  },650);
-
-  btn.onclick=()=>{
-    clearInterval(moveInterval);
-    pop("that’s it, no more No button for you");
-    btn.remove();
-    growYes();
-  };
+btn.onclick=()=>{
+clearInterval(int);
+pop("that’s it, no more No button for you");
+btn.remove();
+yesBtn.style.transform="scale(2)";
+};
 }
 
-/* GIFT SYSTEM */
+/* GIFT */
 bigGift.onclick=()=>{
-  giftWrap.style.display="none";
-  gameTitle.style.display="block";
-  cardGrid.style.display="grid";
-  generateCards();
-  explodeConfetti();
+giftWrap.style.display="none";
+gameTitle.style.display="block";
+cardGrid.style.display="grid";
+generateCards();
 };
 
 function generateCards(){
-  let icons=["🎆","🎇","🌌","🌠"];
+let icons=["🎆","🎇","🌌","🌠"];
 
-  let gifts=[
-    {type:"video",src:"vid1.mp4"},
-    {type:"image",src:"img1.jpg"},
-    {type:"youtube",src:"https://www.youtube.com/embed/1o00J04ThXQ"},
-    {type:"final",text:"happy birthday shoon ❤️"}
-  ];
+let gifts=[];
 
-  cardGrid.innerHTML="";
+/* 11 videos */
+for(let i=1;i<=11;i++){
+gifts.push({type:"video",src:`vid${i}.mp4`});
+}
 
-  gifts.forEach(g=>{
-    let card=document.createElement("div");
-    card.className="card";
-    card.innerText=icons[Math.floor(Math.random()*icons.length)];
+/* 7 images */
+for(let i=1;i<=7;i++){
+gifts.push({type:"image",src:`img${i}.jpg`});
+}
 
-    card.onclick=()=>{
-      card.style.visibility="hidden";
-      openGift(g);
-    };
+/* youtube */
+gifts.push({type:"youtube",src:"https://www.youtube.com/embed/1o00J04ThXQ"});
 
-    cardGrid.appendChild(card);
-  });
+/* FINAL MESSAGE */
+gifts.push({
+type:"final",
+text:`happy birthday, i hope today is filled with so much happiness, laughter, and moments that make u genuinely smile. u deserve a day where everything feels light and good, even just for a while. i hope this year brings you more peace, more growth, and more of the things you’ve been quietly wishing for. i just want u to know that you’re someone really special, not just for how you are on the outside, but for the way you carry yourself, the way you care, and the little things about you that people don’t always say out loud. i hope you never lose that part of you. take your time today, enjoy everything, and don’t stress too much. just be happy, even in the smallest ways. you deserve that. happy birthday again shoonkey. 
+
+– the goat and yo boi Lloyd ᕙ( •̀ ᗜ •́ )ᕗ`
+});
+
+/* shuffle */
+gifts.sort(()=>Math.random()-0.5);
+
+cardGrid.innerHTML="";
+
+gifts.forEach(g=>{
+let c=document.createElement("div");
+c.className="card";
+c.innerText=icons[Math.floor(Math.random()*icons.length)];
+
+c.onclick=()=>{
+c.style.visibility="hidden";
+openGift(g);
+};
+
+cardGrid.appendChild(c);
+});
 }
 
 function openGift(g){
-  let body=document.getElementById("rewardBody");
+let body=document.getElementById("rewardBody");
 
-  music2.pause();
-  music2.currentTime=0;
+music2.pause();
+music2.currentTime=0;
 
-  body.innerHTML="";
+body.innerHTML="";
 
-  if(g.type==="video"){
-    body.innerHTML=`<video controls autoplay style="max-width:300px;">
-    <source src="${g.src}" type="video/mp4"></video>`;
-  }
+if(g.type==="video"){
+body.innerHTML=`<video controls autoplay>
+<source src="${g.src}" type="video/mp4"></video>`;
+}
+else if(g.type==="image"){
+body.innerHTML=`<img src="${g.src}">`;
+}
+else if(g.type==="youtube"){
+body.innerHTML=`<iframe src="${g.src}" allowfullscreen></iframe>`;
+}
+else if(g.type==="final"){
+finalMusic.play();
+body.innerHTML=`<div style="font-size:16px;line-height:1.5;text-align:left;">${g.text}</div>`;
+}
 
-  else if(g.type==="image"){
-    body.innerHTML=`<img src="${g.src}" style="max-width:300px;">`;
-  }
-
-  else if(g.type==="youtube"){
-    body.innerHTML=`<iframe width="300" height="200" src="${g.src}" frameborder="0" allowfullscreen></iframe>`;
-  }
-
-  else if(g.type==="final"){
-    finalMusic.play();
-    body.innerHTML=`<div>${g.text}</div>`;
-  }
-
-  rewardBox.style.display="flex";
+rewardBox.style.display="flex";
 }
 
 function closeReward(){
-  rewardBox.style.display="none";
-  if(finalMusic.paused){
-    music2.play();
-  }
+rewardBox.style.display="none";
+if(finalMusic.paused){
+music2.play();
 }
-
-/* CONFETTI */
-function explodeConfetti(){
-  for(let i=0;i<60;i++){
-    let c=document.createElement("div");
-    c.className="confetti";
-    c.innerText="🎉";
-    c.style.left=Math.random()*100+"%";
-    document.body.appendChild(c);
-    setTimeout(()=>c.remove(),2000);
-  }
 }
 </script>
 
