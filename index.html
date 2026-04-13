@@ -78,10 +78,28 @@ body,html{
 
 /* SLIDE 3 */
 #slide3{
-  background:#ffd6e0;
   position:relative;
+  overflow:hidden;
 }
 
+/* PICNIC */
+#picnicBg{
+  position:absolute;
+  inset:0;
+  z-index:0;
+}
+
+.sky{height:60%;background:linear-gradient(#ffc0cb,#ffe4e1);}
+.grass{position:absolute;bottom:0;width:100%;height:40%;background:#b5e48c;}
+.blanket{
+  position:absolute;bottom:40px;left:50%;
+  transform:translateX(-50%);
+  width:200px;height:120px;background:#ff8fab;border-radius:15px;
+}
+.basket{position:absolute;bottom:80px;left:calc(50% - 60px);font-size:40px;}
+.food{position:absolute;bottom:80px;left:calc(50% + 20px);font-size:30px;}
+
+/* UI */
 #gameTitle{
   display:none;
   position:absolute;
@@ -89,12 +107,13 @@ body,html{
   width:100%;
   text-align:center;
   font-weight:bold;
+  z-index:5;
 }
 
 #giftWrap{
-  display:flex;
-  flex-direction:column;
-  align-items:center;
+  position:relative;
+  z-index:5;
+  text-align:center;
 }
 
 #bigGift{
@@ -112,18 +131,50 @@ body,html{
   grid-template-columns:repeat(5,1fr);
   gap:12px;
   justify-items:center;
+  z-index:5;
 }
 
 .card{
   width:80px;
   height:80px;
-  background:white;
-  border-radius:14px;
-  display:flex;
-  align-items:center;
-  justify-content:center;
-  font-size:30px;
+  perspective:600px;
   cursor:pointer;
+}
+
+.inner{
+  width:100%;
+  height:100%;
+  position:relative;
+  transform-style:preserve-3d;
+  transition:transform 0.6s;
+}
+
+.card.flip .inner{transform:rotateY(180deg);}
+
+.front,.back{
+  position:absolute;
+  width:100%;
+  height:100%;
+  backface-visibility:hidden;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  border-radius:14px;
+}
+
+.front{background:white;font-size:30px;}
+.back{background:#ffc2d1;transform:rotateY(180deg);}
+
+/* POPUP */
+.popup{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:white;
+  padding:15px 25px;
+  border-radius:12px;
+  z-index:9999;
 }
 
 /* REWARD */
@@ -152,27 +203,8 @@ body,html{
   max-height:75vh;
 }
 
-/* POPUP */
-.popup{
-  position:absolute;
-  top:50%;
-  left:50%;
-  transform:translate(-50%,-50%);
-  background:white;
-  padding:15px 25px;
-  border-radius:12px;
-}
-
 /* CONFETTI */
-.confetti{
-  position:absolute;
-  animation:fall 2s linear forwards;
-}
-
-@keyframes fall{
-  from{transform:translateY(-10vh);}
-  to{transform:translateY(110vh);}
-}
+.confetti{position:absolute;}
 </style>
 </head>
 
@@ -182,7 +214,6 @@ body,html{
 <audio id="music2" src="minmhamin.mp3"></audio>
 <audio id="finalMusic" src="wings.mp3"></audio>
 
-<!-- SLIDES -->
 <div id="slide1" class="slide active">
 <button id="startBtn" class="start-btn">PRESS</button>
 </div>
@@ -196,10 +227,19 @@ body,html{
 </div>
 
 <div id="slide3" class="slide">
-<div id="gameTitle">find your gifts</div>
+
+<div id="picnicBg">
+<div class="sky"></div>
+<div class="grass"></div>
+<div class="blanket"></div>
+<div class="basket">🧺</div>
+<div class="food">🍓🥐🧃</div>
+</div>
+
+<div id="gameTitle">find your gifts ₍₍⚞(˶>ᗜ<˶)⚟⁾⁾</div>
 
 <div id="giftWrap">
-<div>open it already</div>
+<div>open it already ৻(  •̀ ᗜ •́  ৻)</div>
 <div id="bigGift">🎁</div>
 </div>
 
@@ -215,198 +255,223 @@ body,html{
 </div>
 
 <script>
-/* ELEMENTS */
-const slide1 = document.getElementById("slide1");
-const slide2 = document.getElementById("slide2");
-const slide3 = document.getElementById("slide3");
+const slide1=slide1, slide2=slide2, slide3=slide3;
+const music1=music1, music2=music2, finalMusic=finalMusic;
 
-const startBtn = document.getElementById("startBtn");
-const yesBtn = document.getElementById("yesBtn");
-const noBtn = document.getElementById("noBtn");
-
-const bigGift = document.getElementById("bigGift");
-const cardGrid = document.getElementById("cardGrid");
-const giftWrap = document.getElementById("giftWrap");
-const gameTitle = document.getElementById("gameTitle");
-
-const rewardBox = document.getElementById("rewardBox");
-const rewardBody = document.getElementById("rewardBody");
-
-const music1 = document.getElementById("music1");
-const music2 = document.getElementById("music2");
-const finalMusic = document.getElementById("finalMusic");
+let stage=0, clickCount=0, moving=false;
 
 /* START */
-startBtn.onclick = async ()=>{
-  slide1.classList.remove("active");
-  slide2.classList.add("active");
-  try{ await music1.play(); }catch{}
+startBtn.onclick=async()=>{
+slide1.classList.remove("active");
+slide2.classList.add("active");
+try{await music1.play();}catch{}
 };
 
+/* FLOATING */
+function spawnFloating(){
+const emojis=["🐱","🐰","🌸","🎀","🎂","🍓","🌷","🌹","💖"];
+setInterval(()=>{
+let e=document.createElement("div");
+e.innerText=emojis[Math.floor(Math.random()*emojis.length)];
+e.style.position="absolute";
+e.style.left=Math.random()*100+"%";
+e.style.bottom="-30px";
+e.style.fontSize=(15+Math.random()*25)+"px";
+slide3.appendChild(e);
+let speed=5000+Math.random()*4000;
+e.animate([{transform:"translateY(0)"},{transform:"translateY(-120vh)"}],{duration:speed});
+setTimeout(()=>e.remove(),speed);
+},300);
+}
+
 /* YES */
-yesBtn.onclick = async ()=>{
-  slide2.classList.remove("active");
-  slide3.classList.add("active");
-  music1.pause(); music1.currentTime=0;
-  try{ await music2.play(); }catch{}
+yesBtn.onclick=async()=>{
+slide2.classList.remove("active");
+slide3.classList.add("active");
+music1.pause();
+music2.play();
+spawnFloating();
 };
 
 /* POP */
 function pop(text){
-  let p=document.createElement("div");
-  p.className="popup";
-  p.innerText=text;
-  slide2.appendChild(p);
-  setTimeout(()=>p.remove(),2500);
+const faces=["₍₍⚞(˶>ᗜ<˶)⚟⁾⁾","(ᗒᗣᗕ)","૮(˶ㅠ︿ㅠ)ა","(╥﹏╥)"];
+let p=document.createElement("div");
+p.className="popup";
+p.innerHTML=text+"<br>"+faces[Math.floor(Math.random()*faces.length)];
+slide2.appendChild(p);
+setTimeout(()=>p.remove(),3000);
 }
 
-/* NO */
-let stage=0;
+/* NO GAME */
 noBtn.onclick=()=>{
-  stage++;
-  yesBtn.style.transform=`scale(${1+stage*0.2})`;
+stage++;
+yesBtn.style.transform=`scale(${1+stage*0.2})`;
 
-  if(stage===1){
-    pop("why no?");
-    teleport(noBtn);
-  }
-  else if(stage===2){
-    pop("try pressing 5 buttons");
-    spawnClones();
-  }
+if(stage===1){
+pop("why no?");
+teleport(noBtn);
+}
+else if(stage===2){
+pop("try pressing 5 buttons then");
+spawnClones();
+}
 };
 
 function teleport(b){
-  b.style.left=Math.random()*70+10+"%";
-  b.style.top=Math.random()*60+20+"%";
+b.style.left=Math.random()*70+10+"%";
+b.style.top=Math.random()*60+20+"%";
 }
 
 function spawnClones(){
-  noBtn.style.display="none";
-  let count=0;
+noBtn.style.display="none";
+clickCount=0;
 
-  for(let i=0;i<5;i++){
-    let c=document.createElement("button");
-    c.className="choice-btn";
-    c.innerText="NO";
-    teleport(c);
+for(let i=0;i<5;i++){
+let c=document.createElement("button");
+c.className="choice-btn";
+c.innerText="NO";
+teleport(c);
+c.onclick=()=>handleClone(c);
+slide2.appendChild(c);
+}
+}
 
-    c.onclick=()=>{
-      c.remove();
-      count++;
+function handleClone(b){
+if(moving)return;
+b.remove();
+clickCount++;
 
-      if(count===1)pop("3...");
-      if(count===2)pop("2...");
-      if(count===3)pop("1...");
-      if(count===4)pop("Shoon lae thu…");
+if(clickCount===1)pop("3...");
+if(clickCount===2)pop("2...");
+if(clickCount===3)pop("1...");
+if(clickCount===4)pop("Shoon lae thu…");
 
-      if(count===5){
-        let f=document.createElement("button");
-        f.className="choice-btn";
-        f.innerText="NO";
-        teleport(f);
-        slide2.appendChild(f);
+if(clickCount===5){
+pop("catch it then 😈");
+let f=document.createElement("button");
+f.className="choice-btn";
+f.innerText="NO";
+teleport(f);
+slide2.appendChild(f);
 
-        let int=setInterval(()=>{
-          teleport(f);
-        },650);
+let int=setInterval(()=>teleport(f),650);
 
-        f.onclick=()=>{
-          clearInterval(int);
-          f.remove();
-          pop("no more NO 😈");
-        };
-      }
-    };
-
-    slide2.appendChild(c);
-  }
+f.onclick=()=>{
+clearInterval(int);
+f.remove();
+pop("no more NO (ᗒᗣᗕ)");
+};
+}
 }
 
 /* GIFT */
 bigGift.onclick=()=>{
-  giftWrap.style.display="none";
-  gameTitle.style.display="block";
-  cardGrid.style.display="grid";
-  generateCards();
+giftWrap.style.display="none";
+gameTitle.style.display="block";
+cardGrid.style.display="grid";
+generateCards();
+explodeConfetti();
 };
 
 function generateCards(){
-  let icons=["🎆","🎇","🌌","🌠"];
-  let gifts=[];
+let icons=["🎆","🎇","🌌","🌠"];
+let gifts=[];
 
-  for(let i=1;i<=11;i++) gifts.push({type:"video",src:`vid${i}.mp4`});
-  for(let i=1;i<=7;i++) gifts.push({type:"image",src:`img${i}.jpg`});
-  gifts.push({type:"youtube",src:"https://www.youtube.com/embed/1o00J04ThXQ"});
-  gifts.push({type:"final"});
+for(let i=1;i<=11;i++)gifts.push({type:"video",src:`vid${i}.mp4`});
+for(let i=1;i<=7;i++)gifts.push({type:"image",src:`img${i}.jpg`});
+gifts.push({type:"youtube",src:"https://www.youtube.com/embed/1o00J04ThXQ"});
+gifts.push({type:"final"});
 
-  gifts.sort(()=>Math.random()-0.5);
+gifts.sort(()=>Math.random()-0.5);
 
-  cardGrid.innerHTML="";
+cardGrid.innerHTML="";
 
-  gifts.forEach(g=>{
-    let card=document.createElement("div");
-    card.className="card";
-    card.innerText=icons[Math.floor(Math.random()*icons.length)];
+gifts.forEach(g=>{
+let card=document.createElement("div");
+card.className="card";
 
-    card.onclick=()=>{
-      card.style.visibility="hidden";
-      openGift(g);
-    };
+let inner=document.createElement("div");
+inner.className="inner";
 
-    cardGrid.appendChild(card);
-  });
+let front=document.createElement("div");
+front.className="front";
+front.innerText=icons[Math.floor(Math.random()*icons.length)];
+
+let back=document.createElement("div");
+back.className="back";
+back.innerText="🎁";
+
+inner.appendChild(front);
+inner.appendChild(back);
+card.appendChild(inner);
+
+card.onclick=()=>{
+card.classList.add("flip");
+setTimeout(()=>openGift(g),500);
+};
+
+cardGrid.appendChild(card);
+});
 }
 
-/* TYPE EFFECT */
+/* TYPEWRITER */
 function typeText(el,text){
-  let i=0;
-  let int=setInterval(()=>{
-    el.innerHTML+=text[i];
-    i++;
-    if(i>=text.length) clearInterval(int);
-  },15);
+let i=0;
+let int=setInterval(()=>{
+el.innerHTML+=text[i];
+i++;
+if(i>=text.length)clearInterval(int);
+},15);
 }
 
 function openGift(g){
-  rewardBody.innerHTML="";
-  music2.pause();
+rewardBody.innerHTML="";
+music2.pause();
 
-  if(g.type==="video"){
-    rewardBody.innerHTML=`<video controls autoplay src="${g.src}"></video>`;
-  }
-  else if(g.type==="image"){
-    rewardBody.innerHTML=`<img src="${g.src}">`;
-  }
-  else if(g.type==="youtube"){
-    rewardBody.innerHTML=`<iframe src="${g.src}" allowfullscreen></iframe>`;
-  }
-  else{
-    finalMusic.play();
-    explodeConfetti();
-    let div=document.createElement("div");
-    rewardBody.appendChild(div);
+if(g.type==="video"){
+rewardBody.innerHTML=`<video controls autoplay src="${g.src}"></video>`;
+}
+else if(g.type==="image"){
+rewardBody.innerHTML=`<img src="${g.src}">`;
+}
+else if(g.type==="youtube"){
+rewardBody.innerHTML=`<iframe src="${g.src}"></iframe>`;
+}
+else{
+finalMusic.play();
+explodeConfetti();
 
-    typeText(div,`happy birthday, i hope today is filled with so much happiness, laughter, and moments that make u genuinely smile. u deserve a day where everything feels light and good, even just for a while. i hope this year brings you more peace, more growth, and more of the things you’ve been quietly wishing for. i just want u to know that you’re someone really special, not just for how you are on the outside, but for the way you carry yourself, the way you care, and the little things about you that people don’t always say out loud. i hope you never lose that part of you. take your time today, enjoy everything, and don’t stress too much. just be happy, even in the smallest ways. you deserve that. happy birthday again shoonkey– the goat and yo boi Lloyd ᕙ( •̀ ᗜ •́ )ᕗ`);
-  }
+let div=document.createElement("div");
+div.style.textAlign="left";
+div.style.lineHeight="1.5";
+rewardBody.appendChild(div);
 
-  rewardBox.style.display="flex";
+typeText(div,`happy birthday, i hope today is filled with so much happiness, laughter, and moments that make u genuinely smile. u deserve a day where everything feels light and good, even just for a while. i hope this year brings you more peace, more growth, and more of the things you’ve been quietly wishing for. i just want u to know that you’re someone really special, not just for how you are on the outside, but for the way you carry yourself, the way you care, and the little things about you that people don’t always say out loud. i hope you never lose that part of you. take your time today, enjoy everything, and don’t stress too much. just be happy, even in the smallest ways. you deserve that. happy birthday again shoonkey. 
+
+– the goat and yo boi Lloyd ᕙ( •̀ ᗜ •́ )ᕗ`);
+}
+
+rewardBox.style.display="flex";
 }
 
 function closeReward(){
-  rewardBox.style.display="none";
-  if(finalMusic.paused) music2.play();
+rewardBox.style.display="none";
+if(finalMusic.paused)music2.play();
 }
 
 function explodeConfetti(){
-  for(let i=0;i<60;i++){
-    let c=document.createElement("div");
-    c.className="confetti";
-    c.innerText="🎉";
-    c.style.left=Math.random()*100+"%";
-    document.body.appendChild(c);
-    setTimeout(()=>c.remove(),2000);
-  }
+for(let i=0;i<120;i++){
+let c=document.createElement("div");
+c.innerText=["🎉","💖","✨","🌸"][Math.floor(Math.random()*4)];
+c.style.position="absolute";
+c.style.left=Math.random()*100+"%";
+document.body.appendChild(c);
+
+c.animate([{transform:"translateY(-10vh)"},{transform:"translateY(110vh)"}],{duration:2000+Math.random()*1000});
+
+setTimeout(()=>c.remove(),3000);
+}
 }
 </script>
 
