@@ -209,7 +209,12 @@ let slide3 = document.getElementById("slide3");
 
 let music1 = document.getElementById("music1");
 let music2 = document.getElementById("music2");
-
+let clickCount = 0;
+let clones = [];
+let moving = false;
+let moveInterval = null;
+let stage = 0;
+let yesScale = 1;
 document.getElementById("startBtn").onclick = async ()=>{
   slide1.classList.remove("active");
   slide2.classList.add("active");
@@ -364,7 +369,99 @@ function openGift(gift){
 
   rewardBox.style.display = "flex";
 }
+function growYes(){
+  yesScale += 0.25;
+  document.getElementById("yesBtn").style.transform = `scale(${yesScale})`;
+}
+function teleport(btn){
+  btn.style.position = "absolute";
+  btn.style.left = (Math.random()*70 + 10) + "%";
+  btn.style.top = (Math.random()*60 + 20) + "%";
+}
+function spawnClones(){
 
+  let noBtn = document.getElementById("noBtn");
+  noBtn.style.display = "none";
+
+  clones = [];
+  clickCount = 0;
+
+  for(let i=0;i<5;i++){
+    let c = document.createElement("button");
+    c.className = "choice-btn";
+    c.innerText = "NO";
+
+    teleport(c);
+
+    c.onclick = ()=>handleCloneClick(c);
+
+    document.getElementById("slide2").appendChild(c);
+    clones.push(c);
+  }
+}
+function handleCloneClick(btn){
+
+  if(moving) return;
+
+  btn.remove();
+  clones = clones.filter(b=>b!==btn);
+
+  clickCount++;
+
+  if(clickCount === 1) pop("3...");
+  if(clickCount === 2) pop("2...");
+  if(clickCount === 3) pop("1...");
+
+  if(clickCount === 4){
+    pop("Shoon lae thu…( •̀⤙•́ )");
+  }
+
+  if(clickCount === 5){
+
+    pop("alr fine try catching it then <(ꐦㅍ _ㅍ)>");
+
+    let finalBtn = document.createElement("button");
+    finalBtn.className = "choice-btn";
+    finalBtn.innerText = "NO";
+
+    teleport(finalBtn);
+    document.getElementById("slide2").appendChild(finalBtn);
+
+    startMoving(finalBtn);
+  }
+}
+function startMoving(btn){
+
+  moving = true;
+
+  moveInterval = setInterval(()=>{
+
+    let x = parseFloat(btn.style.left) || 50;
+    let y = parseFloat(btn.style.top) || 50;
+
+    x += (Math.random()*20 - 10);
+    y += (Math.random()*20 - 10);
+
+    x = Math.max(10, Math.min(80, x));
+    y = Math.max(20, Math.min(80, y));
+
+    btn.style.left = x + "%";
+    btn.style.top = y + "%";
+
+  },600);
+
+  btn.onclick = ()=>{
+
+    clearInterval(moveInterval);
+
+    pop("that’s it, no more No button for you (ᗒᗣᗕ)");
+
+    btn.remove();
+
+    growYes();
+    document.getElementById("yesBtn").classList.add("grow");
+  };
+}
 function closeReward(){
   rewardBox.style.display = "none";
 
