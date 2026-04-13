@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Birthday Game</title>
+<title>SHOONSDAY</title>
 
 <style>
 body,html{
@@ -209,6 +209,7 @@ let slide3 = document.getElementById("slide3");
 
 let music1 = document.getElementById("music1");
 let music2 = document.getElementById("music2");
+  
 let clickCount = 0;
 let clones = [];
 let moving = false;
@@ -485,6 +486,25 @@ function explodeConfetti(){
     setTimeout(()=>c.remove(),2000);
   }
 }
+document.getElementById("noBtn").onclick = ()=>{
+
+  growYes();
+  stage++;
+
+  if(stage === 1){
+    pop("why no? ૮(◞ ‸ ◟ )ა");
+
+    let btn = document.getElementById("noBtn");
+    btn.style.left = (Math.random()*60 + 20) + "%";
+    btn.style.top = (Math.random()*60 + 20) + "%";
+    btn.style.position = "absolute";
+  }
+
+  else if(stage === 2){
+    pop("try pressing 5 buttons then (¬_ ´¬ )");
+    spawnClones();
+  }
+};
 </script>
 
 </body>
