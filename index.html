@@ -361,7 +361,7 @@ let rewardBox = document.getElementById("rewardBox");
 let rewardText = document.getElementById("rewardText");
 
 bigGift.onclick = ()=>{
-  bigGift.style.display = "none";
+  document.getElementById("giftWrap").style.display = "none"; // 🔥 FIX
   cardGrid.style.display = "grid";
   generateCards();
   explodeConfetti();
