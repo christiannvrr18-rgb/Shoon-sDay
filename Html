@@ -351,6 +351,7 @@ if(clickCount===3)pop("1...");
 if(clickCount===4)pop("Shoon lae thu…");
 
 if(clickCount===5){
+pop("catch it then 😈"); // ✅ THIS WAS MISSING
 let f=document.createElement("button");
 f.className="choice-btn";
 f.innerText="NO";
@@ -380,8 +381,9 @@ function generateCards(){
 let gifts=[];
 
 for(let i=1;i<=11;i++)gifts.push({type:"video",src:`vid${i}.mp4`});
-for(let i=1;i<=7;i++)gifts.push({type:"image",src:`img${i}.jpg`});
+for(let i=1;i<=6;i++)gifts.push({type:"image",src:`img${i}.jpg`});
 gifts.push({type:"youtube",src:"https://www.youtube.com/embed/1o00J04ThXQ"});
+gifts.push({type:"image",src:"img478.jpg"});
 
 gifts.sort(()=>Math.random()-0.5);
 
@@ -470,7 +472,29 @@ cardGrid.appendChild(card);
 }
 
 function openSecretGift(){
-rewardBody.innerHTML=`<img src="img478.jpg">`;
+
+rewardBody.innerHTML=""; // ❗ NO IMAGE ANYMORE
+
+music2.pause();
+finalMusic.currentTime=0;
+finalMusic.play();
+
+explodeConfetti();
+
+/* TEXT CONTAINER */
+let div=document.createElement("div");
+div.style.marginTop="15px";
+div.style.textAlign="left";
+div.style.lineHeight="1.6";
+rewardBody.appendChild(div);
+
+/* TYPEWRITER MESSAGE */
+typeText(div,`i hope today is filled with so much happiness, laughter, and moments that make u genuinely smile. u deserve a day where everything feels light and good, even just for a while. i hope this year brings you more peace, more growth, and more of the things you’ve been quietly wishing for. i just want u to know that you’re someone really special, not just for how you are on the outside, but for the way you carry yourself, the way you care, and the little things about you that people don’t always say out loud. i hope you never lose that part of you. take your time today, enjoy everything, and don’t stress too much. just be happy, even in the smallest ways. you deserve that. once again, happy birthday again shoon.
+
+– the goat and yo boi Lloyd ᕙ( •̀ ᗜ •́ )ᕗ`);
+
+rewardBox.style.display="flex";
+}
 
 music2.pause();
 finalMusic.currentTime=0;
