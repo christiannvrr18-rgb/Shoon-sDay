@@ -2,229 +2,519 @@
 <html>
 <head>
 <meta charset="UTF-8">
-<title>Happy Birthday 🎂</title>
+<title>SHOONSDAY</title>
 
 <style>
-body{
+body,html{
   margin:0;
-  font-family: 'Georgia', serif;
-  background:#ffe4ec;
-  text-align:center;
+  height:100%;
   overflow:hidden;
+  font-family:Arial;
 }
 
 .slide{
   display:none;
-  padding:60px 20px;
+  width:100%;
+  height:100%;
+  justify-content:center;
+  align-items:center;
 }
+.active{display:flex;}
 
-.active{
-  display:block;
-  animation:fade 0.8s ease;
-}
+#slide1{background:black;}
 
-@keyframes fade{
-  from{opacity:0;}
-  to{opacity:1;}
-}
-
-h1{font-size:55px; color:#8b0033;}
-h2{font-size:40px;}
-p{font-size:24px; max-width:700px; margin:auto;}
-
-button{
-  padding:14px 25px;
-  font-size:18px;
+.start-btn{
+  background:red;
+  color:white;
+  padding:25px 50px;
+  font-size:24px;
   border:none;
-  border-radius:25px;
-  margin:10px;
+  border-radius:15px;
   cursor:pointer;
 }
 
-.next{background:#ff4d6d; color:white;}
-.exit{background:#b3003c; color:white;}
+/* SLIDE 2 */
+#slide2{
+  background:#ffd6e0;
+  flex-direction:column;
+  text-align:center;
+  position:relative;
+}
 
-img{
-  width:250px;
-  margin:20px;
+#cat{
+  width:420px;
+  max-width:90%;
+}
+
+.choice-btn{
+  position:absolute;
+  padding:12px 25px;
+  border:none;
   border-radius:20px;
+  font-size:18px;
+  cursor:pointer;
+}
+
+#yesBtn{
+  background:#ff4d6d;
+  color:white;
+  left:40%;
+  top:75%;
+  animation:pulse 1.5s infinite;
+}
+
+#noBtn{
+  background:#444;
+  color:white;
+  left:55%;
+  top:75%;
+}
+
+@keyframes pulse{
+  0%{transform:scale(1);}
+  50%{transform:scale(1.1);}
+  100%{transform:scale(1);}
+}
+
+/* SLIDE 3 */
+#slide3{
+  position:relative;
+  background:linear-gradient(#ffd6e0,#fff0f5);
+}
+
+#gameTitle{
+  display:none;
+  position:absolute;
+  top:15px;
+  width:100%;
+  text-align:center;
+  font-weight:bold;
+  z-index:5;
+}
+
+#giftWrap{
+  z-index:5;
+  text-align:center;
+}
+
+#bigGift{
+  font-size:140px;
+  cursor:pointer;
+}
+
+/* CARDS */
+#cardGrid{
+  display:none;
+  position:absolute;
+  top:80px;
+  width:100%;
+  display:grid;
+  grid-template-columns:repeat(5,1fr);
+  gap:12px;
+  justify-items:center;
+  z-index:5;
+}
+
+.card{
+  width:80px;
+  height:80px;
+  perspective:600px;
+  cursor:pointer;
+}
+
+.inner{
+  width:100%;
+  height:100%;
+  position:relative;
+  transform-style:preserve-3d;
+  transition:transform 0.6s;
+}
+
+.card.flip .inner{transform:rotateY(180deg);}
+
+.front,.back{
+  position:absolute;
+  width:100%;
+  height:100%;
+  backface-visibility:hidden;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  border-radius:14px;
+}
+
+.front{background:white;font-size:30px;}
+.back{background:#ffc2d1;transform:rotateY(180deg);}
+
+/* POPUP */
+.popup{
+  position:absolute;
+  top:50%;
+  left:50%;
+  transform:translate(-50%,-50%);
+  background:white;
+  padding:15px 25px;
+  border-radius:12px;
+  z-index:9999;
+}
+
+/* REWARD */
+#rewardBox{
+  position:fixed;
+  inset:0;
+  background:rgba(0,0,0,0.8);
+  display:none;
+  justify-content:center;
+  align-items:center;
+}
+
+#rewardContent{
+  background:white;
+  padding:20px;
+  border-radius:15px;
+  max-width:90%;
+  max-height:90%;
+  overflow:auto;
+}
+
+#rewardBody video,
+#rewardBody img,
+#rewardBody iframe{
+  max-width:90vw;
+  max-height:75vh;
+}
+
+#backBtn{
+  font-size:20px;
+  padding:10px 25px;
+  border:none;
+  border-radius:10px;
+  background:#ff4d6d;
+  color:white;
+  cursor:pointer;
 }
 </style>
 </head>
 
 <body>
 
-<audio id="music" loop>
-  <source src="hotline.mp3">
-</audio>
+<audio id="music1" src="hotline.mp3"></audio>
+<audio id="music2" src="minmhamin.mp3"></audio>
+<audio id="finalMusic" src="wings.mp3"></audio>
 
-<!-- 1 OPENING -->
-<div class="slide active">
-  <h1>hey birthday girl 🎂</h1>
-  <p>
-  i made something for you…  
-  don’t overthink it, just go through it okay?
-  </p>
-  <img src="bunny1.jpg">
-  <br>
-  <button class="next" onclick="nextSlide()">start</button>
+<div id="slide1" class="slide active">
+<button id="startBtn" class="start-btn">PRESS</button>
 </div>
 
-<!-- 2 MORNING -->
-<div class="slide">
-  <h2>good morning 🐰</h2>
-  <p>
-  pompom’s been with you right?  
-  i hope she’s taking care of you for me
-  </p>
-  <img src="pompom.jpg">
-  <br>
-  <button class="next" onclick="nextSlide()">continue</button>
+<div id="slide2" class="slide">
+<img src="bdaycat.png" id="cat">
+<h1>Happy Birthday Shoon! 🎂</h1>
+<p>Open your presents?</p>
+<button id="yesBtn" class="choice-btn">YES</button>
+<button id="noBtn" class="choice-btn">NO</button>
 </div>
 
-<!-- 3 FLOWERS -->
-<div class="slide">
-  <h2>i got you flowers 🌸</h2>
-  <p>
-  rose lilies and tulips…  
-  see? i actually pay attention sometimes
-  </p>
-  <img src="flowers.jpg">
-  <br>
-  <button onclick="sendEmail()">receive bouquet 💌</button>
-  <button class="next" onclick="nextSlide()">next</button>
+<div id="slide3" class="slide">
+
+<div id="gameTitle">find your gifts ₍₍⚞(˶>ᗜ<˶)⚟⁾⁾</div>
+
+<div id="progress" style="position:absolute;top:50px;width:100%;text-align:center;z-index:5;font-weight:bold;">
+0 / 20 opened
 </div>
 
-<!-- 4 FOOD -->
-<div class="slide">
-  <h2>eat first</h2>
-  <p>
-  don’t say you’re not hungry…  
-  i already know how you are 😐
-  </p>
-  <img src="cake.jpg">
-  <br>
-  <button class="next" onclick="nextSlide()">ok fine</button>
+<div id="giftWrap">
+<div>open it already ৻( •̀ ᗜ •́ ৻)</div>
+<div id="bigGift">🎁</div>
 </div>
 
-<!-- 5 SINGING -->
-<div class="slide">
-  <h2>okay don’t laugh 💀</h2>
-  <p>
-  i actually tried here…  
-  so be nice for like 2 minutes
-  </p>
-
-  <!-- AUDIO -->
-  <audio controls>
-    <source src="sing.mp3">
-  </audio>
-
-  <!-- OR VIDEO -->
-  <!--
-  <video width="300" controls>
-    <source src="sing.mp4">
-  </video>
-  -->
-
-  <br>
-  <button class="next" onclick="nextSlide()">be honest</button>
+<div id="cardGrid"></div>
 </div>
 
-<!-- 6 BUNNY BREAK -->
-<div class="slide">
-  <h2>important break 🐰</h2>
-  <p>
-  i still think pompom was a good choice…  
-  she kinda matches you
-  </p>
-  <img src="bunny2.jpg">
-  <br>
-  <button class="next" onclick="nextSlide()">continue</button>
+<div id="rewardBox">
+<div id="rewardContent">
+<div id="rewardBody"></div>
+<br>
+<button onclick="closeReward()" id="backBtn">BACK</button>
 </div>
-
-<!-- 7 EXTRA EMOTIONAL -->
-<div class="slide">
-  <h2>random thought</h2>
-  <p>
-  i like knowing something i gave you  
-  is there with you today
-  </p>
-  <br>
-  <button class="next" onclick="nextSlide()">next</button>
-</div>
-
-<!-- 8 SHIFT -->
-<div class="slide">
-  <h2>okay… for real</h2>
-  <p>
-  i wish i was actually there with you today…  
-  not just doing this through a screen
-  </p>
-  <br>
-  <button onclick="finalSlide()">next</button>
-</div>
-
-<!-- FINAL -->
-<div class="slide">
-  <h2>happy birthday ❤️</h2>
-  <p>
-  i know this isn’t the same as being there with you,  
-  but i still wanted to make something that’s actually yours.  
-
-  not just something random… but something that reminds you  
-  that someone out there is thinking about you today.  
-
-  you’re not nonchalant like you act sometimes,  
-  you care more than you show,  
-  and i notice that.  
-
-  i like how you balance things…  
-  how you can be sarcastic one second  
-  and soft the next without even trying.  
-
-  and yeah, i don’t always say things directly,  
-  but i hope you can feel it through this.  
-
-  i’m really glad it’s you.  
-
-  enjoy your day, okay?  
-
-  – lloyd
-  </p>
 </div>
 
 <script>
-let slides=document.querySelectorAll(".slide");
-let current=0;
-let music=document.getElementById("music");
-let started=false;
+const slide1 = document.getElementById("slide1");
+const slide2 = document.getElementById("slide2");
+const slide3 = document.getElementById("slide3");
 
-function startMusic(){
-  if(!started){
-    music.play();
-    started=true;
-  }
+const startBtn = document.getElementById("startBtn");
+const yesBtn = document.getElementById("yesBtn");
+const noBtn = document.getElementById("noBtn");
+
+const bigGift = document.getElementById("bigGift");
+const cardGrid = document.getElementById("cardGrid");
+const giftWrap = document.getElementById("giftWrap");
+const gameTitle = document.getElementById("gameTitle");
+
+const rewardBox = document.getElementById("rewardBox");
+const rewardBody = document.getElementById("rewardBody");
+
+const music1 = document.getElementById("music1");
+const music2 = document.getElementById("music2");
+const finalMusic = document.getElementById("finalMusic");
+
+let stage=0, clickCount=0;
+let openedCount=0;
+let openedSet=new Set();
+let secretUnlocked=false;
+
+/* START */
+startBtn.onclick=async()=>{
+slide1.classList.remove("active");
+slide2.classList.add("active");
+try{await music1.play();}catch{}
+};
+
+/* FLOATING */
+function spawnFloating(){
+const emojis=["🐱","🐰","🌸","🎀","🎂","🍓","🌷","💖"];
+setInterval(()=>{
+let e=document.createElement("div");
+e.innerText=emojis[Math.floor(Math.random()*emojis.length)];
+e.style.position="absolute";
+e.style.left=Math.random()*100+"%";
+e.style.bottom="-30px";
+slide3.appendChild(e);
+
+let speed=5000+Math.random()*3000;
+e.animate([{transform:"translateY(0)"},{transform:"translateY(-120vh)"}],{duration:speed});
+setTimeout(()=>e.remove(),speed);
+},300);
 }
 
-function nextSlide(){
-  startMusic();
-  slides[current].classList.remove("active");
-  current++;
-  slides[current].classList.add("active");
+/* YES */
+yesBtn.onclick=()=>{
+slide2.classList.remove("active");
+slide3.classList.add("active");
+music1.pause();
+music2.play();
+spawnFloating();
+};
+
+/* POPUP */
+function pop(text){
+const faces=["₍₍⚞(˶>ᗜ<˶)⚟⁾⁾","(ᗒᗣᗕ)","૮(˶ㅠ︿ㅠ)ა","(╥﹏╥)"];
+let p=document.createElement("div");
+p.className="popup";
+p.innerHTML=text+"<br>"+faces[Math.floor(Math.random()*faces.length)];
+slide2.appendChild(p);
+setTimeout(()=>p.remove(),2500);
 }
 
-function finalSlide(){
-  slides[current].classList.remove("active");
-  current++;
-  slides[current].classList.add("active");
+/* NO GAME */
+noBtn.onclick=()=>{
+stage++;
+yesBtn.style.transform=`scale(${1+stage*0.2})`;
 
-  music.src="minmhamin.mp3";
-  music.play();
+if(stage===1){
+pop("why no?");
+teleport(noBtn);
+}
+else if(stage===2){
+pop("try pressing 5 buttons then");
+spawnClones();
+}
+};
+
+function teleport(b){
+b.style.left=Math.random()*70+10+"%";
+b.style.top=Math.random()*60+20+"%";
 }
 
-function sendEmail(){
-  window.location.href="mailto:?subject=For you 🌸&body=If I could, I’d give these to you in person… but for now, imagine I’m there 😌";
+function spawnClones(){
+noBtn.style.display="none";
+clickCount=0;
+
+for(let i=0;i<5;i++){
+let c=document.createElement("button");
+c.className="choice-btn";
+c.innerText="NO";
+teleport(c);
+c.onclick=()=>handleClone(c);
+slide2.appendChild(c);
+}
+}
+
+function handleClone(b){
+b.remove();
+clickCount++;
+
+if(clickCount===1)pop("3...");
+if(clickCount===2)pop("2...");
+if(clickCount===3)pop("1...");
+if(clickCount===4)pop("Shoon lae thu…");
+
+if(clickCount===5){
+let f=document.createElement("button");
+f.className="choice-btn";
+f.innerText="NO";
+teleport(f);
+slide2.appendChild(f);
+
+let int=setInterval(()=>teleport(f),600);
+
+f.onclick=()=>{
+clearInterval(int);
+f.remove();
+pop("no more NO (ᗒᗣᗕ)");
+};
+}
+}
+
+/* GIFT */
+bigGift.onclick=()=>{
+giftWrap.style.display="none";
+gameTitle.style.display="block";
+cardGrid.style.display="grid";
+generateCards();
+explodeConfetti();
+};
+
+function generateCards(){
+let gifts=[];
+
+for(let i=1;i<=11;i++)gifts.push({type:"video",src:`vid${i}.mp4`});
+for(let i=1;i<=7;i++)gifts.push({type:"image",src:`img${i}.jpg`});
+gifts.push({type:"youtube",src:"https://www.youtube.com/embed/1o00J04ThXQ"});
+
+gifts.sort(()=>Math.random()-0.5);
+
+gifts.forEach((g,i)=>{
+let card=document.createElement("div");
+card.className="card";
+
+let inner=document.createElement("div");
+inner.className="inner";
+
+let front=document.createElement("div");
+front.className="front";
+front.innerText="🎆";
+
+let back=document.createElement("div");
+back.className="back";
+back.innerText="🎁";
+
+inner.appendChild(front);
+inner.appendChild(back);
+card.appendChild(inner);
+
+card.onclick=()=>{
+card.classList.add("flip");
+
+if(!openedSet.has(i)){
+openedSet.add(i);
+openedCount++;
+document.getElementById("progress").innerText=openedCount+" / 20 opened";
+
+if(openedCount===20 && !secretUnlocked){
+secretUnlocked=true;
+setTimeout(spawnSecretCard,800);
+}
+}
+
+setTimeout(()=>openGift(g),400);
+};
+
+cardGrid.appendChild(card);
+});
+}
+
+function openGift(g){
+rewardBody.innerHTML="";
+music2.pause();
+
+if(g.type==="video"){
+rewardBody.innerHTML=`<video controls autoplay src="${g.src}"></video>`;
+}
+else if(g.type==="image"){
+rewardBody.innerHTML=`<img src="${g.src}">`;
+}
+else{
+rewardBody.innerHTML=`<iframe src="${g.src}"></iframe>`;
+}
+
+rewardBox.style.display="flex";
+}
+
+function spawnSecretCard(){
+let card=document.createElement("div");
+card.className="card";
+
+let inner=document.createElement("div");
+inner.className="inner";
+
+let front=document.createElement("div");
+front.className="front";
+front.innerText="🌸";
+
+let back=document.createElement("div");
+back.className="back";
+back.innerText="🎁";
+
+inner.appendChild(front);
+inner.appendChild(back);
+card.appendChild(inner);
+
+card.onclick=()=>{
+card.classList.add("flip");
+setTimeout(openSecretGift,400);
+};
+
+cardGrid.appendChild(card);
+}
+
+function openSecretGift(){
+rewardBody.innerHTML=`<img src="img478.jpg">`;
+
+music2.pause();
+finalMusic.currentTime=0;
+finalMusic.play();
+
+explodeConfetti();
+
+let div=document.createElement("div");
+div.style.marginTop="15px";
+rewardBody.appendChild(div);
+
+typeText(div,` i hope today is filled with so much happiness, laughter, and moments that make u genuinely smile. u deserve a day where everything feels light and good, even just for a while. i hope this year brings you more peace, more growth, and more of the things you’ve been quietly wishing for. i just want u to know that you’re someone really special, not just for how you are on the outside, but for the way you carry yourself, the way you care, and the little things about you that people don’t always say out loud. i hope you never lose that part of you. take your time today, enjoy everything, and don’t stress too much. just be happy, even in the smallest ways. you deserve that. once again, happy birthday again shoon.
+– the goat and yo boi Lloyd ᕙ( •̀ ᗜ •́ )ᕗ`);
+
+rewardBox.style.display="flex";
+}
+
+function typeText(el,text){
+let i=0;
+let int=setInterval(()=>{
+el.innerHTML+=text[i];
+i++;
+if(i>=text.length)clearInterval(int);
+},15);
+}
+
+function closeReward(){
+rewardBox.style.display="none";
+if(finalMusic.paused)music2.play();
+}
+
+function explodeConfetti(){
+for(let i=0;i<120;i++){
+let c=document.createElement("div");
+c.innerText=["🎉","💖","✨","🌸"][Math.floor(Math.random()*4)];
+c.style.position="absolute";
+c.style.left=Math.random()*100+"%";
+document.body.appendChild(c);
+
+c.animate([{transform:"translateY(-10vh)"},{transform:"translateY(110vh)"}],
+{duration:2000+Math.random()*1000});
+
+setTimeout(()=>c.remove(),3000);
+}
 }
 </script>
 
