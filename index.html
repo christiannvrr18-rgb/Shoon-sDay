@@ -260,8 +260,9 @@ const music2 = document.getElementById("music2");
 const finalMusic = document.getElementById("finalMusic");
 
 let stage=0, clickCount=0;
-let openedCount = 0;
-let secretUnlocked = false;
+let openedCount=0;
+let openedSet=new Set();
+let secretUnlocked=false;
 
 /* START */
 startBtn.onclick=async()=>{
@@ -272,7 +273,7 @@ try{await music1.play();}catch{}
 
 /* FLOATING */
 function spawnFloating(){
-const emojis=["🐱","🐰","🌸","🎀","🎂","🍓","🌷","🌹","💖"];
+const emojis=["🐱","🐰","🌸","🎀","🎂","🍓","🌷","💖"];
 setInterval(()=>{
 let e=document.createElement("div");
 e.innerText=emojis[Math.floor(Math.random()*emojis.length)];
@@ -281,7 +282,7 @@ e.style.left=Math.random()*100+"%";
 e.style.bottom="-30px";
 slide3.appendChild(e);
 
-let speed=5000+Math.random()*4000;
+let speed=5000+Math.random()*3000;
 e.animate([{transform:"translateY(0)"},{transform:"translateY(-120vh)"}],{duration:speed});
 setTimeout(()=>e.remove(),speed);
 },300);
@@ -296,13 +297,14 @@ music2.play();
 spawnFloating();
 };
 
-/* POP */
+/* POPUP */
 function pop(text){
+const faces=["₍₍⚞(˶>ᗜ<˶)⚟⁾⁾","(ᗒᗣᗕ)","૮(˶ㅠ︿ㅠ)ა","(╥﹏╥)"];
 let p=document.createElement("div");
 p.className="popup";
-p.innerText=text;
+p.innerHTML=text+"<br>"+faces[Math.floor(Math.random()*faces.length)];
 slide2.appendChild(p);
-setTimeout(()=>p.remove(),2000);
+setTimeout(()=>p.remove(),2500);
 }
 
 /* NO GAME */
@@ -360,7 +362,7 @@ let int=setInterval(()=>teleport(f),600);
 f.onclick=()=>{
 clearInterval(int);
 f.remove();
-pop("no more NO 😈");
+pop("no more NO (ᗒᗣᗕ)");
 };
 }
 }
@@ -383,7 +385,7 @@ gifts.push({type:"youtube",src:"https://www.youtube.com/embed/1o00J04ThXQ"});
 
 gifts.sort(()=>Math.random()-0.5);
 
-gifts.forEach(g=>{
+gifts.forEach((g,i)=>{
 let card=document.createElement("div");
 card.className="card";
 
@@ -403,10 +405,20 @@ inner.appendChild(back);
 card.appendChild(inner);
 
 card.onclick=()=>{
-if(card.classList.contains("opened")) return;
+card.classList.add("flip");
 
-card.classList.add("opened","flip");
-setTimeout(()=>openGift(g),500);
+if(!openedSet.has(i)){
+openedSet.add(i);
+openedCount++;
+document.getElementById("progress").innerText=openedCount+" / 20 opened";
+
+if(openedCount===20 && !secretUnlocked){
+secretUnlocked=true;
+setTimeout(spawnSecretCard,800);
+}
+}
+
+setTimeout(()=>openGift(g),400);
 };
 
 cardGrid.appendChild(card);
@@ -414,10 +426,6 @@ cardGrid.appendChild(card);
 }
 
 function openGift(g){
-openedCount++;
-document.getElementById("progress").innerText =
-openedCount + " / 20 opened";
-
 rewardBody.innerHTML="";
 music2.pause();
 
@@ -429,11 +437,6 @@ rewardBody.innerHTML=`<img src="${g.src}">`;
 }
 else{
 rewardBody.innerHTML=`<iframe src="${g.src}"></iframe>`;
-}
-
-if(openedCount === 20 && !secretUnlocked){
-secretUnlocked = true;
-setTimeout(spawnSecretCard,800);
 }
 
 rewardBox.style.display="flex";
@@ -460,7 +463,7 @@ card.appendChild(inner);
 
 card.onclick=()=>{
 card.classList.add("flip");
-setTimeout(openSecretGift,500);
+setTimeout(openSecretGift,400);
 };
 
 cardGrid.appendChild(card);
@@ -479,7 +482,8 @@ let div=document.createElement("div");
 div.style.marginTop="15px";
 rewardBody.appendChild(div);
 
-typeText(div,"happy birthday... – the goat and yo boi Lloyd");
+typeText(div,`happy birthday, i hope today is filled with so much happiness...
+– the goat and yo boi Lloyd ᕙ( •̀ ᗜ •́ )ᕗ`);
 
 rewardBox.style.display="flex";
 }
@@ -506,10 +510,8 @@ c.style.position="absolute";
 c.style.left=Math.random()*100+"%";
 document.body.appendChild(c);
 
-c.animate(
-[{transform:"translateY(-10vh)"},{transform:"translateY(110vh)"}],
-{duration:2000+Math.random()*1000}
-);
+c.animate([{transform:"translateY(-10vh)"},{transform:"translateY(110vh)"}],
+{duration:2000+Math.random()*1000});
 
 setTimeout(()=>c.remove(),3000);
 }
