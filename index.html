@@ -235,226 +235,242 @@ body,html{
 </div>
 
 <script>
-let slide1 = document.getElementById("slide1");
-let slide2 = document.getElementById("slide2");
-let slide3 = document.getElementById("slide3");
+const slide1 = document.getElementById("slide1");
+const slide2 = document.getElementById("slide2");
+const slide3 = document.getElementById("slide3");
 
-let startBtn = document.getElementById("startBtn");
-let yesBtn = document.getElementById("yesBtn");
-let noBtn = document.getElementById("noBtn");
+const startBtn = document.getElementById("startBtn");
+const yesBtn = document.getElementById("yesBtn");
+const noBtn = document.getElementById("noBtn");
 
-let cat = document.getElementById("cat");
+const bigGift = document.getElementById("bigGift");
+const cardGrid = document.getElementById("cardGrid");
+const giftWrap = document.getElementById("giftWrap");
+const gameTitle = document.getElementById("gameTitle");
 
-let modal = document.getElementById("modal");
-let modalText = document.getElementById("modalText");
+const rewardBox = document.getElementById("rewardBox");
+const rewardBody = document.getElementById("rewardBody");
 
-let music1 = document.getElementById("music1");
-let music2 = document.getElementById("music2");
+const music1 = document.getElementById("music1");
+const music2 = document.getElementById("music2");
+const finalMusic = document.getElementById("finalMusic");
 
-let noRemaining = 5;
-let yesScale = 1;
-let noClones = [];
-
-/* POPUP */
-function pop(text){
-  modal.classList.remove("show");
-  void modal.offsetWidth;
-  modalText.innerText = text;
-  modal.classList.add("show");
-  setTimeout(()=>modal.classList.remove("show"),1200);
-}
+let stage=0, clickCount=0, moving=false;
 
 /* START */
-startBtn.onclick = async ()=>{
-  slide1.classList.remove("active");
-  slide2.classList.add("active");
-
-  try{ await music1.play(); }catch(e){}
+startBtn.onclick=async()=>{
+slide1.classList.remove("active");
+slide2.classList.add("active");
+try{await music1.play();}catch{}
 };
+
+/* FLOATING */
+function spawnFloating(){
+const emojis=["🐱","🐰","🌸","🎀","🎂","🍓","🌷","🌹","💖"];
+setInterval(()=>{
+let e=document.createElement("div");
+e.innerText=emojis[Math.floor(Math.random()*emojis.length)];
+e.style.position="absolute";
+e.style.left=Math.random()*100+"%";
+e.style.bottom="-30px";
+e.style.fontSize=(15+Math.random()*25)+"px";
+slide3.appendChild(e);
+let speed=5000+Math.random()*4000;
+e.animate([{transform:"translateY(0)"},{transform:"translateY(-120vh)"}],{duration:speed});
+setTimeout(()=>e.remove(),speed);
+},300);
+}
 
 /* YES */
-yesBtn.onclick = async ()=>{
-  slide2.classList.remove("active");
-  slide3.classList.add("active");
-
-  music1.pause();
-  music2.currentTime = 0;
-
-  try{ await music2.play(); }catch(e){}
-
-  confettiBurst();
+yesBtn.onclick=async()=>{
+slide2.classList.remove("active");
+slide3.classList.add("active");
+music1.pause();
+music2.play();
+spawnFloating();
 };
 
-/* CONFETTI 🎉 */
-function confettiBurst(){
-  for(let i=0;i<40;i++){
-    let c = document.createElement("div");
-    c.style.position = "fixed";
-    c.style.width = "8px";
-    c.style.height = "8px";
-    c.style.background = `hsl(${Math.random()*360},100%,60%)`;
-    c.style.left = Math.random()*100 + "vw";
-    c.style.top = "-10px";
-    c.style.zIndex = 9999;
-
-    document.body.appendChild(c);
-
-    let fall = setInterval(()=>{
-      let top = parseFloat(c.style.top);
-      c.style.top = (top + 5) + "px";
-      c.style.transform = `rotate(${top*5}deg)`;
-
-      if(top > window.innerHeight){
-        c.remove();
-        clearInterval(fall);
-      }
-    },16);
-  }
+/* POP */
+function pop(text){
+const faces=["₍₍⚞(˶>ᗜ<˶)⚟⁾⁾","(ᗒᗣᗕ)","૮(˶ㅠ︿ㅠ)ა","(╥﹏╥)"];
+let p=document.createElement("div");
+p.className="popup";
+p.innerHTML=text+"<br>"+faces[Math.floor(Math.random()*faces.length)];
+slide2.appendChild(p);
+setTimeout(()=>p.remove(),3000);
 }
 
-/* GROW YES */
-function growYes(){
-  yesScale += 0.25;
-  yesBtn.style.setProperty("--s", yesScale);
+/* NO GAME */
+noBtn.onclick=()=>{
+stage++;
+yesBtn.style.transform=`scale(${1+stage*0.2})`;
+
+if(stage===1){
+pop("why no?");
+teleport(noBtn);
 }
-
-/* CAT REACTION 😾 */
-function catReact(type){
-  if(type === "angry"){
-    cat.style.transform = "scale(1.05) rotate(-2deg)";
-  }
-  if(type === "sad"){
-    cat.style.transform = "scale(0.95)";
-  }
-  if(type === "happy"){
-    cat.style.transform = "scale(1.1)";
-  }
-
-  setTimeout(()=>cat.style.transform="scale(1)",300);
+else if(stage===2){
+pop("try pressing 5 buttons then");
+spawnClones();
 }
-
-/* NO LOGIC */
-function consumeNo(){
-  noRemaining--;
-  growYes();
-
-  if(noRemaining === 4){
-    pop("why no? ૮(◞ ‸ ◟ )ა");
-    catReact("sad");
-  }
-  else if(noRemaining === 3){
-    pop("try pressing 5 buttons then (¬_ ´¬ )");
-    catReact("angry");
-  }
-  else if(noRemaining === 2){
-    pop("alr fine try catching it then <(ꐦㅍ _ㅍ)>");
-  }
-  else if(noRemaining === 1){
-    pop("that’s it, no more No button for you (ᗒᗣᗕ)");
-  }
-  else if(noRemaining <= 0){
-    finalState();
-  }
-}
-
-/* MAIN NO */
-noBtn.onclick = ()=>{
-  if(noRemaining > 3){
-    consumeNo();
-    moveButton(noBtn);
-  }
-  else if(noRemaining === 3){
-    consumeNo();
-    spawnClones();
-  }
-  else{
-    consumeNo();
-  }
 };
 
-/* MOVE BUTTON */
-function moveButton(btn){
-  btn.style.left = (Math.random()*60 + 20) + "%";
-  btn.style.top = (Math.random()*60 + 20) + "%";
+function teleport(b){
+b.style.left=Math.random()*70+10+"%";
+b.style.top=Math.random()*60+20+"%";
 }
 
-/* CLONES (SMART ESCAPE 😈) */
 function spawnClones(){
+noBtn.style.display="none";
+clickCount=0;
 
-  noBtn.style.display = "none";
-
-  for(let i=0;i<5;i++){
-
-    let clone = document.createElement("button");
-    clone.innerText = "NO";
-    clone.className = "choice-btn";
-
-    clone.style.background = "#444";
-    clone.style.color = "white";
-
-    moveButton(clone);
-
-    /* ESCAPE MECHANIC */
-    let canMove = true;
-
-    function tryEscape(e){
-
-      if(!canMove) return;
-
-      let rect = clone.getBoundingClientRect();
-
-      let dx = e.clientX - (rect.left + rect.width/2);
-      let dy = e.clientY - (rect.top + rect.height/2);
-
-      let distance = Math.sqrt(dx*dx + dy*dy);
-
-      if(distance < 120){ // detection radius
-
-        canMove = false;
-
-        setTimeout(()=>{
-          moveButton(clone);
-          canMove = true;
-        },200); // delay = catchable
-      }
-    }
-
-    /* MOUSE + TOUCH */
-    document.addEventListener("mousemove", tryEscape);
-    document.addEventListener("touchmove", (e)=>{
-      tryEscape(e.touches[0]);
-    });
-
-    clone.onclick = ()=>{
-      if(noRemaining <= 0) return;
-
-      consumeNo();
-      clone.remove();
-
-      if(noRemaining <= 0){
-        finalState();
-      }
-    };
-
-    slide2.appendChild(clone);
-    noClones.push(clone);
-  }
+for(let i=0;i<5;i++){
+let c=document.createElement("button");
+c.className="choice-btn";
+c.innerText="NO";
+teleport(c);
+c.onclick=()=>handleClone(c);
+slide2.appendChild(c);
+}
 }
 
-/* FINAL */
-function finalState(){
+function handleClone(b){
+if(moving)return;
+b.remove();
+clickCount++;
 
-  noClones.forEach(btn => btn.remove());
-  noClones = [];
+if(clickCount===1)pop("3...");
+if(clickCount===2)pop("2...");
+if(clickCount===3)pop("1...");
+if(clickCount===4)pop("Shoon lae thu…");
 
-  if(noBtn) noBtn.remove();
+if(clickCount===5){
+pop("catch it then 😈");
+let f=document.createElement("button");
+f.className="choice-btn";
+f.innerText="NO";
+teleport(f);
+slide2.appendChild(f);
 
-  yesBtn.classList.add("grow");
+let int=setInterval(()=>teleport(f),650);
 
-  catReact("happy");
-  pop("fine... just press YES already (╥﹏╥)");
+f.onclick=()=>{
+clearInterval(int);
+f.remove();
+pop("no more NO (ᗒᗣᗕ)");
+};
+}
+}
+
+/* GIFT */
+bigGift.onclick=()=>{
+giftWrap.style.display="none";
+gameTitle.style.display="block";
+cardGrid.style.display="grid";
+generateCards();
+explodeConfetti();
+};
+
+function generateCards(){
+let icons=["🎆","🎇","🌌","🌠"];
+let gifts=[];
+
+for(let i=1;i<=11;i++)gifts.push({type:"video",src:`vid${i}.mp4`});
+for(let i=1;i<=7;i++)gifts.push({type:"image",src:`img${i}.jpg`});
+gifts.push({type:"youtube",src:"https://www.youtube.com/embed/1o00J04ThXQ"});
+gifts.push({type:"final"});
+
+gifts.sort(()=>Math.random()-0.5);
+
+cardGrid.innerHTML="";
+
+gifts.forEach(g=>{
+let card=document.createElement("div");
+card.className="card";
+
+let inner=document.createElement("div");
+inner.className="inner";
+
+let front=document.createElement("div");
+front.className="front";
+front.innerText=icons[Math.floor(Math.random()*icons.length)];
+
+let back=document.createElement("div");
+back.className="back";
+back.innerText="🎁";
+
+inner.appendChild(front);
+inner.appendChild(back);
+card.appendChild(inner);
+
+card.onclick=()=>{
+card.classList.add("flip");
+setTimeout(()=>openGift(g),500);
+};
+
+cardGrid.appendChild(card);
+});
+}
+
+/* TYPEWRITER */
+function typeText(el,text){
+let i=0;
+let int=setInterval(()=>{
+el.innerHTML+=text[i];
+i++;
+if(i>=text.length)clearInterval(int);
+},15);
+}
+
+function openGift(g){
+rewardBody.innerHTML="";
+music2.pause();
+
+if(g.type==="video"){
+rewardBody.innerHTML=`<video controls autoplay src="${g.src}"></video>`;
+}
+else if(g.type==="image"){
+rewardBody.innerHTML=`<img src="${g.src}">`;
+}
+else if(g.type==="youtube"){
+rewardBody.innerHTML=`<iframe src="${g.src}"></iframe>`;
+}
+else{
+finalMusic.play();
+explodeConfetti();
+
+let div=document.createElement("div");
+div.style.textAlign="left";
+div.style.lineHeight="1.5";
+rewardBody.appendChild(div);
+
+typeText(div,`happy birthday, i hope today is filled with so much happiness, laughter, and moments that make u genuinely smile. u deserve a day where everything feels light and good, even just for a while. i hope this year brings you more peace, more growth, and more of the things you’ve been quietly wishing for. i just want u to know that you’re someone really special, not just for how you are on the outside, but for the way you carry yourself, the way you care, and the little things about you that people don’t always say out loud. i hope you never lose that part of you. take your time today, enjoy everything, and don’t stress too much. just be happy, even in the smallest ways. you deserve that. happy birthday again shoonkey. 
+
+– the goat and yo boi Lloyd ᕙ( •̀ ᗜ •́ )ᕗ`);
+}
+
+rewardBox.style.display="flex";
+}
+
+function closeReward(){
+rewardBox.style.display="none";
+if(finalMusic.paused)music2.play();
+}
+
+function explodeConfetti(){
+for(let i=0;i<120;i++){
+let c=document.createElement("div");
+c.innerText=["🎉","💖","✨","🌸"][Math.floor(Math.random()*4)];
+c.style.position="absolute";
+c.style.left=Math.random()*100+"%";
+document.body.appendChild(c);
+
+c.animate([{transform:"translateY(-10vh)"},{transform:"translateY(110vh)"}],{duration:2000+Math.random()*1000});
+
+setTimeout(()=>c.remove(),3000);
+}
 }
 </script>
-  
+
 </body>
 </html>
