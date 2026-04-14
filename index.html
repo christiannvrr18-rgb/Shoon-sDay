@@ -77,17 +77,11 @@ body,html{
 }
 
 /* SLIDE 3 */
-#slide3::before{
-  content:"";
-  position:absolute;
-  inset:0;
-  background:
-    radial-gradient(circle at 20% 30%, #ffc2d1 0%, transparent 40%),
-    radial-gradient(circle at 80% 70%, #ffd6e0 0%, transparent 40%);
-  z-index:0;
+#slide3{
+  position:relative;
+  background:linear-gradient(#ffd6e0,#fff0f5);
 }
 
-/* UI */
 #gameTitle{
   display:none;
   position:absolute;
@@ -99,7 +93,6 @@ body,html{
 }
 
 #giftWrap{
-  position:relative;
   z-index:5;
   text-align:center;
 }
@@ -190,7 +183,8 @@ body,html{
   max-width:90vw;
   max-height:75vh;
 }
-  #backBtn{
+
+#backBtn{
   font-size:20px;
   padding:10px 25px;
   border:none;
@@ -199,10 +193,6 @@ body,html{
   color:white;
   cursor:pointer;
 }
-
-
-/* CONFETTI */
-.confetti{position:absolute;}
 </style>
 </head>
 
@@ -227,19 +217,13 @@ body,html{
 <div id="slide3" class="slide">
 
 <div id="gameTitle">find your gifts ₍₍⚞(˶>ᗜ<˶)⚟⁾⁾</div>
-<div id="progress" style="
-position:absolute;
-top:50px;
-width:100%;
-text-align:center;
-z-index:5;
-font-weight:bold;
-">
+
+<div id="progress" style="position:absolute;top:50px;width:100%;text-align:center;z-index:5;font-weight:bold;">
 0 / 20 opened
 </div>
 
 <div id="giftWrap">
-<div>open it already ৻(  •̀ ᗜ •́  ৻)</div>
+<div>open it already ৻( •̀ ᗜ •́ ৻)</div>
 <div id="bigGift">🎁</div>
 </div>
 
@@ -275,10 +259,9 @@ const music1 = document.getElementById("music1");
 const music2 = document.getElementById("music2");
 const finalMusic = document.getElementById("finalMusic");
 
-let stage=0, clickCount=0, moving=false;
+let stage=0, clickCount=0;
 let openedCount = 0;
 let secretUnlocked = false;
-
 
 /* START */
 startBtn.onclick=async()=>{
@@ -296,8 +279,8 @@ e.innerText=emojis[Math.floor(Math.random()*emojis.length)];
 e.style.position="absolute";
 e.style.left=Math.random()*100+"%";
 e.style.bottom="-30px";
-e.style.fontSize=(15+Math.random()*25)+"px";
 slide3.appendChild(e);
+
 let speed=5000+Math.random()*4000;
 e.animate([{transform:"translateY(0)"},{transform:"translateY(-120vh)"}],{duration:speed});
 setTimeout(()=>e.remove(),speed);
@@ -305,7 +288,7 @@ setTimeout(()=>e.remove(),speed);
 }
 
 /* YES */
-yesBtn.onclick=async()=>{
+yesBtn.onclick=()=>{
 slide2.classList.remove("active");
 slide3.classList.add("active");
 music1.pause();
@@ -315,12 +298,11 @@ spawnFloating();
 
 /* POP */
 function pop(text){
-const faces=["₍₍⚞(˶>ᗜ<˶)⚟⁾⁾","(ᗒᗣᗕ)","૮(˶ㅠ︿ㅠ)ა","(╥﹏╥)"];
 let p=document.createElement("div");
 p.className="popup";
-p.innerHTML=text+"<br>"+faces[Math.floor(Math.random()*faces.length)];
+p.innerText=text;
 slide2.appendChild(p);
-setTimeout(()=>p.remove(),3000);
+setTimeout(()=>p.remove(),2000);
 }
 
 /* NO GAME */
@@ -358,7 +340,6 @@ slide2.appendChild(c);
 }
 
 function handleClone(b){
-if(moving)return;
 b.remove();
 clickCount++;
 
@@ -368,19 +349,18 @@ if(clickCount===3)pop("1...");
 if(clickCount===4)pop("Shoon lae thu…");
 
 if(clickCount===5){
-pop("catch it then 😈");
 let f=document.createElement("button");
 f.className="choice-btn";
 f.innerText="NO";
 teleport(f);
 slide2.appendChild(f);
 
-let int=setInterval(()=>teleport(f),650);
+let int=setInterval(()=>teleport(f),600);
 
 f.onclick=()=>{
 clearInterval(int);
 f.remove();
-pop("no more NO (ᗒᗣᗕ)");
+pop("no more NO 😈");
 };
 }
 }
@@ -395,7 +375,6 @@ explodeConfetti();
 };
 
 function generateCards(){
-let icons=["🎆","🎇","🌌","🌠"];
 let gifts=[];
 
 for(let i=1;i<=11;i++)gifts.push({type:"video",src:`vid${i}.mp4`});
@@ -403,8 +382,6 @@ for(let i=1;i<=7;i++)gifts.push({type:"image",src:`img${i}.jpg`});
 gifts.push({type:"youtube",src:"https://www.youtube.com/embed/1o00J04ThXQ"});
 
 gifts.sort(()=>Math.random()-0.5);
-
-cardGrid.innerHTML="";
 
 gifts.forEach(g=>{
 let card=document.createElement("div");
@@ -415,7 +392,7 @@ inner.className="inner";
 
 let front=document.createElement("div");
 front.className="front";
-front.innerText=icons[Math.floor(Math.random()*icons.length)];
+front.innerText="🎆";
 
 let back=document.createElement("div");
 back.className="back";
@@ -426,20 +403,87 @@ inner.appendChild(back);
 card.appendChild(inner);
 
 card.onclick=()=>{
-  if(card.classList.contains("opened")) return;
+if(card.classList.contains("opened")) return;
 
-  card.classList.add("opened");
-  card.classList.add("flip");
-
-  setTimeout(()=>openGift(g),500);
+card.classList.add("opened","flip");
+setTimeout(()=>openGift(g),500);
 };
-
 
 cardGrid.appendChild(card);
 });
 }
 
-/* TYPEWRITER */
+function openGift(g){
+openedCount++;
+document.getElementById("progress").innerText =
+openedCount + " / 20 opened";
+
+rewardBody.innerHTML="";
+music2.pause();
+
+if(g.type==="video"){
+rewardBody.innerHTML=`<video controls autoplay src="${g.src}"></video>`;
+}
+else if(g.type==="image"){
+rewardBody.innerHTML=`<img src="${g.src}">`;
+}
+else{
+rewardBody.innerHTML=`<iframe src="${g.src}"></iframe>`;
+}
+
+if(openedCount === 20 && !secretUnlocked){
+secretUnlocked = true;
+setTimeout(spawnSecretCard,800);
+}
+
+rewardBox.style.display="flex";
+}
+
+function spawnSecretCard(){
+let card=document.createElement("div");
+card.className="card";
+
+let inner=document.createElement("div");
+inner.className="inner";
+
+let front=document.createElement("div");
+front.className="front";
+front.innerText="🌸";
+
+let back=document.createElement("div");
+back.className="back";
+back.innerText="🎁";
+
+inner.appendChild(front);
+inner.appendChild(back);
+card.appendChild(inner);
+
+card.onclick=()=>{
+card.classList.add("flip");
+setTimeout(openSecretGift,500);
+};
+
+cardGrid.appendChild(card);
+}
+
+function openSecretGift(){
+rewardBody.innerHTML=`<img src="img478.jpg">`;
+
+music2.pause();
+finalMusic.currentTime=0;
+finalMusic.play();
+
+explodeConfetti();
+
+let div=document.createElement("div");
+div.style.marginTop="15px";
+rewardBody.appendChild(div);
+
+typeText(div,"happy birthday... – the goat and yo boi Lloyd");
+
+rewardBox.style.display="flex";
+}
+
 function typeText(el,text){
 let i=0;
 let int=setInterval(()=>{
@@ -447,45 +491,6 @@ el.innerHTML+=text[i];
 i++;
 if(i>=text.length)clearInterval(int);
 },15);
-}
-
-function openGift(g){
-openedCount++;
-document.getElementById("progress").innerText =
-  openedCount + " / 20 opened";
-rewardBody.innerHTML="";
-music2.pause();
-
-if(g.type==="video"){
-rewardBody.innerHTML=`<video controls autoplay src="${g.src}"></video>`;
-if(openedCount === 20 && !secretUnlocked){
-  secretUnlocked = true;
-
-  setTimeout(()=>{
-    spawnSecretCard();
-  },800);
-}
-else if(g.type==="image"){
-rewardBody.innerHTML=`<img src="${g.src}">`;
-}
-else if(g.type==="youtube"){
-rewardBody.innerHTML=`<iframe src="${g.src}"></iframe>`;
-}
-else{
-finalMusic.play();
-explodeConfetti();
-
-let div=document.createElement("div");
-div.style.textAlign="left";
-div.style.lineHeight="1.5";
-rewardBody.appendChild(div);
-
-typeText(div,`happy birthday, i hope today is filled with so much happiness, laughter, and moments that make u genuinely smile. u deserve a day where everything feels light and good, even just for a while. i hope this year brings you more peace, more growth, and more of the things you’ve been quietly wishing for. i just want u to know that you’re someone really special, not just for how you are on the outside, but for the way you carry yourself, the way you care, and the little things about you that people don’t always say out loud. i hope you never lose that part of you. take your time today, enjoy everything, and don’t stress too much. just be happy, even in the smallest ways. you deserve that. happy birthday again shoonkey. 
-
-– the goat and yo boi Lloyd ᕙ( •̀ ᗜ •́ )ᕗ`);
-}
-
-rewardBox.style.display="flex";
 }
 
 function closeReward(){
@@ -501,60 +506,14 @@ c.style.position="absolute";
 c.style.left=Math.random()*100+"%";
 document.body.appendChild(c);
 
-c.animate([{transform:"translateY(-10vh)"},{transform:"translateY(110vh)"}],{duration:2000+Math.random()*1000});
+c.animate(
+[{transform:"translateY(-10vh)"},{transform:"translateY(110vh)"}],
+{duration:2000+Math.random()*1000}
+);
 
 setTimeout(()=>c.remove(),3000);
-
-function spawnSecretCard(){
-
-  let card=document.createElement("div");
-  card.className="card";
-
-  let inner=document.createElement("div");
-  inner.className="inner";
-
-  let front=document.createElement("div");
-  front.className="front";
-  front.innerText="🌸";
-
-  let back=document.createElement("div");
-  back.className="back";
-  back.innerText="🎁";
-
-  inner.appendChild(front);
-  inner.appendChild(back);
-  card.appendChild(inner);
-
-  card.onclick=()=>{
-    card.classList.add("flip");
-    setTimeout(()=>openSecretGift(),500);
-  };
-
-  cardGrid.appendChild(card);
 }
-function openSecretGift(){
-
-  rewardBody.innerHTML = `<img src="img478.jpg" style="max-width:100%; border-radius:10px;">`;
-
-  music2.pause();
-  finalMusic.currentTime = 0;
-  finalMusic.play();
-
-  explodeConfetti();
-
-  let div=document.createElement("div");
-  div.style.marginTop="15px";
-  div.style.textAlign="left";
-  div.style.lineHeight="1.6";
-  rewardBody.appendChild(div);
-
-  typeText(div,`happy birthday, i hope today is filled with so much happiness, laughter, and moments that make u genuinely smile. u deserve a day where everything feels light and good, even just for a while. i hope this year brings you more peace, more growth, and more of the things you’ve been quietly wishing for. i just want u to know that you’re someone really special, not just for how you are on the outside, but for the way you carry yourself, the way you care, and the little things about you that people don’t always say out loud. i hope you never lose that part of you. take your time today, enjoy everything, and don’t stress too much. just be happy, even in the smallest ways. you deserve that. happy birthday again shoonkey. 
-
-– the goat and yo boi Lloyd ᕙ( •̀ ᗜ •́ )ᕗ`);
-
-  rewardBox.style.display="flex";
 }
-
 </script>
 
 </body>
