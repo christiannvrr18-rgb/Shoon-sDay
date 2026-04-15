@@ -75,6 +75,20 @@ body,html{
   50%{transform:scale(1.1);}
   100%{transform:scale(1);}
 }
+@keyframes glowPulse{
+  0%{
+    transform:translateX(-50%) scale(1.2);
+    box-shadow:0 0 10px #ff4d6d;
+  }
+  50%{
+    transform:translateX(-50%) scale(1.35);
+    box-shadow:0 0 25px #ff4d6d;
+  }
+  100%{
+    transform:translateX(-50%) scale(1.2);
+    box-shadow:0 0 10px #ff4d6d;
+  }
+}
 
 /* SLIDE 3 */
 #slide3{
@@ -162,11 +176,13 @@ body,html{
 #rewardBox{
   position:fixed;
   inset:0;
-  background:rgba(0,0,0,0.8);
+  background:rgba(0,0,0,0.85);
   display:none;
   justify-content:center;
   align-items:center;
+  z-index:999999; /* 🔥 FORCE TOP LAYER */
 }
+
 
 #rewardContent{
   background:white;
@@ -175,6 +191,23 @@ body,html{
   max-width:90%;
   max-height:90%;
   overflow:auto;
+  z-index:1000000;
+  position:relative;
+  
+#rewardContent{
+  animation:popIn 0.25s ease;
+}
+
+@keyframes popIn{
+  from{
+    transform:scale(0.8);
+    opacity:0;
+  }
+  to{
+    transform:scale(1);
+    opacity:1;
+  }
+}  
 }
 
 #rewardBody video,
@@ -448,6 +481,14 @@ rewardBox.style.display="flex";
 }
 
 function spawnSecretCard(){
+card.style.position = "absolute";
+card.style.left = "50%";
+card.style.bottom = "40px";
+card.style.transform = "translateX(-50%) scale(1.2)";
+card.style.zIndex = "10";
+card.style.animation = "glowPulse 1.2s infinite";
+
+
 let card=document.createElement("div");
 card.className="card";
 
@@ -460,8 +501,13 @@ front.innerText="🌸";
 
 let back=document.createElement("div");
 back.className="back";
-back.innerText="🎁";
 
+back.innerText="🎁";
+card.style.position = "absolute";
+card.style.left = "50%";
+card.style.bottom = "40px";
+card.style.transform = "translateX(-50%) scale(1.2)";
+card.style.zIndex = "10";
 inner.appendChild(front);
 inner.appendChild(back);
 card.appendChild(inner);
@@ -505,9 +551,18 @@ if(i>=text.length)clearInterval(int);
 }
 
 function closeReward(){
-rewardBox.style.display="none";
-if(finalMusic.paused)music2.play();
+  rewardBox.style.display="none";
+
+  // if final music is playing, STOP it
+  if(!finalMusic.paused){
+    finalMusic.pause();
+    finalMusic.currentTime = 0;
+  }
+
+  // resume background music
+  music2.play();
 }
+
 
 function explodeConfetti(){
 for(let i=0;i<120;i++){
