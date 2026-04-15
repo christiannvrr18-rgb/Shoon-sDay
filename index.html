@@ -183,7 +183,6 @@ body,html{
   z-index:999999; /* 🔥 FORCE TOP LAYER */
 }
 
-
 #rewardContent{
   background:white;
   padding:20px;
@@ -193,22 +192,9 @@ body,html{
   overflow:auto;
   z-index:1000000;
   position:relative;
-  
-#rewardContent{
   animation:popIn 0.25s ease;
 }
 
-@keyframes popIn{
-  from{
-    transform:scale(0.8);
-    opacity:0;
-  }
-  to{
-    transform:scale(1);
-    opacity:1;
-  }
-}  
-}
 
 #rewardBody video,
 #rewardBody img,
@@ -481,6 +467,11 @@ rewardBox.style.display="flex";
 }
 
 function spawnSecretCard(){
+
+let card=document.createElement("div");
+card.className="card";
+
+/* 🔥 POSITION + STYLE */
 card.style.position = "absolute";
 card.style.left = "50%";
 card.style.bottom = "40px";
@@ -488,37 +479,30 @@ card.style.transform = "translateX(-50%) scale(1.2)";
 card.style.zIndex = "10";
 card.style.animation = "glowPulse 1.2s infinite";
 
-
-let card=document.createElement("div");
-card.className="card";
-
 let inner=document.createElement("div");
 inner.className="inner";
 
 let front=document.createElement("div");
 front.className="front";
 front.innerText="🌸";
+front.style.fontSize="32px";
 
 let back=document.createElement("div");
 back.className="back";
-
 back.innerText="🎁";
-card.style.position = "absolute";
-card.style.left = "50%";
-card.style.bottom = "40px";
-card.style.transform = "translateX(-50%) scale(1.2)";
-card.style.zIndex = "10";
+
 inner.appendChild(front);
 inner.appendChild(back);
 card.appendChild(inner);
 
 card.onclick=()=>{
-card.classList.add("flip");
-setTimeout(openSecretGift,400);
+  card.classList.add("flip");
+  setTimeout(openSecretGift,400);
 };
 
 cardGrid.appendChild(card);
 }
+
 
 function openSecretGift(){
 rewardBody.innerHTML="";
