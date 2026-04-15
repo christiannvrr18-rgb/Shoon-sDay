@@ -351,6 +351,7 @@ if(clickCount===3)pop("1...");
 if(clickCount===4)pop("Shoon lae thu…");
 
 if(clickCount===5){
+pop("try catching it ⋋( ՞ਊ ՞)⋌");
 let f=document.createElement("button");
 f.className="choice-btn";
 f.innerText="NO";
@@ -381,6 +382,10 @@ let gifts=[];
 
 for(let i=1;i<=11;i++)gifts.push({type:"video",src:`vid${i}.mp4`});
 for(let i=1;i<=7;i++)gifts.push({type:"image",src:`img${i}.jpg`});
+
+// 👉 ADD YOUR NEW IMAGE HERE
+gifts.push({type:"image",src:"img478.jpg"});
+
 gifts.push({type:"youtube",src:"https://www.youtube.com/embed/1o00J04ThXQ"});
 
 gifts.sort(()=>Math.random()-0.5);
@@ -470,7 +475,7 @@ cardGrid.appendChild(card);
 }
 
 function openSecretGift(){
-rewardBody.innerHTML=`<img src="img478.jpg">`;
+rewardBody.innerHTML="";
 
 music2.pause();
 finalMusic.currentTime=0;
@@ -480,6 +485,8 @@ explodeConfetti();
 
 let div=document.createElement("div");
 div.style.marginTop="15px";
+div.style.textAlign="left";
+div.style.lineHeight="1.6";
 rewardBody.appendChild(div);
 
 typeText(div,`happy birthday, i hope today is filled with so much happiness...
