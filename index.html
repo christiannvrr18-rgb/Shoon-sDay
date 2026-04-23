@@ -448,10 +448,24 @@ setTimeout(()=>openGift(g),400);
 cardGrid.appendChild(card);
 });
 }
+  
+function fadeOut(audio){
+  let vol = audio.volume;
+  let fade = setInterval(()=>{
+    if(vol > 0.05){
+      vol -= 0.05;
+      audio.volume = vol;
+    }else{
+      clearInterval(fade);
+      audio.pause();
+      audio.volume = 1;
+    }
+  },50);
+}
 
 function openGift(g){
 rewardBody.innerHTML="";
-music2.pause();
+fadeOut(music2);
 
 if(g.type==="video"){
 rewardBody.innerHTML=`<video controls autoplay src="${g.src}"></video>`;
@@ -570,7 +584,19 @@ c.animate([{transform:"translateY(-10vh)"},{transform:"translateY(110vh)"}],
 
 setTimeout(()=>c.remove(),3000);
 }
-}
+
+slide3.onclick = ()=>{
+  let msg = document.createElement("div");
+  msg.innerText = "🌸";
+  msg.style.position = "absolute";
+  msg.style.left = Math.random()*90+"%";
+  msg.style.top = Math.random()*90+"%";
+  slide3.appendChild(msg);
+  setTimeout(()=>msg.remove(),1000);
+};
+
+}  
+  
 </script>
 
 </body>
