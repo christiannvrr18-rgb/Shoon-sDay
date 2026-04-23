@@ -460,7 +460,16 @@ else if(g.type==="image"){
 rewardBody.innerHTML=`<img src="${g.src}">`;
 }
 else{
-rewardBody.innerHTML=`<iframe src="${g.src}"></iframe>`;
+rewardBody.innerHTML=`
+<iframe 
+  width="560" 
+  height="315"
+  src="${g.src}?autoplay=1"
+  frameborder="0"
+  allow="autoplay; encrypted-media"
+  allowfullscreen>
+</iframe>`;
+
 }
 
 rewardBox.style.display="flex";
