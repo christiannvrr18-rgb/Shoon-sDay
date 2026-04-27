@@ -216,11 +216,13 @@ body,html{
 /* 👇 NOW THIS IS OUTSIDE (IMPORTANT) */
 #bottomDecor{
   position:absolute;
-  bottom:10px;
+  bottom:15px;
+  left:0;
   width:100%;
   display:flex;
   justify-content:space-between;
-  padding:0 20px;
+  align-items:flex-end; /* 🔥 aligns bottoms evenly */
+  padding:0 30px;
   box-sizing:border-box;
   pointer-events:none;
 }
@@ -229,21 +231,30 @@ body,html{
 .leftGroup,
 .rightGroup{
   display:flex;
-  gap:10px;
+  align-items:flex-end; /* 🔥 same baseline */
+  gap:14px;
 }
 
 /* IMAGES */
 .decor{
-  width:80px;
-  height:80px;
-  object-fit:cover; /* 🔥 fixes stretching */
-  border-radius:12px;
+  width:85px;
+  height:85px;
+  object-fit:cover;
+  border-radius:14px;
 
-  /* subtle style */
-  box-shadow:0 4px 10px rgba(0,0,0,0.2);
+  box-shadow:0 6px 14px rgba(0,0,0,0.25);
 
-  /* floating */
-  animation:floaty 3s ease-in-out infinite;
+  /* smoother float */
+  animation:floaty 4s ease-in-out infinite;
+}
+
+/* add slight variation so they don't look cloned */
+.leftGroup .decor:nth-child(2){
+  animation-delay:0.4s;
+}
+.rightGroup .decor:nth-child(2){
+  animation-delay:0.7s;
+}
 }
 
 @keyframes floaty{
