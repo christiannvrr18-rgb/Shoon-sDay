@@ -213,51 +213,42 @@ body,html{
   cursor:pointer;
 #bottomDecor{
   position:absolute;
-  bottom:0;
+  bottom:10px;
   width:100%;
+  display:flex;
+  justify-content:space-between;
+  padding:0 20px;
+  box-sizing:border-box;
   pointer-events:none;
 }
 
-/* LEFT SIDE (cats) */
-.decor.left{
-  position:absolute;
-  bottom:10px;
-  left:10px;
-  width:90px;
+/* GROUPS */
+.leftGroup,
+.rightGroup{
+  display:flex;
+  gap:10px;
 }
 
-.decor.left2{
-  position:absolute;
-  bottom:10px;
-  left:90px;
-  width:90px;
-}
-
-/* RIGHT SIDE (bunnies) */
-.decor.right{
-  position:absolute;
-  bottom:10px;
-  right:10px;
-  width:90px;
-}
-
-.decor.right2{
-  position:absolute;
-  bottom:10px;
-  right:90px;
-  width:90px;
-}
-
-/* optional float animation */
+/* IMAGES */
 .decor{
+  width:80px;
+  height:80px;
+  object-fit:cover; /* 🔥 fixes stretching */
+  border-radius:12px;
+
+  /* subtle style */
+  box-shadow:0 4px 10px rgba(0,0,0,0.2);
+
+  /* floating */
   animation:floaty 3s ease-in-out infinite;
 }
 
 @keyframes floaty{
   0%{transform:translateY(0);}
-  50%{transform:translateY(-8px);}
+  50%{transform:translateY(-6px);}
   100%{transform:translateY(0);}
 }
+
 
 }
 </style>
@@ -296,12 +287,19 @@ body,html{
 
 <div id="cardGrid"></div>
 <div id="bottomDecor">
-  <img src="cat1.jpg" class="decor left">
-  <img src="cat2.jpg" class="decor left2">
 
-  <img src="bunny1.jpg" class="decor right">
-  <img src="bunny2.jpg" class="decor right2">
+  <div class="leftGroup">
+    <img src="cat1.jpg" class="decor">
+    <img src="cat2.jpg" class="decor">
+  </div>
+
+  <div class="rightGroup">
+    <img src="bunny1.jpg" class="decor">
+    <img src="bunny2.jpg" class="decor">
+  </div>
+
 </div>
+
 
 </div>
 
